@@ -32,9 +32,9 @@ public class UsrMemberController {
 	
 	@PostMapping("/usr/member/doJoin")
 	@ResponseBody
-	public String doJoin(String loginId, String loginPw, String name) {
+	public String doJoin(String loginId, String loginPw, String name, String address) {
 		
-		this.memberService.joinMember(loginId, loginPw, name);
+		this.memberService.joinMember(loginId, loginPw, name, address);
 		
 		return Util.jsReplace(String.format("[ %s ] 님의 가입이 완료되었습니다", name), "/usr/article/list");
 	}

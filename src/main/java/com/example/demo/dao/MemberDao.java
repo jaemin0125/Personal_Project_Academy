@@ -16,8 +16,9 @@ public interface MemberDao {
 			        , loginId = #{loginId}
 			        , loginPw = #{loginPw}
 			        , `name` = #{name}
+			        , address = #{address}
 			""")
-	void joinMember(String loginId, String loginPw, String name);
+	void joinMember(String loginId, String loginPw, String name, String address);
 
 	@Select("""
 			SELECT *

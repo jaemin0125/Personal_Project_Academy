@@ -5,7 +5,8 @@
 <c:set var="pageTitle" value="분조장" />
 
 <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <div class="content px-4 md:px-12 py-12 space-y-20">
   <!-- 업로드 박스 -->
@@ -29,39 +30,65 @@
   </section>
 
 <hr class="border-t border-gray-300 my-12" />	
-  <!-- 최근 업데이트된 쓰레기 섹션 -->
-  <section class="text-center">
-	 <h2 class="text-2xl font-bold mb-8">최근 업데이트된 쓰레기</h2>
-    <div class="flex justify-center space-x-6 overflow-x-auto scrollbar-hide">
-      <!-- 예시 이미지들 -->
-      <div class="flex-shrink-0 w-80 h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-        <img src="https://picsum.photos/300/300?random=1" class="object-cover w-full h-full rounded-lg" />
-      </div>
-      <div class="flex-shrink-0 w-80 h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-        <img src="https://picsum.photos/300/300?random=2" class="object-cover w-full h-full rounded-lg" />
-      </div>
-      <div class="flex-shrink-0 w-80 h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-        <img src="https://picsum.photos/300/300?random=3" class="object-cover w-full h-full rounded-lg" />
-      </div>
-      <div class="flex-shrink-0 w-80 h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-        <img src="https://picsum.photos/300/300?random=4" class="object-cover w-full h-full rounded-lg" />
-      </div>
-      <div class="flex-shrink-0 w-80 h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-        <img src="https://picsum.photos/300/300?random=5" class="object-cover w-full h-full rounded-lg" />
-      </div>
-    </div>
-      <!-- 페이지네이션 점 -->
-      <div class="mt-6 flex justify-center space-x-1">
-        <div class="w-2 h-2 bg-[#58c43a] rounded-full"></div>
-        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-      </div>
-  </section>
+ 
+<!-- 최근 업데이트된 쓰레기 섹션 -->
+	<section class="text-center">
+		<h2 class="text-2xl font-bold mb-8">최근 업데이트된 쓰레기</h2>
 
-<hr class="border-t border-gray-300 my-12" />
-  <!-- 오늘의 검색 TOP 10 -->
+		<!-- 슬라이드 박스 -->
+		<div class="swiper w-full max-w-7xl mx-auto !pb-14">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=1"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=2"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=3"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=4"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=5"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=6"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=7"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=8"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=9"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+				<div class="swiper-slide">
+					<img src="https://picsum.photos/300/300?random=10"
+						class="w-64 h-64 object-cover rounded-lg mx-auto" />
+				</div>
+			</div>
+
+			<!-- 페이지네이션 -->
+			<div class="swiper-pagination"></div>
+			<div class="swiper-button-prev !text-green-500 !pb-14"></div>
+			<div class="swiper-button-next !text-green-500 !pb-14"></div>
+		</div>
+	</section>
+
+	<hr class="border-t border-gray-300 my-12" />
+	<!-- 오늘의 검색 TOP 10 -->
   <section class="text-center">
     <h2 class="text-2xl font-bold mb-8">오늘의 검색 TOP 10</h2>
     <ol class="list-decimal list-inside text-left max-w-md mx-auto text-lg space-y-3">
@@ -88,5 +115,26 @@
     <a href="../article/list" class="btn btn-outline btn-success text-lg">에코커뮤니티로 이동</a>
   </div>
 </div>
+
+<script>
+const swiper = new Swiper('.swiper', {
+	  loop: true,
+	  slidesPerView: 5,
+	  spaceBetween: 20,
+	  pagination: {
+	    el: '.swiper-pagination',
+	    clickable: true,
+	  },
+	  autoplay: {
+	    delay: 5000,
+	    disableOnInteraction: false,
+	  },
+	  navigation: {
+	    nextEl: '.swiper-button-next',
+	    prevEl: '.swiper-button-prev',
+	  },
+	  simulateTouch: false,
+	});
+</script>
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp" %>

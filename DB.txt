@@ -1,0 +1,162 @@
+DROP DATABASE IF EXISTS Recycle_AM;
+CREATE DATABASE Recycle_AM;
+USE Recycle_AM;
+
+CREATE TABLE article(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+    , regDate DATETIME NOT NULL
+    , updateDate DATETIME NOT NULL
+    , title VARCHAR(50) NOT NULL
+    , content TEXT NOT NULL
+);
+
+ALTER TABLE article ADD COLUMN memberId INT UNSIGNED NOT NULL AFTER updateDate;
+ALTER TABLE article ADD COLUMN boardId INT UNSIGNED NOT NULL AFTER memberId;
+ALTER TABLE article ADD COLUMN views INT UNSIGNED NOT NULL DEFAULT 0;
+
+CREATE TABLE `member`(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+    , regDate DATETIME NOT NULL
+    , updateDate DATETIME NOT NULL
+    , loginId VARCHAR(50) NOT NULL UNIQUE
+    , loginPw VARCHAR(100) NOT NULL
+    , `name` VARCHAR(50) NOT NULL
+    , address VARCHAR(100) NOT NULL
+);
+
+ALTER TABLE `member` ADD COLUMN authLevel INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '관리자 = 0, 사용자 = 1';
+
+CREATE TABLE board(
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+    , `name` VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE likePoint(
+    memberId INT UNSIGNED NOT NULL
+    , relTypeCode VARCHAR(20) NOT NULL
+    , relId INT UNSIGNED NOT NULL
+);
+
+CREATE TABLE reply(
+   id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+   , regDate DATETIME NOT NULL
+   , updateDate DATETIME NOT NULL
+   , relTypeCode VARCHAR(20) NOT NULL
+   , relId INT UNSIGNED NOT NULL
+   , memberId INT UNSIGNED NOT NULL
+   , content VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE wasteGuide (
+    id INT PRIMARY KEY AUTO_INCREMENT
+    ,label VARCHAR(100) NOT NULL         -- YOLO에서 오는 정확한 객체 이름
+    ,category VARCHAR(50)                -- 대분류 (예: bottle, can)
+    ,guide TEXT NOT NULL                 -- 분리배출 가이드 설명
+    ,thumbnail VARCHAR(255)              -- 대표 이미지 파일 경로
+    ,reg_date DATETIME DEFAULT NOW()     -- 등록일
+);
+
+INSERT INTO article
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , memberId = 1
+        , boardId = 1
+        , title = '공지1'
+        , content = '공지내용1';
+        
+INSERT INTO article
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , memberId = 1
+        , boardId = 2
+        , title = '제목2'
+        , content = '내용2';
+
+INSERT INTO article
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , memberId = 2
+        , boardId = 3
+        , title = '제목3'
+        , content = '내용3';
+
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'admin'
+        , loginPw = SHA2('admin', 256)
+        , `name` = '관리자'
+        , address = '대전광역시 서구 둔산동'
+        , authLevel = 0;
+        
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'test1'
+        , loginPw = SHA2('test1', 256)
+        , `name` = '유저1'
+        , address = '서울특별시 강남구 도곡동';
+
+INSERT INTO `member`
+    SET regDate = NOW()
+        , updateDate = NOW()
+        , loginId = 'test2'
+        , loginPw = SHA2('test2', 256)
+        , `name` = '유저2'
+        , address = '서울특별시 강동구 천호동';
+        
+INSERT INTO board
+    SET `name` = '공지사항';
+
+INSERT INTO board
+    SET `name` = '팁/정보';
+    
+INSERT INTO board
+    SET `name` = '질의응답';
+
+INSERT INTO likePoint
+    SET memberId = 2
+        , relTypeCode = 'article'
+        , relId = 2;
+
+INSERT INTO likePoint
+    SET memberId = 3
+        , relTypeCode = 'article'
+        , relId = 2;
+        
+INSERT INTO likePoint
+    SET memberId = 2
+        , relTypeCode = 'article'
+        , relId = 3;
+        
+INSERT INTO likePoint
+    SET memberId = 3
+        , relTypeCode = 'article'
+        , relId = 1;
+
+
+INSERT INTO wasteGuide (label, category, guide, thumbnail) VALUES
+('petbottle', 'plastic', '내용물을 비우고 라벨을 제거한 후 압착하여 투명 페트병 전용 수거함에 배출하세요.', '/resource/imgs/petbottle.png'),
+('can', 'metal', '음료 캔은 물로 헹군 후 라벨과 뚜껑을 제거하고 압착해서 배출하세요.', '/resource/imgs/can.png'),
+('glassbottle', 'glass', '내용물을 비우고 물로 헹군 후 라벨 제거 후 배출하세요. 색상별 분리 필요 시 지자체 기준 확인.', '/resource/imgs/glassbottle.png'),
+('papercup', 'paper', '음료 잔여물을 버리고 깨끗이 헹군 후 종이류와 혼합되지 않도록 별도 배출하세요.', '/resource/imgs/papercup.png'),
+('cardboard', 'paper', '테이프, 스티커 등 이물질 제거 후 접어서 끈으로 묶어 배출하세요.', '/resource/imgs/cardboard.png'),
+('plasticbag', 'plastic', '내용물을 비우고 물기를 제거한 깨끗한 비닐만 분리배출 가능합니다.', '/resource/imgs/plasticbag.png'),
+('plasticcontainer', 'plastic', '내용물을 비우고 이물질 제거 후 플라스틱류로 배출하세요. 뚜껑과 몸체가 다른 재질이면 분리하세요.', '/resource/imgs/plasticcontainer.png'),
+('milkpack', 'paper', '내용물을 비우고 물로 헹군 후 펼쳐서 종이팩 전용 수거함에 배출하거나 마트 등 교환 서비스 활용하세요.', '/resource/imgs/milkpack.png'),
+('newspaper', 'paper', '깨끗한 신문만 끈으로 묶어 배출하세요. 코팅지나 전단지는 일반쓰레기입니다.', '/resource/imgs/newspaper.png'),
+('styrofoam', 'plastic', '이물질 없고 깨끗한 흰색 스티로폼만 분리배출 가능. 테이프 제거 필수.', '/resource/imgs/styrofoam.png');
+
+
+SELECT * FROM article;
+SELECT * FROM `member`;
+SELECT * FROM board;
+SELECT * FROM likePoint;
+SELECT * FROM reply;
+SELECT * FROM wasteGuide;
+
+
+/*페이징 테스트용 더미데이터
+insert into article (regDate, updateDate, memberId, boardId, title, content)
+select now(), now(), FLOOR(RAND() * 3) + 1, FLOOR(RAND() * 3) + 1, concat('테스트제목', substr(RAND(), 1, 5)), CONCAT('테스트내용', SUBSTR(RAND(), 1, 5)) from article;
+*/

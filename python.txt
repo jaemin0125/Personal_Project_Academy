@@ -1,0 +1,47 @@
+from flask import Flask, request, jsonify
+import torch
+import os
+import uuid
+
+# YOLO 모델 로드 (사전 학습된 모델)
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+
+app = Flask(__name__)
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    file = request.files['image']
+
+    # 1. 이미지 저장
+    filename = f"{uuid.uuid4().hex}.jpg"
+    save_dir = "uploads"
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, filename)
+    file.save(save_path)
+
+    print(f"[LOG] 이미지 저장 경로: {save_path}")
+
+    # 2. YOLO로 분석
+    results = model(save_path)
+    detections = results.pred[0]
+
+    # 3. 전체 분석 결과 로그 출력
+    print("[LOG] YOLO 전체 분석 결과:")
+    print(results.pandas().xyxy[0])  # ← YOLO 인식된 모든 객체 출력
+    print(f"[LOG] 총 인식 객체 수: {detections.shape[0]}")
+
+    # 4. 가장 신뢰도 높은 첫 번째 객체의 라벨 추출
+    if detections.shape[0] == 0:
+        label = "unknown"
+    else:
+        class_id = int(detections[0][5].item())  # class 번호
+        label = results.names[class_id]          # 클래스 이름
+        print(f"[LOG] 최종 선택된 label: {label}")
+
+    # 5. 결과 반환
+    return jsonify({
+        "label": label
+    })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

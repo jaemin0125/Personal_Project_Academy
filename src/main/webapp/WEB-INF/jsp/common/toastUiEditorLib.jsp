@@ -28,7 +28,8 @@
 		  initialEditType: 'markdown',
 		  initialValue: initialValue,
 		  theme: theme,
-		  plugins: [colorSyntax]
+		  plugins: [colorSyntax],
+		  placeholder: '내용을 입력하세요'
 		});
 		
 		toastEditor = editor;

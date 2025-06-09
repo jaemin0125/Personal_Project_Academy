@@ -6,6 +6,7 @@
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
 <c:set var="pageTitle" value="글쓰기" />
+<c:set var="selectedBoardId" value="${boardId != null ? boardId : 1}" />
 
 <%@ include file="/WEB-INF/jsp/common/header.jsp" %>
 <%@ include file="/WEB-INF/jsp/common/toastUiEditorLib.jsp" %>
@@ -20,17 +21,21 @@
         <div class="flex space-x-4">
           <c:if test="${req.getLoginedMember().getAuthLevel() == 0 }">
             <label class="label cursor-pointer">
-              <input type="radio" name="boardId" value="1" class="radio radio-sm radio-success" />
+              <input type="radio" name="boardId" value="1" class="radio radio-sm radio-success" ${selectedBoardId == 1 ? 'checked' : ''}/>
               <span class="ml-2">공지사항</span>
             </label>
           </c:if>
           <label class="label cursor-pointer">
-            <input type="radio" name="boardId" value="2" class="radio radio-sm radio-success" checked />
+            <input type="radio" name="boardId" value="2" class="radio radio-sm radio-success" ${selectedBoardId == 2 ? 'checked' : ''}/>
             <span class="ml-2">팁/정보</span>
           </label>
           <label class="label cursor-pointer">
-            <input type="radio" name="boardId" value="3" class="radio radio-sm radio-success" />
+            <input type="radio" name="boardId" value="3" class="radio radio-sm radio-success" ${selectedBoardId == 3 ? 'checked' : ''}/>
             <span class="ml-2">질의응답</span>
+          </label>
+          <label class="label cursor-pointer">
+            <input type="radio" name="boardId" value="4" class="radio radio-sm radio-success" ${selectedBoardId == 4 ? 'checked' : ''}/>
+            <span class="ml-2">오류신고</span>
           </label>
         </div>
       </div>

@@ -47,6 +47,15 @@ CREATE TABLE reply(
    , content VARCHAR(200) NOT NULL
 );
 
+CREATE TABLE wasteGuide (
+    id INT PRIMARY KEY AUTO_INCREMENT
+    , label VARCHAR(100) NOT NULL
+    , ko_label VARCHAR(100) NOT NULL      -- YOLO에서 오는 정확한 객체 이름
+    , category VARCHAR(50)                -- 대분류 (예: bottle, can)
+    , guide TEXT NOT NULL                 -- 분리배출 가이드 설명
+    , thumbnail VARCHAR(255)              -- 대표 이미지 파일 경로
+    , reg_date DATETIME DEFAULT NOW()     -- 등록일
+);
 
 INSERT INTO article
     SET regDate = NOW()
@@ -76,7 +85,7 @@ INSERT INTO `member`
     SET regDate = NOW()
         , updateDate = NOW()
         , loginId = 'admin'
-        , loginPw = 'admin'
+        , loginPw = SHA2('admin', 256)
         , `name` = '관리자'
         , address = '대전광역시 서구 둔산동'
         , authLevel = 0;
@@ -85,7 +94,7 @@ INSERT INTO `member`
     SET regDate = NOW()
         , updateDate = NOW()
         , loginId = 'test1'
-        , loginPw = 'test1'
+        , loginPw = SHA2('test1', 256)
         , `name` = '유저1'
         , address = '서울특별시 강남구 도곡동';
 
@@ -93,7 +102,7 @@ INSERT INTO `member`
     SET regDate = NOW()
         , updateDate = NOW()
         , loginId = 'test2'
-        , loginPw = 'test2'
+        , loginPw = SHA2('test2', 256)
         , `name` = '유저2'
         , address = '서울특별시 강동구 천호동';
         
@@ -106,6 +115,9 @@ INSERT INTO board
 INSERT INTO board
     SET `name` = '질의응답';
 
+INSERT INTO board
+    SET `name` = '오류 신고';
+    
 INSERT INTO likePoint
     SET memberId = 2
         , relTypeCode = 'article'
@@ -126,11 +138,35 @@ INSERT INTO likePoint
         , relTypeCode = 'article'
         , relId = 1;
 
+
+INSERT INTO wasteGuide (label, ko_label, category, guide, thumbnail) VALUES
+('petbottle', '페트병', 'plastic', '내용물을 비우고 라벨을 제거한 후 압착하여 투명 페트병 전용 수거함에 배출하세요.', '/resource/imgs/petbottle.png'),
+('can', '캔', 'metal', '음료 캔은 물로 헹군 후 라벨과 뚜껑을 제거하고 압착해서 배출하세요.', '/resource/imgs/can.png'),
+('glassbottle', '유리병', 'glass', '내용물을 비우고 물로 헹군 후 라벨 제거 후 배출하세요. 색상별 분리 필요 시 지자체 기준 확인.', '/resource/imgs/glassbottle.png'),
+('papercup', '종이컵', 'paper', '음료 잔여물을 버리고 깨끗이 헹군 후 종이류와 혼합되지 않도록 별도 배출하세요. *플라스틱 뚜껑이 있다면 뚜껑은 플라스틱으로 배출하는 센스!', '/resource/imgs/papercup.png'),
+('paperbox', '종이박스', 'paper', '테이프, 스티커 등 이물질 제거 후 접어서 배출하세요.', '/resource/imgs/paperbox.png'),
+('plasticbag', '비닐봉투', 'plastic', '내용물을 비우고 물기를 제거한 깨끗한 비닐만 분리배출 가능합니다.', '/resource/imgs/plasticbag.png'),
+('plasticcontainer', '플라스틱 용기', 'plastic', '내용물을 비우고 이물질 제거 후 플라스틱류로 배출하세요. 뚜껑과 몸체가 다른 재질이면 분리하세요.', '/resource/imgs/plasticcontainer.png'),
+('paperpack', '종이팩', 'paper', '내용물을 비우고 물로 헹군 후 펼쳐서 종이팩 전용 수거함에 배출하거나 마트 등 교환 서비스 활용하세요.', '/resource/imgs/paperpack.png'),
+('paperprint', '신문/잡지', 'paper', '깨끗한 신문만 끈으로 묶어 배출하세요. 코팅지나 전단지는 일반쓰레기입니다.', '/resource/imgs/paperprint.png'),
+('styrofoam', '스티로폼', 'plastic', '이물질 없고 깨끗한 흰색 스티로폼만 분리배출 가능. 테이프 제거 필수.', '/resource/imgs/styrofoam.png');
+
+CREATE TABLE searchLog (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ko_label VARCHAR(100) NOT NULL,       -- 검색어 (label, category 등)
+    category VARCHAR(20),             -- 검색 종류 (예: 'label', 'category')
+    search_time DATETIME DEFAULT NOW()   -- 검색 시각
+);
+
+
+
 SELECT * FROM article;
 SELECT * FROM `member`;
 SELECT * FROM board;
 SELECT * FROM likePoint;
 SELECT * FROM reply;
+SELECT * FROM wasteGuide;
+SELECT * FROM searchLog;
 
 
 

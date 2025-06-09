@@ -18,7 +18,7 @@
 		</ul>
 	</aside>
 
-	<div class="w-4/5 ml-6 ">
+	<div class="w-4/5 ml-6 "> 
 		<div
 			class="flex justify-between items-center border-b border-gray-300 mb-4 text-gray-700 font-semibold text-lg">
 
@@ -29,6 +29,8 @@
 					class="pb-2 ${board.getId() == 2 ? 'border-b-2 border-green-600' : ''}">팁/정보</a>
 				<a href="/usr/article/list?boardId=3"
 					class="pb-2 ${board.getId() == 3 ? 'border-b-2 border-green-600' : ''}">질의응답</a>
+				<a href="/usr/article/list?boardId=4"
+					class="pb-2 ${board.getId() == 4 ? 'border-b-2 border-green-600' : ''}">오류신고</a>
 			</div>
 
 			<form method="get"
@@ -67,12 +69,12 @@
 			<c:if test="${req.getLoginedMember().id != 0}">
 				<c:choose>
 					<c:when test="${req.getLoginedMember().authLevel == 0}">
-						<a href="write"
+						<a href="write?boardId=${board.getId() }"
 							class="px-4 py-2 bg-green-500 text-white text-sm rounded-xl hover:bg-green-600 transition">글쓰기</a>
 					</c:when>
 					<c:otherwise>
 						<c:if test="${board.getId() != 1}">
-							<a href="write"
+							<a href="write?boardId=${board.getId() }"
 								class="px-4 py-2 bg-green-500 text-white text-sm rounded-xl hover:bg-green-600 transition">글쓰기</a>
 						</c:if>
 					</c:otherwise>

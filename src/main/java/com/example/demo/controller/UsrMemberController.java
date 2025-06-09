@@ -34,9 +34,9 @@ public class UsrMemberController {
 	@ResponseBody
 	public String doJoin(String loginId, String loginPw, String name, String address) {
 		
-		this.memberService.joinMember(loginId, loginPw, name, address);
+		this.memberService.joinMember(loginId, Util.encryptSHA256(loginPw), name, address);
 		
-		return Util.jsReplace(String.format("[ %s ] 님의 가입이 완료되었습니다", name), "/usr/article/list");
+		return Util.jsReplace(String.format("[ %s ] 님의 가입이 완료되었습니다", name), "/usr/home/main");
 	}
 	
 	@GetMapping("/usr/member/loginIdDupChk")
@@ -67,13 +67,13 @@ public class UsrMemberController {
 			return Util.jsReplace(String.format("[ %s ] 은(는) 존재하지 않는 회원입니다", loginId), "login");
 		}
 		
-		if (member.getLoginPw().equals(loginPw) == false) {
+		if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
 			return Util.jsReplace("비밀번호가 일치하지 않습니다", "login");
 		}
 		
 		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel()));
 		
-		return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()), "/usr/article/list");
+		return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()), "/usr/home/main");
 	}
 	
 	@GetMapping("/usr/member/logout")
@@ -82,7 +82,7 @@ public class UsrMemberController {
 		
 		this.req.logout();
 		
-		return Util.jsReplace("정상적으로 로그아웃 되었습니다", "/usr/article/list");
+		return Util.jsReplace("정상적으로 로그아웃 되었습니다", "/usr/home/main");
 	}
 	
 	@GetMapping("/usr/member/getLoginId")

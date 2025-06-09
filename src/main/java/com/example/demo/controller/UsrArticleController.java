@@ -34,7 +34,10 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/write")
-	public String write() {
+	public String write(int boardId, Model model) {
+		
+		model.addAttribute("boardId", boardId);
+		
 		return "usr/article/write";
 	}
 
@@ -71,7 +74,7 @@ public class UsrArticleController {
 		Board board = this.boardService.getBoard(boardId);
 		List<Article> articles = this.articleService.getArticles(boardId, articlesInPage, limitFrom, searchType,
 				searchKeyword);
-
+		
 		model.addAttribute("searchType", searchType);
 		model.addAttribute("searchKeyword", searchKeyword);
 		model.addAttribute("cPage", cPage);

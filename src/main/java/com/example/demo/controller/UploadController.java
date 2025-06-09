@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.WasteGuide;
 import com.example.demo.service.UploadService;
+import com.example.demo.util.Util;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -34,6 +36,13 @@ public class UploadController {
 	
     @PostMapping("/usr/image/analyze")
     public String analyzeImage(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+    	
+    	String contentType = file.getContentType();
+    	
+        if (contentType == null || !contentType.startsWith("image/")) {
+        	return Util.jsReplace("이미지 파일만 업로드할 수 있습니다.", "/");
+        }
+    	
         // 1. 임시 파일로 저장
         File tempFile = File.createTempFile("upload-", file.getOriginalFilename());
         file.transferTo(tempFile);

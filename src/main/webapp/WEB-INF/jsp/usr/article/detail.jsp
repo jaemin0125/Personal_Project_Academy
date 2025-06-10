@@ -320,13 +320,19 @@
 						</button>
 					</c:when>
 					<c:otherwise>
+						<span>추천수 : </span>
 						<span id="likePointCnt" class="text-sm text-gray-600"></span>
 					</c:otherwise>
 				</c:choose>
 			</div>
 
 			<!-- 본문 -->
-			<div class="prose max-w-none">${article.getForPrintContent()}</div>
+			<div class="prose max-w-none"><strong>${article.getForPrintContent()}</strong></div>
+			<c:if test="${article.getThumbnail() != null }">
+				<div class="text-sm">
+					<img src="${article.getThumbnail() }" class="w-62 h-auto rounded-lg"/>
+				</div>
+			</c:if>
 		</div>
 
 		<!-- 🔧 수정 / 삭제 / 뒤로 -->

@@ -23,11 +23,11 @@ public class UploadService {
 		return this.uploadDao.getWasteGuide(resultLabel);
 	}
 
-	public void searchCnt(String ko_label, String category) {
-		this.uploadDao.searchCnt(ko_label, category);
+	public void searchCnt(String label, String ko_label, String category) {
+		this.uploadDao.searchCnt(label, ko_label, category);
 	}
 
-	public List<String> getKeywordList() {
+	public List<WasteGuide> getKeywordList() {
 		return this.uploadDao.getKeywordList();
 	}
 

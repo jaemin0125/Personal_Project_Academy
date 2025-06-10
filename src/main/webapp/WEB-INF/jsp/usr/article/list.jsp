@@ -6,15 +6,17 @@
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
 <div class="container mx-auto flex mt-6 px-4">
-	<aside class="w-1/5 bg-green-100 p-4 rounded-xl h-fit">
-		<h2 class="font-semibold text-lg mb-4">카테고리</h2>
+	<aside class="relative w-1/5 bg-green-100 p-4 rounded-xl h-fit">
+		<h2 class="font-semibold text-lg pb-4">카테고리</h2>
+		<c:if test="${req.getLoginedMember().id !=0 && req.getLoginedMember().authLevel == 0}">
+			<div class="absolute top-4 right-5">
+				<a href="/usr/board/modify" class="btn btn-error btn-xs shadow-md hover:scale-105 transition-transform">🛠 게시판 관리 </a>
+			</div>
+		</c:if>
 		<ul class="space-y-2">
-			<li><a href="/usr/article/list?boardId=1"
-				class="block hover:text-green-800">공지사항</a></li>
-			<li><a href="/usr/article/list?boardId=2"
-				class="block hover:text-green-800">팁/정보</a></li>
-			<li><a href="/usr/article/list?boardId=3"
-				class="block hover:text-green-800">질의응답</a></li>
+			<c:forEach var="boards" items="${boards }">
+				<li><a href="/usr/article/list?boardId=${boards.getId() }" class="block hover:text-green-800">${boards.getName() }</a></li>
+			</c:forEach>
 		</ul>
 	</aside>
 
@@ -23,15 +25,11 @@
 			class="flex justify-between items-center border-b border-gray-300 mb-4 text-gray-700 font-semibold text-lg">
 
 			<div class="flex space-x-6">
-				<a href="/usr/article/list?boardId=1"
-					class="pb-2 ${board.getId() == 1 ? 'border-b-2 border-green-600' : ''}">공지사항</a>
-				<a href="/usr/article/list?boardId=2"
-					class="pb-2 ${board.getId() == 2 ? 'border-b-2 border-green-600' : ''}">팁/정보</a>
-				<a href="/usr/article/list?boardId=3"
-					class="pb-2 ${board.getId() == 3 ? 'border-b-2 border-green-600' : ''}">질의응답</a>
-				<a href="/usr/article/list?boardId=4"
-					class="pb-2 ${board.getId() == 4 ? 'border-b-2 border-green-600' : ''}">오류신고</a>
-			</div>
+				<c:forEach var="boards" items="${boards }">
+					<a href="/usr/article/list?boardId=${boards.getId() }"
+					class="pb-2 ${board.getId() == boards.getId() ? 'border-b-2 border-green-600' : ''}">${boards.getName() }</a>
+				</c:forEach>
+			</div> 
 
 			<form method="get"
 				class="flex items-center space-x-2 bg-green-50 px-3 py-2 mb-4 rounded-lg shadow-sm">

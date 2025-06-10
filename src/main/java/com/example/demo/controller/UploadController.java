@@ -72,7 +72,7 @@ public class UploadController {
         WasteGuide wasteGuide = this.uploadService.getWasteGuide(resultLabel);
         
         if(wasteGuide != null) {
-        	this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getCategory()); //검색어 기능을 위함
+        	this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory()); //검색어 기능을 위함
         }
         
         model.addAttribute("wasteGuide", wasteGuide);
@@ -84,9 +84,10 @@ public class UploadController {
     public String getResultPage(@RequestParam String label, Model model) {
     	
     	    WasteGuide wasteGuide = uploadService.getWasteGuide(label);
+    	    
 
     	    if (wasteGuide != null) {
-    	        uploadService.searchCnt(wasteGuide.getKo_label(), wasteGuide.getCategory());
+    	        uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
     	    }
 
     	    model.addAttribute("wasteGuide", wasteGuide);

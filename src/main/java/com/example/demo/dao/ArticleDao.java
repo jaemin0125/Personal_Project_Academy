@@ -21,8 +21,9 @@ public interface ArticleDao {
 			        , boardId = #{boardId}
 			        , title = #{title}
 			        , content = #{content}
+			        , thumbnail = #{thumbnail}
 			""")
-	public void writeArticle(String title, String content, int loginedMemberId, int boardId);
+	public void writeArticle(String title, String content, int loginedMemberId, int boardId, String thumbnail);
 
 	@Select("""
 			<script>
@@ -73,9 +74,10 @@ public interface ArticleDao {
 			    SET updateDate = NOW()
 			        , title = #{title}
 			        , content = #{content}
+			        , thumbnail = #{thumbnail}
 			    WHERE id = #{id}
 			""")
-	public void modifyArticle(int id, String title, String content);
+	public void modifyArticle(int id, String title, String content, String thumbnail);
 
 	@Delete("""
 			DELETE FROM article
@@ -119,4 +121,5 @@ public interface ArticleDao {
 				WHERE id = #{id}
 			""")
 	public void increaseViews(int id);
+
 }

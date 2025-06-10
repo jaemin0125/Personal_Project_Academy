@@ -15,29 +15,22 @@
   <div class="container mx-auto max-w-2xl bg-base-100 p-8 rounded-2xl shadow-md">
     <form action="doWrite" method="post" onsubmit="return submitForm(this);">
       <input type="hidden" name="content" />
+      <input type="hidden" name="thumbnail" id="thumbnail"/>
 
       <div class="form-control mb-6">
         <label class="label font-semibold">게시판 선택</label>
-        <div class="flex space-x-4">
-          <c:if test="${req.getLoginedMember().getAuthLevel() == 0 }">
-            <label class="label cursor-pointer">
-              <input type="radio" name="boardId" value="1" class="radio radio-sm radio-success" ${selectedBoardId == 1 ? 'checked' : ''}/>
-              <span class="ml-2">공지사항</span>
-            </label>
-          </c:if>
-          <label class="label cursor-pointer">
-            <input type="radio" name="boardId" value="2" class="radio radio-sm radio-success" ${selectedBoardId == 2 ? 'checked' : ''}/>
-            <span class="ml-2">팁/정보</span>
-          </label>
-          <label class="label cursor-pointer">
-            <input type="radio" name="boardId" value="3" class="radio radio-sm radio-success" ${selectedBoardId == 3 ? 'checked' : ''}/>
-            <span class="ml-2">질의응답</span>
-          </label>
-          <label class="label cursor-pointer">
-            <input type="radio" name="boardId" value="4" class="radio radio-sm radio-success" ${selectedBoardId == 4 ? 'checked' : ''}/>
-            <span class="ml-2">오류신고</span>
-          </label>
-        </div>
+		<div class="flex space-x-4">
+		  <c:forEach var="board" items="${boards}">
+		    <c:if test="${req.getLoginedMember().authLevel == 0 || board.id != 1}">
+		      <label class="label cursor-pointer">
+		        <input type="radio" name="boardId" value="${board.getId() }"
+		               class="radio radio-sm radio-success"
+		               ${selectedBoardId == board.getId() ? 'checked' : ''}/>
+		        <span class="ml-2">${board.name}</span>
+		      </label>
+		    </c:if>
+		  </c:forEach>
+		</div>
       </div>
 
       <div class="form-control mb-6">
@@ -57,8 +50,5 @@
     </form>
   </div>
 </section>
-
-<%@ include file="/WEB-INF/jsp/common/footer.jsp" %>
-
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

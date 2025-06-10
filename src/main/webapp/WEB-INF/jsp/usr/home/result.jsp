@@ -25,7 +25,7 @@
 	</div>
 </c:if>
 <c:if test="${wasteGuide == null }"> 
-  <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-xl shadow-md text-red-800 max-w-xl mx-auto mt-10 text-center animate-fade-in">
+  <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-xl shadow-md text-red-800 max-w-xl mx-auto mt-20 text-center animate-fade-in">
     <h2 class="text-2xl font-bold mb-2">😢 아직 학습되지 않은 쓰레기입니다</h2>
     <div class="text-md mb-4">
       현재 업로드한 쓰레기는 <strong>AI가 아직 분류하지 못했어요.</strong><br/>
@@ -35,6 +35,7 @@
       class="inline-block mt-4 px-6 py-2 bg-red-400 text-white font-semibold rounded-full hover:bg-red-500 transition duration-200">
       🔧 오류 신고하고 AI 학습 돕기
     </a>
+    <div class="mt-2">* 업로드했던 사진을 <span class="text-red-600 font-semibold">꼭</span> 첨부해 주세요!!</div>
   </div>
 </c:if>
 

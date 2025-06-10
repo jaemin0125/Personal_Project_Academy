@@ -31,18 +31,19 @@ public interface UploadDao {
 	
 	@Insert("""
 			INSERT INTO searchLog
-				SET ko_label = #{ko_label}
+				SET label = #{label}
+					, ko_label = #{ko_label}
 					, category = #{category}
 			""")
-	void searchCnt(String ko_label, String category);
+	void searchCnt(String label, String ko_label, String category);
 
 	@Select("""
-			SELECT ko_label
+			SELECT *
 			    FROM searchLog
 			    WHERE search_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
 			    GROUP BY ko_label
 			    ORDER BY COUNT(id) DESC
 			    LIMIT 10;
 			""")
-	List<String> getKeywordList();
+	List<WasteGuide> getKeywordList();
 }

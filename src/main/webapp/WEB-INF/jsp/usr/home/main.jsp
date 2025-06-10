@@ -81,7 +81,7 @@
 			class="list-decimal list-inside text-left max-w-md mx-auto text-lg space-y-3">
 			<c:forEach var="searchKeyword" items="${searchKeyword }">
 				<li class="hover:text-[#06874e]"><a
-					href="/usr/home/result?label=${searchKeyword }">${searchKeyword }</a>
+					href="/usr/home/result?label=${searchKeyword.getLabel() }">${searchKeyword.getKo_label() }</a>
 				</li>
 			</c:forEach>
 		</ol>

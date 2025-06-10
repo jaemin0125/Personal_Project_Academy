@@ -113,6 +113,9 @@
 					<input type="text" name="name" placeholder="이름" class="grow" />
 				</label>
 				<label class="input input-bordered flex items-center gap-2">
+					<input type="email" name="email" placeholder="이메일" class="grow" />
+				</label>
+				<label class="input input-bordered flex items-center gap-2">
 					<input type="text" name="address" placeholder="주소   ex) 서울특별시 강남구 도곡동" class="grow" />
 				</label>
 				<div class="flex justify-center mt-6">

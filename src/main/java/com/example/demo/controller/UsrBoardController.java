@@ -23,7 +23,7 @@ public class UsrBoardController {
 		this.req = req;
 	}
 	
-	@GetMapping("/usr/board/modify")
+	@GetMapping("/usr/board/list")
 	public String modifyBoard(Model model) {
 		
 		if(req.getLoginedMember().getId() == 0 || req.getLoginedMember().getAuthLevel() !=0) {
@@ -34,7 +34,7 @@ public class UsrBoardController {
 		
 		model.addAttribute("boards", boards);   
 		
-		return "usr/board/modify";
+		return "usr/board/list";
 	}
 	
 	@GetMapping("/usr/board/doAddBoard")

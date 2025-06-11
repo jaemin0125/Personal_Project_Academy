@@ -2,9 +2,11 @@ package com.example.demo.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.example.demo.dto.WasteGuide;
 
@@ -15,7 +17,7 @@ public interface UploadDao {
 	@Select("""
 			SELECT *
 				FROM wasteGuide
-				ORDER BY reg_date DESC
+				ORDER BY updateDate DESC
 				LIMIT 10
 			""")
 	List<WasteGuide> getAddedObject();
@@ -46,4 +48,48 @@ public interface UploadDao {
 			    LIMIT 10;
 			""")
 	List<WasteGuide> getKeywordList();
+
+
+	@Select("""
+			SELECT *
+				FROM wasteGuide
+			""")
+	List<WasteGuide> getTotalGuide();
+
+	@Insert("""
+			INSERT INTO wasteGuide
+				SET label = #{label}
+					, ko_label = #{ko_label}
+					, category = #{category}
+					, guide = #{guide}
+					, thumbnail = #{thumbnail}
+					, updateDate = NOW()
+			""")
+	void doAddWaste(String label, String ko_label, String category, String guide, String thumbnail);
+
+	@Update("""
+			UPDATE wasteGuide
+				SET label = #{label}
+					, ko_label = #{ko_label}
+					, category = #{category}
+					, guide = #{guide}
+					, updateDate = NOW()
+					WHERE id = #{wasteId}
+			""")
+	void doModifyWaste(int wasteId, String label, String ko_label, String category, String guide);
+
+	
+	@Select("""
+			SELECT *
+				FROM wasteGuide
+				WHERE id = #{wasteId}
+			""")
+	WasteGuide getWasteGuideById(int wasteId);
+
+	@Delete("""
+			DELETE
+				FROM wasteGuide
+				WHERE id = #{wasteId}
+			""")
+	void doDeleteWaste(int wasteId);
 }

@@ -25,8 +25,12 @@
 	        <li><a href="/usr/member/join" class="hover:text-green-200 font-semibold">회원가입</a></li>
 	        <li><a href="/usr/member/login" class="hover:text-green-200 font-semibold">로그인</a></li>
         </c:if>
-        <c:if test="${req.getLoginedMember().getId() != 0 }">
+        <c:if test="${req.getLoginedMember().getId() != 0 && req.getLoginedMember().authLevel != 0 }">
 	        <li><a href="/usr/member/checkPw" class="hover:text-green-200 font-semibold">마이페이지</a></li>
+	        <li><a href="/usr/member/logout" class="hover:text-green-200 font-semibold">로그아웃</a></li>
+        </c:if>
+        <c:if test="${req.getLoginedMember().getId() != 0 && req.getLoginedMember().authLevel == 0 }">
+	        <li><a href="/usr/member/checkPw" class="hover:text-green-200 font-semibold">관리자페이지</a></li>
 	        <li><a href="/usr/member/logout" class="hover:text-green-200 font-semibold">로그아웃</a></li>
         </c:if>
       </ul>

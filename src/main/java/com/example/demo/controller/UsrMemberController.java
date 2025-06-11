@@ -117,6 +117,7 @@ public class UsrMemberController {
 	
 	@PostMapping("/usr/member/info")
 	public String memberInfo(Model model, String loginPw) {
+
 		if(!Util.encryptSHA256(loginPw).equals(req.getLoginedMember().getLoginedMemberPw())) {
 			return "redirect:/usr/member/checkPw";
 		}

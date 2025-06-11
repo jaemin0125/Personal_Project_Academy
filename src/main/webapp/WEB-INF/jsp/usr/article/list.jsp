@@ -8,11 +8,6 @@
 <div class="container mx-auto flex mt-6 px-4">
 	<aside class="relative w-1/5 bg-green-100 p-4 rounded-xl h-fit">
 		<h2 class="font-semibold text-lg pb-4">카테고리</h2>
-		<c:if test="${req.getLoginedMember().id !=0 && req.getLoginedMember().authLevel == 0}">
-			<div class="absolute top-4 right-5">
-				<a href="/usr/board/modify" class="btn btn-error btn-xs shadow-md hover:scale-105 transition-transform">🛠 게시판 관리 </a>
-			</div>
-		</c:if>
 		<ul class="space-y-2">
 			<c:forEach var="boards" items="${boards }">
 				<li><a href="/usr/article/list?boardId=${boards.getId() }" class="block hover:text-green-800">${boards.getName() }</a></li>

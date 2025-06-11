@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.UploadDao;
+import com.example.demo.dto.Article;
 import com.example.demo.dto.WasteGuide;
 
 @Service
@@ -29,6 +30,27 @@ public class UploadService {
 
 	public List<WasteGuide> getKeywordList() {
 		return this.uploadDao.getKeywordList();
+	}
+
+	public List<WasteGuide> getTotalGuide() {
+		return this.uploadDao.getTotalGuide();
+	}
+
+	public void doAddWaste(String label, String ko_label, String category, String guide, String thumbnail) {
+		this.uploadDao.doAddWaste(label, ko_label, category, guide, thumbnail);
+	}
+
+	public void doModifyWaste(int wasteId, String label, String ko_label, String category, String guide) {
+		this.uploadDao.doModifyWaste(wasteId, label, ko_label, category, guide);
+		
+	}
+
+	public WasteGuide getWasteGuideById(int wasteId) {
+		return this.uploadDao.getWasteGuideById(wasteId);
+	}
+
+	public void doDeleteWaste(int wasteId) {
+		this.uploadDao.doDeleteWaste(wasteId);
 	}
 
 }	

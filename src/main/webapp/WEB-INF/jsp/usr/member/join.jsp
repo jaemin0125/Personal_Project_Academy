@@ -5,8 +5,7 @@
 <c:set var="pageTitle" value="회원 가입" />
 <%@ include file="/WEB-INF/jsp/common/header.jsp"%>
 
-<script
-	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script>
 	let validLoginId = null;
@@ -110,11 +109,18 @@
 
 	function postCode() {
 		new daum.Postcode({
-			oncomplete : function(data) {
-				$('#address').val(data.address);
+			oncomplete: function(data) {
+				let region = data.sido;
+				if (data.sigungu && data.sigungu.trim() !== '') {
+					region += ' ' + data.sigungu;
+				}
+
+				$('#address').val(region);
+
 			}
 		}).open();
 	}
+
 </script>
 
 <section

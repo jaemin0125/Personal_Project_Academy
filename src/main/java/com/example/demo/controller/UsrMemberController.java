@@ -95,8 +95,6 @@ public class UsrMemberController {
 	@ResponseBody
 	public String doModifyMember(String name, String email, String address, String loginPw) {
 		
-		System.out.println(loginPw);
-		
 		if (loginPw.length() != 0) {
 			this.memberService.doModifyMember(req.getLoginedMember().getLoginedMemberId(), name, email, address, Util.encryptSHA256(loginPw));
 		} else if(loginPw.length() == 0) {

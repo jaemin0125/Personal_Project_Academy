@@ -13,6 +13,7 @@ public class WasteGuide {
 	private String ko_label;
 	private String category;
 	private String guide;
+	private String wasteType;
 	private String thumbnail;
 	private String regDate;
 

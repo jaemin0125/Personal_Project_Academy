@@ -14,12 +14,20 @@
 	<!-- 업로드 박스 -->
 	<section class="text-center">
 		<div class="mb-10 text-center relative">
-			<div class="text-3xl font-bold text-green-700 mb-3">♻️ 분리수거 나만 헷갈리는 거 아니죠?</div>
-			<div class="text-lg text-gray-700">
-				사진만 업로드하세요! <span class="text-green-600 font-semibold">AI가 분석</span>하고<br>
-				<span class="underline underline-offset-4">우리 동네 배출 기준</span>까지 정확하게알려드려요.
+			<div class="mb-10 text-center relative">
+				<div class="text-3xl font-bold text-green-700 mb-3">♻️ 분리수거 나만
+					헷갈리는 거 아니죠?</div>
+				<div class="text-lg text-gray-700">
+					사진만 업로드하세요! <span class="text-green-600 font-semibold">AI가
+						분석</span>해서<br> 분리배출 방법은 물론,<br> <span
+						class="text-green-700 font-semibold">대형폐기물은 내 거주지 기준</span>으로 스티커
+					비용까지 정확히 안내해드려요.
+				</div>
+
 			</div>
+
 		</div>
+
 		<div class="flex items-center justify-center">
 			<form action="/usr/image/analyze" method="post"
 				enctype="multipart/form-data">

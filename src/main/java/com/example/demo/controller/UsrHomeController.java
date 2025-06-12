@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.dto.Board;
 import com.example.demo.dto.Req;
+import com.example.demo.dto.StickerPrice;
 import com.example.demo.dto.WasteGuide;
 import com.example.demo.service.BoardService;
 import com.example.demo.service.UploadService;

@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.Article;
+import com.example.demo.dto.Req;
+import com.example.demo.dto.StickerPrice;
 import com.example.demo.dto.WasteGuide;
 import com.example.demo.service.UploadService;
 import com.example.demo.util.Util;
@@ -36,9 +37,11 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UploadController {
 	
 	private UploadService uploadService;
+	private Req req;
 	
-	public UploadController(UploadService uploadService) {
+	public UploadController(UploadService uploadService, Req req) {
 		this.uploadService = uploadService;
+		this.req = req;
 	}
 	
 	@PostMapping("/usr/image/analyze")
@@ -86,15 +89,21 @@ public class UploadController {
 	    if (wasteGuide != null) {
 	        this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
 	    }
-
+	    
+	    List<StickerPrice> stickerPrice = uploadService.getStickerPrice(resultLabel, this.req.getLoginedMember().getAddress());
+	    
+	    List<WasteGuide> relatedList = uploadService.getRandomRelated(wasteGuide.getCategory(), wasteGuide.getLabel());
+	    
 	    model.addAttribute("wasteGuide", wasteGuide);
+	    model.addAttribute("stickerPrice", stickerPrice);
+	    model.addAttribute("relatedList", relatedList);
 
 	    return "usr/home/result";
 	}
 
     
     @GetMapping("/usr/home/result")
-    public String getResultPage(@RequestParam String label, Model model) {
+    public String getResultPage(String label, Model model) {
     	
     	    WasteGuide wasteGuide = uploadService.getWasteGuide(label);
     	    
@@ -102,8 +111,13 @@ public class UploadController {
     	    if (wasteGuide != null) {
     	        uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
     	    }
-
+    	    
+    		List<StickerPrice> stickerPrice = uploadService.getStickerPrice(label, this.req.getLoginedMember().getAddress());
+    		List<WasteGuide> relatedList = uploadService.getRandomRelated(wasteGuide.getCategory(), wasteGuide.getLabel());
+    		
     	    model.addAttribute("wasteGuide", wasteGuide);
+    	    model.addAttribute("stickerPrice", stickerPrice);
+    	    model.addAttribute("relatedList", relatedList);
 
         return "usr/home/result";
     }
@@ -147,18 +161,18 @@ public class UploadController {
 	
 	@GetMapping("/usr/wasteGuide/doAddWaste")
 	@ResponseBody
-	public String doAddWaste(String label, String ko_label, String category, String guide, String thumbnail) {
+	public String doAddWaste(String label, String ko_label, String category, String guide, String wasteType, String thumbnail) {
 		
-		this.uploadService.doAddWaste(label, ko_label, category, guide, thumbnail);
+		this.uploadService.doAddWaste(label, ko_label, category, guide, wasteType, thumbnail);
 		
 		return Util.jsReplace("정보 추가 완료!", "/usr/wasteGuide/list");
 	}
 	
 	@GetMapping("/usr/wasteGuide/doModifyWaste")
 	@ResponseBody
-	public String doModifyWaste(int wasteId, String label, String ko_label, String category, String guide) {
+	public String doModifyWaste(int wasteId, String label, String ko_label, String category, String guide, String wasteType) {
 		
-		this.uploadService.doModifyWaste(wasteId, label, ko_label, category, guide);
+		this.uploadService.doModifyWaste(wasteId, label, ko_label, category, guide, wasteType);
 		
 		return Util.jsReplace("정보 수정 완료!", "/usr/wasteGuide/list");
 	}
@@ -178,7 +192,9 @@ public class UploadController {
 		}
 		
 		this.uploadService.doDeleteWaste(wasteId);
+		this.uploadService.doDeleteSearchKeyword(oldWasteGuide.getLabel());
 
 		return Util.jsReplace(String.format("%d번 정보가 삭제되었습니다", wasteId), "/usr/wasteGuide/list");
 	}
+	
 }

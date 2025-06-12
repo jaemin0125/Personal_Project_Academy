@@ -40,9 +40,8 @@
 					<!-- 카테고리 -->
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label
-							class="col-span-3 text-right font-semibold whitespace-nowrap">카테고리
-							(영문) </label> <input type="text" name="category"
-							class="input input-bordered col-span-9" placeholder="예: paper"
+							class="col-span-3 text-right font-semibold whitespace-nowrap">카테고리</label> <input type="text" name="category"
+							class="input input-bordered col-span-9" placeholder="예: 종이"
 							required />
 					</div>
 
@@ -53,6 +52,12 @@
 						<textarea name="guide" rows="4"
 							class="textarea textarea-bordered col-span-9"
 							placeholder="예: 내용물을 비우고 압착한 후 배출하세요." required></textarea>
+					</div>
+					<div class="grid grid-cols-12 items-center gap-2">
+						<label
+							class="col-span-3 text-right font-semibold whitespace-nowrap">타입</label> <input type="text" name="wasteType"
+							class="input input-bordered col-span-9" placeholder="예: 일반 or 대형 or 특수"
+							required />
 					</div>
 					<div class="grid grid-cols-12 items-center gap-2">
 			            <label class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일 이미지</label>
@@ -72,12 +77,8 @@
 			</div>
 		</div>
 
-
-
-		<!-- 게시판 목록 + 수정/삭제 -->
 		<div class="border rounded-xl p-6">
 			<h2 class="text-lg font-semibold mb-4">📋 등록된 쓰레기 목록</h2>
-
 			<table class="table w-full">
 				<tbody>
 					<c:forEach var="wasteGuide" items="${wasteGuides}">
@@ -90,6 +91,7 @@
 									<input type="text" name="label" class="input input-bordered input-sm !w-24 shrink-0" value="${wasteGuide.getLabel()}" required /> 
 									<input type="text" name="ko_label" class="input input-bordered input-sm !w-30 shrink-0" value="${wasteGuide.getKo_label()}" required /> 
 									<input type="text" name="category" class="input input-bordered input-sm !w-20 shrink-0"value="${wasteGuide.getCategory()}" required />
+									<input type="text" name="wasteType" class="input input-bordered input-sm !w-20 shrink-0"value="${wasteGuide.getWasteType()}" required />
 									<input type="text" name="guide" class="input input-bordered input-sm flex-grow" value="${wasteGuide.getGuide()}" required />
 									<button type="submit" class="btn btn-sm btn-success ml-2 shrink-0">수정</button>
 								</form>

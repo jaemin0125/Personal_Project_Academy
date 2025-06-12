@@ -18,7 +18,7 @@ from utils.augmentations import letterbox
 app = Flask(__name__)
 
 # 모델 경로 (custom_yolo_s_train 경로에 있는 best.pt 사용)
-model_path = 'yolov5/runs/train/custom_yolo_s_train/weights/best.pt'
+model_path = 'yolov5/runs/train/waste_v1_m_epoch50/weights/best.pt'
 
 # 디바이스 설정 (GPU 있으면 CUDA 사용)
 device = select_device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -40,7 +40,7 @@ def detect(image):
         img_tensor = img_tensor.unsqueeze(0)
 
     pred = model(img_tensor, augment=False, visualize=False)
-    pred = non_max_suppression(pred, conf_thres=0.25, iou_thres=0.45)
+    pred = non_max_suppression(pred, conf_thres=0.65, iou_thres=0.45)
 
     results = []
     for det in pred:

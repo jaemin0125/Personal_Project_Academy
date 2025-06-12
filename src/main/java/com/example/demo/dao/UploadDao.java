@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.example.demo.dto.StickerPrice;
 import com.example.demo.dto.WasteGuide;
 
 @Mapper
@@ -62,10 +63,11 @@ public interface UploadDao {
 					, ko_label = #{ko_label}
 					, category = #{category}
 					, guide = #{guide}
+					, wasteType = #{wasteType}
 					, thumbnail = #{thumbnail}
 					, updateDate = NOW()
 			""")
-	void doAddWaste(String label, String ko_label, String category, String guide, String thumbnail);
+	void doAddWaste(String label, String ko_label, String category, String guide, String wasteType, String thumbnail);
 
 	@Update("""
 			UPDATE wasteGuide
@@ -73,10 +75,11 @@ public interface UploadDao {
 					, ko_label = #{ko_label}
 					, category = #{category}
 					, guide = #{guide}
+					, wasteType = #{wasteType}
 					, updateDate = NOW()
 					WHERE id = #{wasteId}
 			""")
-	void doModifyWaste(int wasteId, String label, String ko_label, String category, String guide);
+	void doModifyWaste(int wasteId, String label, String ko_label, String category, String guide, String wasteType);
 
 	
 	@Select("""
@@ -92,4 +95,29 @@ public interface UploadDao {
 				WHERE id = #{wasteId}
 			""")
 	void doDeleteWaste(int wasteId);
+
+	@Select("""
+			SELECT *
+				FROM stickerPrice
+				WHERE label = #{label}
+				AND region = #{region}
+				ORDER BY price;
+			""")
+	List<StickerPrice> getStickerPrice(String label, String region);
+
+	@Select("""
+			SELECT * 
+				FROM wasteGuide
+				WHERE category = #{category}
+				AND label != #{label}
+				ORDER BY RAND()
+				LIMIT 4
+			""")
+	List<WasteGuide> getRandeomRelate(String category, String label);
+
+	@Delete("""
+			DELETE FROM searchLog
+				WHERE label = #{label}
+			""")
+	void doDeleteSearchKeyword(String label);
 }

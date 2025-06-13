@@ -47,38 +47,40 @@ public class UploadController {
 	@PostMapping("/usr/image/analyze")
 	public String analyzeImage(@RequestParam("file") MultipartFile file, Model model) throws IOException {
 	    
-	    String contentType = file.getContentType();
+	    String contentType = file.getContentType(); // file의 컨텐츠 타입을 contentType이란 변수에 저장한다 모든 image파일의 MIMETYPE은 image/로 시작
 	    
-	    if (contentType == null || !contentType.startsWith("image/")) {
+	    if (contentType == null || !contentType.startsWith("image/")) { // MIMETYPE이 null이거나 image파일 이 아닌경우에 코드의 흐름을 제어하는 조건문
 	        return Util.jsReplace("이미지 파일만 업로드할 수 있습니다.", "/");
 	    }
 
 	    // 1. 임시 파일로 저장
-	    File tempFile = File.createTempFile("upload-", file.getOriginalFilename());
-	    file.transferTo(tempFile);
+	    File tempFile = File.createTempFile("upload-", file.getOriginalFilename()); //jsp에서 사용자가 업로드 한 사진을 임시파일을 생성하여 디렉토리 중 한곳에 저장한다
+	    file.transferTo(tempFile); 
+	    
 
 	    // 2. Flask로 파일 보내기
-	    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	    body.add("image", new FileSystemResource(tempFile));
+	    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>(); 
+	    body.add("image", new FileSystemResource(tempFile)); //body변수에 image라는 key로 실제로 임시파일(이미지파일)을 저장
 
 	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+	    headers.setContentType(MediaType.MULTIPART_FORM_DATA); //HTTP의 요청 MediaType을 MULTIPART_FORM_DATA 로 지정
 
-	    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+	    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers); //실제로 Http요청에 body와 headers 변수를 담는다
 
-	    String flaskUrl = "http://localhost:5000/analyze";
+	    String flaskUrl = "http://localhost:5000/analyze"; // flask url
 
-	    RestTemplate restTemplate = new RestTemplate();
-	    ResponseEntity<Map> response = restTemplate.postForEntity(flaskUrl, requestEntity, Map.class);
+	    RestTemplate restTemplate = new RestTemplate(); // Http요청을 보내기 위한 Spring 클라이언트 객체 
+	    ResponseEntity<Map> response = restTemplate.postForEntity(flaskUrl, requestEntity, Map.class); //flaskurl에 요청이 담긴 requestEntity 변수를 post요청으로 보내고 , 리턴은 Map타입으로 받겠다
 
 	    // 3. Flask에서 온 JSON 응답 처리
-	    Map<String, Object> result = response.getBody();
-	    List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results");
+	    Map<String, Object> result = response.getBody(); // result라는 변수에 json객체 배열을 담는다
+	    
+	    List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results"); // results라는 Json객체 타입의 List 변수에 Json배열에서 results라는 key로 꺼내온 Json객체를 담는다  
 
-
+	    
 	    String resultLabel = null;
-	    if (results != null && !results.isEmpty()) {
-	        Map<String, Object> topResult = results.get(0); // 정확도 가장 높은 라벨
+	    if (results != null && !results.isEmpty()) {  
+	        Map<String, Object> topResult = results.get(0); 
 	        resultLabel = (String) topResult.get("label");
 	    }
 
@@ -86,9 +88,12 @@ public class UploadController {
 	    
 	    WasteGuide wasteGuide = this.uploadService.getWasteGuide(resultLabel);
 
-	    if (wasteGuide != null) {
-	        this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
-	    }
+		if (wasteGuide == null) {
+			model.addAttribute("wasteGuide", null);
+			return "usr/home/result";
+		} else if (wasteGuide != null) {
+			this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
+		}
 	    
 	    List<StickerPrice> stickerPrice = uploadService.getStickerPrice(resultLabel, this.req.getLoginedMember().getAddress());
 	    

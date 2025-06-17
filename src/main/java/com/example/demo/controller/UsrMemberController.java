@@ -13,8 +13,6 @@ import com.example.demo.dto.ResultData;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.Util;
 
-
-
 @Controller
 public class UsrMemberController {
 	
@@ -71,7 +69,7 @@ public class UsrMemberController {
 		if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
 			return Util.jsReplace("비밀번호가 일치하지 않습니다", "login");
 		}
-		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel(), member.getLoginId(), member.getLoginPw(), member.getName(), member.getEmail(), member.getAddress()));
+		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel()));
 		
 		return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()), "/usr/home/main");
 	}
@@ -85,27 +83,21 @@ public class UsrMemberController {
 		return Util.jsReplace("정상적으로 로그아웃 되었습니다", "/usr/home/main");
 	}
 	
-	@GetMapping("/usr/member/getLoginId")
-	@ResponseBody
-	public String getLoginId() {
-		return this.memberService.getLoginId(this.req.getLoginedMember().getId());
-	}
-	
-	@PostMapping("/usr/member/doModify")
-	@ResponseBody
-	public String doModifyMember(String name, String email, String address, String loginPw) {
+	@PostMapping("/usr/member/info")
+	public String memberInfo(Model model, String loginPw) {
 		
-		if (loginPw.length() != 0) {
-			this.memberService.doModifyMember(req.getLoginedMember().getLoginedMemberId(), name, email, address, Util.encryptSHA256(loginPw));
-		} else if(loginPw.length() == 0) {
-			this.memberService.modfiyWithOutPw(req.getLoginedMember().getLoginedMemberId(), name, email, address);
+		Member loginedMember = this.memberService.getLoginedMemberById(this.req.getLoginedMember().getId());
+		
+		
+		if(!Util.encryptSHA256(loginPw).equals(loginedMember.getLoginPw())) {
+			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
+			return "usr/member/checkPw";
 		}
 		
-		this.req.logout();
+		model.addAttribute("loginedMember", loginedMember);
 		
-		return Util.jsReplace("회원정보가 수정되었습니다 변경된 정보로 다시 로그인하세요", "/");
+		return "usr/member/info";
 	}
-	
 	
 	@GetMapping("/usr/member/checkPw")
 	public String checkPw(String loginPw) {
@@ -113,16 +105,22 @@ public class UsrMemberController {
 		return "usr/member/checkPw";
 	}
 	
-	@PostMapping("/usr/member/info")
-	public String memberInfo(Model model, String loginPw) {
-
-		if(!Util.encryptSHA256(loginPw).equals(req.getLoginedMember().getLoginedMemberPw())) {
-			return "redirect:/usr/member/checkPw";
+	@PostMapping("/usr/member/doModify")
+	@ResponseBody
+	public String doModifyMember(String name, String email, String address, String loginPw) {
+		
+		Member loginedMember = this.memberService.getLoginedMemberById(this.req.getLoginedMember().getId());
+		
+		if (loginPw.length() != 0) {
+			this.memberService.doModifyMember(loginedMember.getLoginId(), name, email, address, Util.encryptSHA256(loginPw));
+		} else if(loginPw.length() == 0) {
+			this.memberService.modfiyWithOutPw(loginedMember.getLoginId(), name, email, address);
 		}
 		
-		model.addAttribute("loginedMember", req.getLoginedMember());
+		this.req.logout();
 		
-		return "usr/member/info";
+		return Util.jsReplace("회원정보가 수정되었습니다 변경된 정보로 다시 로그인하세요", "/");
 	}
+	
 	
 }

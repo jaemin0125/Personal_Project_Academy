@@ -41,7 +41,7 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/write")
-	public String write(int boardId, Model model) {
+	public String write(@RequestParam(required = false) Integer boardId, Model model) {
 		
 		List<Board> boards = this.boardService.getBoards();
 		
@@ -50,7 +50,7 @@ public class UsrArticleController {
 		
 		return "usr/article/write";
 	}
-
+	
 	@PostMapping("/usr/article/doWrite")
 	@ResponseBody
 	public String doWrite(String title, String content, int boardId, String thumbnail) {
@@ -185,11 +185,12 @@ public class UsrArticleController {
 	public Map<String, Object> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
 		
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
+		
 		if (!List.of("jpg", "jpeg", "png", "gif").contains(ext)) {
 		    throw new IllegalArgumentException("지원하지 않는 확장자입니다");
 		}
 		
-	    String uploadDir = request.getServletContext().getRealPath("/resource/upload/");
+	    String uploadDir = request.getServletContext().getRealPath("/static/resource/imgs/");
 	    File dir = new File(uploadDir);
 	    if (!dir.exists()) dir.mkdirs();
 
@@ -201,7 +202,7 @@ public class UsrArticleController {
 
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("success", true);
-	    response.put("url", "/resource/upload/" + fileName);
+	    response.put("url", "/static/resource/imgs/" + fileName);
 	    return response;
 	}
 

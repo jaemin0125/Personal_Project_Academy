@@ -29,13 +29,6 @@ public interface MemberDao {
 			""")
 	Member getMemberByLoginId(String loginId);
 
-	@Select("""
-			SELECT loginId
-				FROM `member`
-				WHERE id = #{id}
-			""")
-	String getLoginId(int id);
-
 	@Update("""
 			UPDATE `member`
 				SET name = #{name}
@@ -54,5 +47,13 @@ public interface MemberDao {
 					WHERE loginId = #{loginedMemberId}
 			""")
 	void modifyWithOutPw(String loginedMemberId, String name, String email, String address);
+
+	
+	@Select("""
+			SELECT *
+				FROM `member`
+				WHERE id = #{id}
+			""")
+	Member getLoginedMemberById(int id);
 	
 }

@@ -15,11 +15,11 @@
 <body class="bg-gray-50 min-h-screen">
 
   <div class="bg-[#06874e] text-white">
-    <div class="container mx-auto flex justify-between items-center h-24 px-4">
+    <div class="container mx-auto flex justify-between items-center h-24">
       <!-- 로고 -->
       <a href="/"><img src="/resource/logo.png" class="h-18" /></a>
       <!-- 메뉴 -->
-      <ul class="flex space-x-6 text-lg font-medium">
+      <ul class="flex space-x-10 text-xl font-medium">
         <li><a href="/usr/article/list" class="hover:text-green-200 font-semibold">커뮤니티</a></li>
         <c:if test="${req.getLoginedMember().getId() == 0 }">
 	        <li><a href="/usr/member/join" class="hover:text-green-200 font-semibold">회원가입</a></li>
@@ -30,7 +30,7 @@
 	        <li><a href="/usr/member/logout" class="hover:text-green-200 font-semibold">로그아웃</a></li>
         </c:if>
         <c:if test="${req.getLoginedMember().getId() != 0 && req.getLoginedMember().authLevel == 0 }">
-	        <li><a href="/usr/member/checkPw" class="hover:text-green-200 font-semibold">관리자페이지</a></li>
+	        <li><a href="/admin/member/info" class="hover:text-green-200 font-semibold">관리자페이지</a></li>
 	        <li><a href="/usr/member/logout" class="hover:text-green-200 font-semibold">로그아웃</a></li>
         </c:if>
       </ul>

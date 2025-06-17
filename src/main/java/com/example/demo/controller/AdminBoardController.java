@@ -14,66 +14,48 @@ import com.example.demo.util.Util;
 
 
 @Controller
-public class UsrBoardController {
+public class AdminBoardController {
 	private BoardService boardService;
-	private Req req;
 
-	public UsrBoardController(BoardService boardService, Req req) {
+	public AdminBoardController(BoardService boardService) {
 		this.boardService = boardService;
-		this.req = req;
 	}
 	
-	@GetMapping("/usr/board/list")
+	@GetMapping("/admin/board/list")
 	public String modifyBoard(Model model) {
-		
-		if(req.getLoginedMember().getId() == 0 || req.getLoginedMember().getAuthLevel() !=0) {
-			return "redirect:/usr/home/main";
-		}
 		
 		List<Board> boards = this.boardService.getBoards();
 		
 		model.addAttribute("boards", boards);   
 		
-		return "usr/board/list";
+		return "admin/board/list";
 	}
 	
-	@GetMapping("/usr/board/doAddBoard")
+	@GetMapping("/admin/board/doAddBoard")
 	@ResponseBody
 	public String doAddBoard(String boardName) {
-		
-		if(req.getLoginedMember().getId() == 0 || req.getLoginedMember().getAuthLevel() !=0) {
-			return Util.jsReplace("관리자만 접근 가능합니다", "/");
-		}
 		
 		this.boardService.doAddBoard(boardName);
 		
 		return Util.jsReplace("게시판 생성 완료", "/usr/article/list");
 	}
 	
-	@GetMapping("/usr/board/doModifyBoard")
+	@GetMapping("/admin/board/doModifyBoard")
 	@ResponseBody
 	public String doModify(int boardId, String boardName) {
-		
-		if(req.getLoginedMember().getId() == 0 || req.getLoginedMember().getAuthLevel() !=0) {
-			return Util.jsReplace("관리자만 접근 가능합니다", "/");
-		}
 		
 		this.boardService.doModfiyBoard(boardId, boardName);
 		
 		return Util.jsReplace("게시판 수정 완료", "/usr/article/list");
 	}
 	
-	@GetMapping("/usr/board/doDeleteBoard")
+	@GetMapping("/admin/board/doDeleteBoard")
 	@ResponseBody
 	public String doDelete(int boardId) {
 		
-		if(req.getLoginedMember().getId() == 0 || req.getLoginedMember().getAuthLevel() !=0) {
-			return Util.jsReplace("관리자만 접근 가능합니다", "/");
-		}
-		
 		this.boardService.doDeleteBoard(boardId);
 		
-		return Util.jsReplace("게시판 삭제 완료", null);
+		return Util.jsReplace("게시판 삭제 완료", "/");
 	}
 	
 }

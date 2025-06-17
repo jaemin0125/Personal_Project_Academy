@@ -10,7 +10,7 @@
 		class="container mx-auto max-w-8xl bg-base-100 p-8 rounded-2xl shadow-md">
 		<h1 class="text-3xl font-bold mb-6 text-center">♻️ 분리배출 정보 관리</h1>
 
-		<div class="bg-base-100 border rounded-xl p-8 mb-10">
+		<div class="bg-base-100 border rounded-xl p-8 mb-4">
 			<h2
 				class="text-xl font-semibold mb-6 flex justify-center items-center gap-2">
 				<span class="text-blue-600 text-lg">🆕</span> 쓰레기 정보 추가
@@ -40,7 +40,8 @@
 					<!-- 카테고리 -->
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label
-							class="col-span-3 text-right font-semibold whitespace-nowrap">카테고리</label> <input type="text" name="category"
+							class="col-span-3 text-right font-semibold whitespace-nowrap">카테고리</label>
+						<input type="text" name="category"
 							class="input input-bordered col-span-9" placeholder="예: 종이"
 							required />
 					</div>
@@ -55,28 +56,36 @@
 					</div>
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label
-							class="col-span-3 text-right font-semibold whitespace-nowrap">타입</label> <input type="text" name="wasteType"
-							class="input input-bordered col-span-9" placeholder="예: 일반 or 대형 or 특수"
-							required />
+							class="col-span-3 text-right font-semibold whitespace-nowrap">타입</label>
+						<input type="text" name="wasteType"
+							class="input input-bordered col-span-9"
+							placeholder="예: 일반 or 대형 or 특수" required />
 					</div>
 					<div class="grid grid-cols-12 items-center gap-2">
-			            <label class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일 이미지</label>
-			            <div class="col-span-9">
-			              <input type="file" id="uploadFileInput" class="file-input file-input-bordered w-full" accept="image/*" />
-			              <button type="button" onclick="uploadImage()" class="btn btn-sm btn-outline">📤 이미지 업로드</button>
-			              <img id="thumbnailPreview" src="" class="mt-4 w-40 h-auto hidden border rounded" />
-			              <input type="hidden" name="thumbnail" id="thumbnailInput" required />
-			            </div>
-			          </div>
-
-					<!-- 버튼 -->
-					<div class="flex justify-center pt-4">
-						<button type="submit" class="btn btn-primary w-40">정보 추가</button>
+						<label
+							class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일
+							이미지</label>
+						<div class="col-span-9">
+							<input type="file" id="uploadFileInput"
+								class="file-input file-input-bordered w-full" accept="image/*" />
+							<button type="button" onclick="uploadImage()"
+								class="btn btn-sm btn-outline">📤 이미지 업로드</button>
+							<img id="thumbnailPreview" src=""
+								class="mt-4 w-40 h-auto hidden border rounded" /> <input
+								type="hidden" name="thumbnail" id="thumbnailInput" required />
+						</div>
+					</div>
+					<div class="relative mt-6 min-h-[48px]">
+						<div class="absolute left-1/2 -translate-x-1/2">
+							<button type="submit" class="btn btn-primary w-40">정보 추가</button>
+						</div>
+						<div class="absolute right-0">
+							<button type="button" onclick="history.back();" class="btn btn-outline btn-success">← 뒤로가기</button>
+						</div>
 					</div>
 				</form>
 			</div>
 		</div>
-
 		<div class="border rounded-xl p-6">
 			<h2 class="text-lg font-semibold mb-4">📋 등록된 쓰레기 목록</h2>
 			<table class="table w-full">
@@ -126,7 +135,7 @@
     formData.append("file", file);
 
     $.ajax({
-      url: "/usr/wasteGuide/uploadImage",
+      url: "/admin/wasteGuide/uploadImage",
       type: "POST",
       data: formData,
       contentType: false,

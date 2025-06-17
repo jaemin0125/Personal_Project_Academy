@@ -363,7 +363,7 @@
 					<div
 						class="text-smfont-medium text-green-700 loginedMemberLoginId mb-2"></div>
 					<textarea style="width: 100%; resize: none;" id="replyContent"
-						class="textarea"></textarea>
+						class="textarea" placeholder="댓글을 입력해주세요"></textarea>
 					<div class="flex justify-end mt-2">
 						<button class="btn btn-sm btn-success btn-outline"
 							onclick="writeReply();">등록</button>

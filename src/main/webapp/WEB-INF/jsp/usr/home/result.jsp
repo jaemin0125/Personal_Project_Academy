@@ -19,21 +19,21 @@
 		<div class="flex justify-center mb-6">
 			<img src="${wasteGuide.thumbnail}"
 				class="w-72 h-auto rounded-lg shadow" alt="${wasteGuide.ko_label}" />
+				
 		</div>
 
 		<!-- 분리배출 가이드 -->
-		<div
-			class="bg-green-50 border-l-4 border-green-400 p-6 rounded-lg text-left text-gray-800 mb-8">
+		<div class="bg-green-50 border-l-4 border-green-400 p-6 rounded-lg text-left text-gray-800 mb-8">
 			<span class="font-semibold text-green-700">📦 분리배출 방법:</span>
 			<div class="mt-2 text-lg font-medium">${wasteGuide.getForPrintGuide() }</div>
 		</div>
 
-		<c:if test="${req.getLoginedMember().id != 0}">
+		<c:if test="${loginedMember != null && loginedMember.getId() != 0}">
 			<c:if test="${wasteGuide.getWasteType() == '대형' }">
 				<div
 					class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg text-gray-800">
 					<h3 class="text-lg font-semibold text-yellow-700 mb-3">🏠
-						${req.getLoginedMember().address} 기준 폐기물 스티커 가격</h3>
+						${loginedMember.getAddress() } 기준 폐기물 스티커 가격</h3>
 
 					<!-- 표 테이블 스타일 -->
 					<div class="overflow-x-auto">
@@ -61,22 +61,23 @@
 		</c:if>
 
 		<!-- 오류신고 버튼 -->
-		<div class="text-right mt-6">
+		<div class="flex justify-between mt-6">
+			<button type="button" onclick="history.back();" class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
 			<a href="/usr/article/write?boardId=4" class="btn btn-sm btn-error">🚨오류
 				신고</a>
 		</div>
 	</div>
 	<hr class="border-t border-gray-300 my-12" />
 	<c:if test="${not empty relatedList}">
-		<div class="mt-12 pb-6">
+		<div class="pb-6">
 			<h3 class="text-xl text-center font-semibold text-green-700 mb-4">헷갈릴 수 있는 다른 항목도 있어요 👀</h3>
-			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+			<div class="gap-1 flex w-full justify-center">
 				<c:forEach var="item" items="${relatedList}">
 					<a href="/usr/home/result?label=${item.label}"
-						class="block text-center hover:shadow-lg p-4 bg-white rounded-xl border border-gray-200 transition hover:-translate-y-1 hover:scale-[1.02] duration-200">
+						class="block text-center hover:shadow-lg w-1/5 p-4 bg-white rounded-xl border border-gray-200 transition hover:-translate-y-1 hover:scale-[1.02] duration-200 ml-4">
 						<img src="${item.thumbnail}" alt="${item.ko_label}"
 						class="w-24 h-24 mx-auto object-contain mb-2">
-						<div class="text-sm text-gray-700 font-medium">${item.ko_label}</div>
+						<span class="text-sm text-gray-700 font-medium">${item.ko_label}</span>
 					</a>
 				</c:forEach>
 			</div>
@@ -104,8 +105,9 @@
 			🔧 오류 신고하고 AI 학습 돕기
 		</a>
 		<div class="mt-2">
-			* 업로드했던 사진을 <span class="text-red-600 font-semibold">꼭</span> 첨부해
-			주세요!!
+			* 업로드했던 사진을 
+			<span class="text-red-600 font-semibold">꼭</span>
+			첨부해주세요!!
 		</div>
 	</div>
 </c:if>

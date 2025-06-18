@@ -21,6 +21,10 @@ public class MemberService {
 	public Member getMemberByLoginId(String loginId) {
 		return this.memberDao.getMemberByLoginId(loginId);
 	}
+	
+	public String getLoginId(int id) {
+		return this.memberDao.getLoginId(id);
+	}
 
 	public void doModifyMember(String loginedMemberId, String name, String email, String address, String loginPw) {
 		this.memberDao.doModifyMember(loginedMemberId, name, email,address, loginPw);

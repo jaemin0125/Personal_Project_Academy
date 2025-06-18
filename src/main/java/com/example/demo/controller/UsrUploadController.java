@@ -20,26 +20,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.Member;
-import com.example.demo.dto.Req;
-import com.example.demo.dto.StickerPrice;
-import com.example.demo.dto.WasteGuide;
-import com.example.demo.service.MemberService;
-import com.example.demo.service.UploadService;
 import com.example.demo.util.Util;
 
 @Controller
 public class UsrUploadController {
-	
-	private UploadService uploadService;
-	private MemberService memberService;
-	private Req req;
-	
-	public UsrUploadController(UploadService uploadService, MemberService memberService, Req req) {
-		this.uploadService = uploadService;
-		this.memberService = memberService;
-		this.req = req;
-	}
 	
 	@PostMapping("/usr/image/analyze")
 	public String analyzeImage(@RequestParam("file") MultipartFile file, Model model) throws IOException {
@@ -88,28 +72,7 @@ public class UsrUploadController {
 	        resultLabel = (String) topResult.get("label");
 	    }
 
-	    WasteGuide wasteGuide = this.uploadService.getWasteGuide(resultLabel);
-
-		if (wasteGuide == null) {
-			model.addAttribute("wasteGuide", null);
-			return "usr/home/result";
-		} else if (wasteGuide != null) {
-			this.uploadService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
-		}
-	    
-	    if (req.getLoginedMember().getId() != 0) {
-	    	Member loginedMember = memberService.getLoginedMemberById(req.getLoginedMember().getId());
-	        List<StickerPrice> stickerPrice = uploadService.getStickerPrice(resultLabel, loginedMember.getAddress());
-	        model.addAttribute("loginedMember", loginedMember);
-	        model.addAttribute("stickerPrice", stickerPrice);
-	    }
-		
-	    List<WasteGuide> relatedList = uploadService.getRandomRelated(wasteGuide.getCategory(), wasteGuide.getLabel());
-	    
-	    model.addAttribute("wasteGuide", wasteGuide);
-	    model.addAttribute("relatedList", relatedList);
-
-	    return "usr/home/result";
+		return String.format("redirect:/usr/home/result?label=%s", resultLabel);
 	}
 	
 }

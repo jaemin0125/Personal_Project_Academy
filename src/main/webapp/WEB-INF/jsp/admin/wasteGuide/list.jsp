@@ -16,7 +16,6 @@
 				<span class="text-blue-600 text-lg">🆕</span> 쓰레기 정보 추가
 			</h2>
 
-			<!-- 가운데 정렬 -->
 			<div class="flex justify-center">
 				<form action="doAddWaste" method="get"
 					class="w-full max-w-2xl space-y-4">
@@ -66,20 +65,17 @@
 							class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일
 							이미지</label>
 						<div class="col-span-9">
-							<input type="file" id="uploadFileInput"
-								class="file-input file-input-bordered w-full" accept="image/*" />
-							<button type="button" onclick="uploadImage()"
-								class="btn btn-sm btn-outline">📤 이미지 업로드</button>
-							<img id="thumbnailPreview" src=""
-								class="mt-4 w-40 h-auto hidden border rounded" /> <input
-								type="hidden" name="thumbnail" id="thumbnailInput" required />
+							<input type="file" id="uploadFileInput" class="file-input file-input-bordered w-full" accept="image/*" />
+							<button type="button" onclick="uploadImage()" class="btn btn-sm btn-outline">📤 이미지 업로드</button>
+							<img id="thumbnailPreview" src="" class="mt-4 w-40 h-auto hidden border rounded" /> 
+							<input type="hidden" name="thumbnail" id="thumbnailInput" required />
 						</div>
 					</div>
 					<div class="relative mt-6 min-h-[48px]">
 						<div class="absolute left-1/2 -translate-x-1/2">
 							<button type="submit" class="btn btn-primary w-40">정보 추가</button>
 						</div>
-						<div class="absolute right-0">
+						<div class="absolute right-18">
 							<button type="button" onclick="history.back();" class="btn btn-outline btn-success">← 뒤로가기</button>
 						</div>
 					</div>
@@ -142,6 +138,7 @@
       processData: false,
       success: function(data) {
         if (data.success) {
+        	console.log(data);
           const url = data.url;
           $("#thumbnailPreview").attr("src", url).removeClass("hidden");
           $("#thumbnailInput").val(url);

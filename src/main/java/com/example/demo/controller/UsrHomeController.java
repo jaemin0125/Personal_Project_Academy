@@ -13,6 +13,10 @@ import com.example.demo.dto.WasteGuide;
 import com.example.demo.service.MemberService;
 import com.example.demo.service.WasteGuideService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 public class UsrHomeController {
 	private WasteGuideService wasteGuideService;
@@ -38,12 +42,32 @@ public class UsrHomeController {
 	}
 
 	@GetMapping("/usr/home/result")
-	public String getResultPage(String label, Model model) {
+	public String getResultPage(HttpServletRequest request, HttpServletResponse response, String label, Model model) {
 
 		WasteGuide wasteGuide = wasteGuideService.getWasteGuide(label);
 
-		if (wasteGuide != null) {
-			wasteGuideService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
+		if (wasteGuide == null) {
+			model.addAttribute("wasteGuide", null);
+			return "usr/home/result";
+		}
+		
+		Cookie[] cookies = request.getCookies();
+		boolean isViewed = false;
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("viewedResult_" + wasteGuide.getId())) {
+					isViewed = true;
+					break;
+				}
+			}
+		}
+		
+		if (wasteGuide != null && !isViewed) {
+			this.wasteGuideService.searchCnt(wasteGuide.getLabel(), wasteGuide.getKo_label(), wasteGuide.getCategory());
+			Cookie cookie = new Cookie("viewedResult_" + wasteGuide.getId(), "true");
+			cookie.setMaxAge(60 * 30);
+			response.addCookie(cookie);
 		}
 		
 		if(req.getLoginedMember().getId() != 0) {

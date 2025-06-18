@@ -63,9 +63,7 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/list")
-	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int cPage,
-			@RequestParam(defaultValue = "title") String searchType,
-			@RequestParam(defaultValue = "") String searchKeyword) {
+	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "title") String searchType, @RequestParam(defaultValue = "") String searchKeyword) {
 
 		int articlesInPage = 10;
 		int limitFrom = (cPage - 1) * articlesInPage;
@@ -149,11 +147,13 @@ public class UsrArticleController {
 		Article oldArticle = this.articleService.getArticleById(id);
 		String oldThumbnail = oldArticle.getThumbnail();
 		
-		String realPath = request.getServletContext().getRealPath(oldThumbnail);
-		File oldFile = new File(realPath);
-		
-		if(oldFile.exists()) {
-			oldFile.delete();
+		if(oldThumbnail != null) {
+			String realPath = request.getServletContext().getRealPath(oldThumbnail);
+			File oldFile = new File(realPath);
+			
+			if(oldFile.exists()) {
+				oldFile.delete();
+			}
 		}
 		
 		this.articleService.modifyArticle(id, title, content, thumbnail);
@@ -168,11 +168,13 @@ public class UsrArticleController {
 		Article oldArticle = this.articleService.getArticleById(id);
 		String oldThumbnail = oldArticle.getThumbnail();
 		
-		String realPath = request.getServletContext().getRealPath(oldThumbnail);
-		File oldFile = new File(realPath);
-		
-		if(oldFile.exists()) {
-			oldFile.delete();
+		if(oldThumbnail != null) {
+			String realPath = request.getServletContext().getRealPath(oldThumbnail);
+			File oldFile = new File(realPath);
+			
+			if(oldFile.exists()) {
+				oldFile.delete();
+			}
 		}
 		
 		this.articleService.deleteArticle(id);

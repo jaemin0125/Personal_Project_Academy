@@ -65,4 +65,8 @@ public class WasteGuideService {
 		this.wasteGuideDao.doDeleteSearchKeyword(label);
 	}
 
+	public List<WasteGuide> getWasteGuideListByrelIds(List<Integer> relIds) {
+		return this.wasteGuideDao.getWasteGuideListByrelIds(relIds);
+	}
+
 }	

@@ -39,6 +39,13 @@ public interface MemberDao {
 			""")
 	void doModifyMember(String loginedMemberId, String name, String email, String address, String loginPw);
 	
+	@Select("""
+			SELECT loginId
+				FROM `member`
+				WHERE id = #{id}
+			""")
+	String getLoginId(int id);
+	
 	@Update("""
 			UPDATE `member`
 				SET name = #{name}

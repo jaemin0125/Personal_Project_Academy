@@ -4,6 +4,15 @@
 
 <c:set var="pageTitle" value="분조장" />
 
+<c:if test="${loginedMember != null && loginedMember.id != 0}">
+	<div
+		class="fixed top-32 left-4 w-64 bg-white shadow-lg rounded-xl border border-gray-200 p-4 z-50 hidden lg:block">
+		<h3 class="text-green-700 font-bold mb-2 text-lg">⭐ 즐겨찾기한 항목</h3>
+		<ul id="likedList" class="space-y-2 text-sm text-gray-800">
+		</ul>
+	</div>
+</c:if>
+
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
 <!-- Swiper CDN -->
@@ -44,44 +53,37 @@
 
 	<hr class="border-t border-gray-300 my-12" />
 
-	<!-- 최근 학습한 쓰레기 슬라이더 -->
 	<section class="text-center">
 		<div class="text-2xl font-bold mb-8">AI가 최근 학습한 쓰레기</div>
-
-		<div class="relative">
-			<div class="swiper w-full max-w-7xl mx-auto !pt-6">
-				<div class="swiper-wrapper">
+		<div class="relative w-full max-w-7xl mx-auto h-[18rem]">
+			<div class="swiper h-full">
+				<div class="swiper-wrapper h-full">
 					<c:forEach var="wasteGuide" items="${wasteGuide}">
-						<div class="swiper-slide flex flex-col items-center px-2">
-							<div class="relative w-full h-[15rem] sm:h-[16rem]">
-								<a href="/usr/home/result?label=${wasteGuide.getLabel()}"> <img
-									src="${wasteGuide.getThumbnail()}"
-									class="w-full h-full object-cover rounded-lg shadow hover:scale-105 transition duration-300" />
+						<div class="swiper-slide h-full flex flex-col items-center px-2">
+							<div class="w-full h-[14rem]">
+								<a href="/usr/home/result?label=${wasteGuide.label}"> <img
+									src="${wasteGuide.thumbnail}"
+									class="w-full h-full object-cover rounded-lg shadow" />
 								</a>
 							</div>
-							<div
-								class="mt-2 sm:mt-4 text-base sm:text-lg font-medium text-gray-800 text-center min-h-[2.5rem]">
-								${wasteGuide.getKo_label()}</div>
+							<div class="mt-2 text-sm text-gray-800 text-center font-medium">
+								${wasteGuide.ko_label}</div>
 						</div>
 					</c:forEach>
 				</div>
-
-				<!-- 슬라이드 네비게이션 버튼 -->
-				<div
-					class="swiper-button-prev absolute top-1/2 -translate-y-1/2 
-					left-2 sm:-left-4 md:-left-6 lg:-left-8 
-					!text-green-500 z-10 !pt-6"></div>
-				<div
-					class="swiper-button-next absolute top-1/2 -translate-y-1/2 
-					right-2 sm:-right-4 md:-right-6 lg:-right-8 
-					!text-green-500 z-10 !pt-6"></div>
 			</div>
 
-			<!-- 페이지네이션 -->
-			<div class="flex justify-center mt-10">
-				<div class="swiper-pagination static"></div>
-			</div>
+			<!-- 버튼 -->
+			<div
+				class="swiper-button-prev absolute top-1/2 -translate-y-1/2 left-2 !text-green-500 z-10"></div>
+			<div
+				class="swiper-button-next absolute top-1/2 -translate-y-1/2 right-2 !text-green-500 z-10"></div>
 		</div>
+
+		<div class="swiper-pagination-wrapper flex justify-center mt-6">
+			<div class="swiper-pagination !static"></div>
+		</div>
+
 	</section>
 
 	<hr class="border-t border-gray-300 my-12" />
@@ -92,6 +94,7 @@
 		<ol
 			class="list-decimal list-inside text-left max-w-md mx-auto text-lg space-y-3">
 			<c:forEach var="searchKeyword" items="${searchKeyword}">
+
 				<li class="hover:text-[#06874e]"><a
 					href="/usr/home/result?label=${searchKeyword.getLabel()}">${searchKeyword.getKo_label()}</a>
 				</li>
@@ -100,8 +103,11 @@
 	</section>
 </div>
 
-<!-- Swiper 초기화 -->
 <script>
+	$(function() {
+	  LikedWasteList();
+	});
+	
 	const swiper = new Swiper('.swiper', {
 		loop : true,
 		spaceBetween : 12,
@@ -136,6 +142,41 @@
 			},
 		}
 	});
+
+	function LikedWasteList() {
+	  $.ajax({
+	    url: '/usr/likePoint/getLikedLabels',
+	    type: 'GET',
+	    data: {
+	      relTypeCode: 'waste'
+	    },
+	    dataType: 'json',
+	    success: function(data) {
+	      if (!data || data.length === 0) {
+	        $('#likedList').html('<li class="text-gray-400">즐겨찾기한 항목이 없습니다</li>');
+	        return;
+	      }
+
+	      let html = '';
+	      data.forEach(function(item) {
+	        html += `
+	          <li>
+	            <a href="/usr/home/result?label=\${item.label}" class="block hover:text-green-600 hover:underline">
+	              \${item.ko_label}
+	            </a>
+	          </li>
+	        `;
+	      });
+
+	      $('#likedList').html(html);
+	    },
+	    error: function(xhr, status, error) {
+	      console.error("즐겨찾기한 항목 로딩 실패:", error);
+	      $('#likedList').html('<li class="text-red-400">불러오기 실패</li>');
+	    }
+	  });
+	}
+	
 </script>
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

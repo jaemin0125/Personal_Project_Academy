@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -120,4 +121,16 @@ public interface WasteGuideDao {
 				WHERE label = #{label}
 			""")
 	void doDeleteSearchKeyword(String label);
+	
+	@Select("""
+		    <script>
+		        SELECT *
+		        FROM wasteGuide
+		        WHERE id IN 
+		        <foreach item="id" collection="relIds" open="(" separator="," close=")">
+		            #{id}
+		        </foreach>
+		    </script>
+		""")
+		List<WasteGuide> getWasteGuideListByrelIds(@Param("relIds") List<Integer> relIds);
 }

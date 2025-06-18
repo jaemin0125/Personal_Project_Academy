@@ -77,8 +77,7 @@ public class AdminWasteGuideController {
 
 	@GetMapping("/admin/wasteGuide/doAddWaste")
 	@ResponseBody
-	public String doAddWaste(String label, String ko_label, String category, String guide, String wasteType,
-			String thumbnail) {
+	public String doAddWaste(String label, String ko_label, String category, String guide, String wasteType, String thumbnail) {
 
 		this.wasteGuideService.doAddWaste(label, ko_label, category, guide, wasteType, thumbnail);
 

@@ -200,6 +200,7 @@
 								<div class="text-lg my-1 ml-2">\${data.content }</div>
 								<div class="text-xs text-gray-400">\${data.updateDate }</div>
 							</div>
+
 						`;
 						
 						if (method == 'write') {
@@ -355,7 +356,7 @@
 		<!-- 💬 댓글 -->
 		<div
 			class="bg-green-50 p-6 rounded-xl shadow space-y-4 border border-green-100">
-			<div class="text-xl font-bold text-green-800">댓글</div>
+			<div id="existReply" class="text-xl font-bold text-green-800">댓글</div>
 
 			<div id="replyArea" class="space-y-4"></div>
 			<c:if test="${req.getLoginedMember().getId() != 0}">

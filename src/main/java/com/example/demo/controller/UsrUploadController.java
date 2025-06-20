@@ -30,8 +30,8 @@ public class UsrUploadController {
 	    
 	    String contentType = file.getContentType(); // file의 컨텐츠 타입을 contentType이란 변수에 저장한다 모든 image파일의 MIMETYPE은 image/로 시작
 	    
-	    if (contentType == null || !contentType.startsWith("image/")) { // MIMETYPE이 null이거나 image파일 이 아닌경우에 코드의 흐름을 제어하는 조건문
-	        return Util.jsReplace("이미지 파일만 업로드할 수 있습니다.", "/");
+	    if (!contentType.startsWith("image/")) { // MIMETYPE이 null이거나 image파일 이 아닌경우에 코드의 흐름을 제어하는 조건문
+	        return "redirect:/";
 	    }
 
 	    // 1. 임시 파일로 저장
@@ -58,8 +58,7 @@ public class UsrUploadController {
 	        ResponseEntity<Map> response = restTemplate.postForEntity(flaskUrl, requestEntity, Map.class);
 	        result = response.getBody();
 	    } catch (RestClientException e) {
-	        model.addAttribute("errorMsg", "AI 분석 서버가 응답하지 않습니다. 잠시 후 다시 시도해주세요.");
-	        return "usr/error/badRequest"; // → 에러용 JSP 페이지로 이동
+	        return "usr/error/flaskError"; // → 에러용 JSP 페이지로 이동
 	    }
 	    
 	    // 3. Flask에서 온 JSON 응답 처리

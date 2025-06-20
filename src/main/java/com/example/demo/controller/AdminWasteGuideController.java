@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,9 +37,10 @@ public class AdminWasteGuideController {
 	@ResponseBody
 	public Map<String, Object> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request)
 			throws IOException {
-
-		String ext = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
-		if (!List.of("jpg", "jpeg", "png", "gif").contains(ext)) {
+		
+		String contentType = file.getContentType();
+		
+		if (contentType == null || !contentType.startsWith("image/")) {
 			throw new IllegalArgumentException("지원하지 않는 확장자입니다");
 		}
 

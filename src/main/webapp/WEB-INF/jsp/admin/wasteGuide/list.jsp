@@ -5,6 +5,42 @@
 <c:set var="pageTitle" value="분리배출 정보 관리" />
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
+<script>
+  function uploadImage() {
+    const file = $("#uploadFileInput")[0].files[0];
+
+    if (!file) {
+      alert("업로드할 파일을 선택하세요");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    $.ajax({
+      url: "/admin/wasteGuide/uploadImage",
+      type: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function(data) {
+        if (data.success) {
+          const url = data.url;
+          $("#thumbnailPreview").attr("src", url).removeClass("hidden");
+          $("#thumbnailInput").val(url);
+          alert("이미지 업로드 성공!");
+        } else {
+          alert("업로드 실패");
+        }
+      },
+      error: function(err) {
+        console.error(err);
+        alert("오류 발생");
+      }
+    });
+  }
+</script>
+
 <section class="mt-10 flex">
 	<div
 		class="container mx-auto max-w-8xl bg-base-100 p-8 rounded-2xl shadow-md">
@@ -13,7 +49,7 @@
 		<div class="bg-base-100 border rounded-xl p-8 mb-4">
 			<h2
 				class="text-xl font-semibold mb-6 flex justify-center items-center gap-2">
-				<span class="text-blue-600 text-lg">🆕</span> 쓰레기 정보 추가
+				<span class="text-blue-600 text-lg">🆕</span> 학습 정보 추가
 			</h2>
 
 			<div class="flex justify-center">
@@ -117,42 +153,5 @@
 		</div>
 	</div>
 </section>
-
-<script>
-  function uploadImage() {
-    const file = $("#uploadFileInput")[0].files[0];
-
-    if (!file) {
-      alert("업로드할 파일을 선택하세요");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    $.ajax({
-      url: "/admin/wasteGuide/uploadImage",
-      type: "POST",
-      data: formData,
-      contentType: false,
-      processData: false,
-      success: function(data) {
-        if (data.success) {
-        	console.log(data);
-          const url = data.url;
-          $("#thumbnailPreview").attr("src", url).removeClass("hidden");
-          $("#thumbnailInput").val(url);
-          alert("이미지 업로드 성공!");
-        } else {
-          alert("업로드 실패");
-        }
-      },
-      error: function(err) {
-        console.error(err);
-        alert("오류 발생");
-      }
-    });
-  }
-</script>
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

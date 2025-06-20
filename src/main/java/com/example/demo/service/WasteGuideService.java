@@ -69,4 +69,8 @@ public class WasteGuideService {
 		return this.wasteGuideDao.getWasteGuideListByrelIds(relIds);
 	}
 
+	public String checkLabelExist(String ko_label) {
+		return this.wasteGuideDao.checkLabelExist(ko_label);
+	}
+
 }	

@@ -22,14 +22,24 @@
 	src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <div class="content px-4 md:px-12 py-12 space-y-20">
-	<!-- 업로드 박스 -->
-	<section class="text-center">
-		<div class="mb-10 text-center relative">
+	<section class="relative text-center">
+		<div class="absolute right-0 top-0 mr-4 z-10 flex flex-col items-end  hidden lg:block">
+			<div
+				class="flex gap-2 bg-green-50 px-1.5 py-1.5 rounded-lg shadow-sm max-w-md">
+				<input type="search" id="searchKeyword" placeholder="검색어로 찾아보기" maxlength="15" class="border border-green-400 text-sm px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300 w-full sm:w-60" />
+				<button type="button" id="searchBtn" class="bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600 transition">검색</button>
+			</div>
+			<div class="h-5 mt-1 text-sm text-red-500">
+				<p id="searchError"></p>
+			</div>
+		</div>
+
+		<div class="mb-10">
 			<div class="text-3xl font-bold text-green-700 mb-3">♻️ 분리수거 나만
 				헷갈리는 거 아니죠?</div>
 			<div class="text-lg text-gray-700">
-				사진만 업로드하세요! <span class="text-green-600 font-semibold">AI가 분석</span>해서<br>
-				분리배출 방법은 물론,<br> <span class="text-green-700 font-semibold">대형폐기물은
+				사진만 업로드하세요! <span class="text-green-600 font-semibold">AI가 분석</span>해서<br />
+				분리배출 방법은 물론,<br /> <span class="text-green-700 font-semibold">대형폐기물은
 					내 거주지 기준</span>으로 스티커 비용까지 정확히 안내해드려요.
 			</div>
 		</div>
@@ -51,10 +61,11 @@
 		</div>
 	</section>
 
+
 	<hr class="border-t border-gray-300 my-12" />
 
 	<section class="text-center">
-		<div class="text-2xl font-bold mb-8">AI가 최근 학습한 쓰레기</div>
+		<div class="text-2xl font-bold mb-4">AI가 최근 학습한 쓰레기</div>
 		<div class="relative w-full max-w-7xl mx-auto h-[18rem]">
 			<div class="swiper h-full">
 				<div class="swiper-wrapper h-full">
@@ -63,7 +74,7 @@
 							<div class="w-full h-[14rem]">
 								<a href="/usr/home/result?label=${wasteGuide.label}"> <img
 									src="${wasteGuide.thumbnail}"
-									class="w-full h-full object-cover rounded-lg shadow" />
+									class="w-full h-full object-cover rounded-lg shadow hover:shadow-xl" />
 								</a>
 							</div>
 							<div class="mt-2 text-sm text-gray-800 text-center font-medium">
@@ -80,7 +91,7 @@
 				class="swiper-button-next absolute top-1/2 -translate-y-1/2 right-2 !text-green-500 z-10"></div>
 		</div>
 
-		<div class="swiper-pagination-wrapper flex justify-center mt-6">
+		<div class="swiper-pagination-wrapper flex justify-center">
 			<div class="swiper-pagination !static"></div>
 		</div>
 
@@ -176,6 +187,47 @@
 	    }
 	  });
 	}
+	  $(function () {
+		  $('#searchBtn').on('click', function () {
+		    handleSearch();
+		  });
+
+		  $('#searchKeyword').on('keypress', function (e) {
+		    if (e.which === 13) {
+		      handleSearch();
+		    }
+		  });
+		});
+
+		function handleSearch() {
+		  const $error = $('#searchError');
+		  const keyword = $('#searchKeyword').val().trim();
+
+		  $error.text('');
+
+		  if (keyword === '') {
+		    $error.text('검색어를 입력해주세요.');
+		    return;
+		  }
+
+		  $.ajax({
+		    url: '/usr/home/checkLabelExists',
+		    method: 'GET',
+		    data: { label: keyword 
+	    	},
+		    dataType: 'text',
+		    success: function (response) {
+		      if (response && response.trim() !== '') {
+		        location.href = '/usr/home/result?label=' + response;
+		      } else {
+		        $error.text(`'\${keyword}'에 대한 검색 결과가 없습니다.`);
+		      }
+		    },
+		    error: function () {
+		      $error.text('서버 오류가 발생했습니다. 다시 시도해주세요.');
+		    }
+		  });
+		}
 	
 </script>
 

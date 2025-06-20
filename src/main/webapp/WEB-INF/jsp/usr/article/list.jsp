@@ -19,11 +19,8 @@
 		</ul>
 	</aside>
 
-	<!-- ✅ 콘텐츠 영역: 모바일 w-full / PC w-4/5 -->
 	<div class="w-full md:w-4/5">
-		<!-- 상단 탭 + 검색 -->
 		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 border-b border-gray-300 pb-2 text-gray-700 font-semibold text-lg gap-2">
-			<!-- 게시판 탭 -->
 			<div class="flex flex-wrap gap-4">
 				<c:forEach var="boards" items="${boards }">
 					<a href="/usr/article/list?boardId=${boards.getId() }"
@@ -33,9 +30,8 @@
 				</c:forEach>
 			</div>
 
-			<!-- 검색 폼 -->
 			<form method="get"
-				  class="flex flex-col sm:flex-row sm:items-center gap-2 bg-green-50 px-3 py-2 rounded-lg shadow-sm w-full sm:w-auto">
+				  class="flex flex-col sm:flex-row sm:items-center gap-2 bg-green-50 px-1.5 py-1.5 rounded-lg shadow-sm w-full sm:w-auto">
 				<input type="hidden" name="boardId" value="${board.getId() }" />
 				<select name="searchType"
 						class="border border-green-400 text-sm px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300">
@@ -44,7 +40,7 @@
 					<option value="title,content" <c:if test="${searchType == 'title,content'}">selected</c:if>>제목+내용</option>
 				</select>
 				<input type="search" name="searchKeyword" value="${searchKeyword}" placeholder="검색어 입력" maxlength="25"
-					   class="border border-green-400 text-sm px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300 w-full sm:w-60" />
+					   class="border border-green-400 text-sm px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300 w-full sm:w-60" />
 				<button type="submit"
 						class="bg-green-500 text-white px-3 py-1 text-sm rounded-md hover:bg-green-600 transition">
 					검색

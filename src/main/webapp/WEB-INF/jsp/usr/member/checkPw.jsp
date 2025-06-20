@@ -12,7 +12,7 @@
       <div class="mt-2 text-red-400">${msg }</div>
     </div>
     <button class="btn btn-primary w-40">확인</button>
-    <div class="mt-2 mb-2 text-left">
+    <div class="mt-2 mb-2 text-center">
    		<button type="button" onclick="location.href='/'" class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
     </div>
   </form>

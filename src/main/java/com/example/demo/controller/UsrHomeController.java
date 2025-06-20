@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.Member;
 import com.example.demo.dto.Req;
@@ -84,7 +85,13 @@ public class UsrHomeController {
 		model.addAttribute("relatedList", relatedList);
 		return "usr/home/result";
 	}
-
+	
+	@GetMapping("/usr/home/checkLabelExists")
+	@ResponseBody
+	public String checkLabelExist(String ko_label) {
+		
+		return this.wasteGuideService.checkLabelExist(ko_label);
+	}
 	
 	@GetMapping("/")
 	public String showRoot() {

@@ -133,4 +133,12 @@ public interface WasteGuideDao {
 		    </script>
 		""")
 		List<WasteGuide> getWasteGuideListByrelIds(@Param("relIds") List<Integer> relIds);
+
+	@Select("""
+			SELECT label
+				FROM wasteGuide
+				WHERE ko_label LIKE CONCAT('%', #{ko_label}, '%')
+				LIMIT 1
+			""")
+	String checkLabelExist(String ko_label);
 }

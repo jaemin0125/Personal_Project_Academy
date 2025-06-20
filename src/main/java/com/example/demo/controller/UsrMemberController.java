@@ -99,7 +99,9 @@ public class UsrMemberController {
 		if(!Util.encryptSHA256(loginPw).equals(loginedMember.getLoginPw())) {
 			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
 			return "usr/member/checkPw";
-		}
+		} /*else if (req.getLoginedMember().getAuthLevel() == 0) {
+			return "usr/member/info";
+			}*/
 		
 		model.addAttribute("loginedMember", loginedMember);
 		

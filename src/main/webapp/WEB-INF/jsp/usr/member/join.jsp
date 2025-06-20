@@ -104,7 +104,6 @@
 			}
 		})
 
-		console.log("함수호출");
 	}
 
 	function postCode() {

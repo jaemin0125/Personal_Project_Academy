@@ -6,14 +6,14 @@ CREATE TABLE article(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
     , regDate DATETIME NOT NULL
     , updateDate DATETIME NOT NULL
+    , memberId INT UNSIGNED NOT NULL
+    , boardId INT UNSIGNED NOT NULL
     , title VARCHAR(50) NOT NULL
     , content TEXT NOT NULL
+    , views INT UNSIGNED NOT NULL DEFAULT 0
+    , thumbnail VARCHAR(200)
+    , relTypeCode VARCHAR(20) DEFAULT 'article'
 );
-
-ALTER TABLE article ADD COLUMN memberId INT UNSIGNED NOT NULL AFTER updateDate;
-ALTER TABLE article ADD COLUMN boardId INT UNSIGNED NOT NULL AFTER memberId;
-ALTER TABLE article ADD COLUMN views INT UNSIGNED NOT NULL DEFAULT 0;
-ALTER TABLE article ADD COLUMN thumbnail VARCHAR(255);
 
 CREATE TABLE `member`(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
@@ -24,9 +24,9 @@ CREATE TABLE `member`(
     , `name` VARCHAR(50) NOT NULL
     , email VARCHAR(50) NOT NULL
     , address VARCHAR(100) NOT NULL
+    , authLevel INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '관리자 = 0, 사용자 = 1'
 );
 
-ALTER TABLE `member` ADD COLUMN authLevel INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '관리자 = 0, 사용자 = 1';
 
 CREATE TABLE board(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
@@ -53,12 +53,13 @@ CREATE TABLE wasteGuide (
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
     , label VARCHAR(100) NOT NULL
     , ko_label VARCHAR(100) NOT NULL     
-    , category VARCHAR(50)               
+    , category VARCHAR(50) NOT NULL            
     , guide TEXT NOT NULL
     , wasteType VARCHAR(20) NOT NULL     
     , thumbnail VARCHAR(255)             
     , regDate DATETIME DEFAULT NOW()
     , updateDate DATETIME DEFAULT NOW()  
+    , relTypeCode VARCHAR(20) NOT NULL DEFAULT 'waste'
 );
 
 
@@ -70,6 +71,7 @@ CREATE TABLE searchLog (
     category VARCHAR(20),          
     search_time DATETIME DEFAULT NOW()
 );
+
 
 
 CREATE TABLE stickerPrice (
@@ -181,7 +183,7 @@ CREATE TABLE stickerPrice (
         ('battery', '건전지', '특수폐기물', '건전지는 폐건전지 전용 수거함에 배출하세요. 가까운 주민센터, 대형마트, 아파트 단지 등에 비치된 수거함 이용. 일반쓰레기로 배출 금지!', '특수', '/resource/imgs/battery.png'),
         ('clothes', '헌 옷', '의류', '재사용 가능한 의류는 헌옷 수거함에 배출하고, 오염되었거나 젖은 옷은 일반쓰레기로 배출하세요. 이불, 카펫류는 별도 대형폐기물로 분류될 수 있습니다.', '일반', '/resource/imgs/clothes.png'),
         ('lightbulb', '형광등', '특수폐기물', '깨지지 않도록 포장한 후 가까운 폐형광등 수거함 또는 주민센터 등에 배출하세요. LED 전구는 일반쓰레기로 분류될 수 있으므로 지자체 기준 확인.', '특수', '/resource/imgs/lightbulb.png'),
-        ('toothpaste', '치약 튜브', '플라스틱', '치약은 내용물을 완전히 비우고, 튜브와 뚜껑이 다른 재질이면 분리 후 플라스틱류로 배출하세요. 재질 확인이 어려우면 일반쓰레기로.', '일반', '/resource/imgs/toothpaste.png'),
+        ('toothpaste', '튜브류', '플라스틱', '내용물을 완전히 비우고, 튜브와 뚜껑이 다른 재질이면 분리 후 플라스틱류로 배출하세요. 재질 확인이 어려우면 일반쓰레기로.', '일반', '/resource/imgs/toothpaste.png'),
         ('umbrella', '우산', '복합재질', '금속과 천 재질이 혼합되어 분리배출이 어려운 경우 일반쓰레기로 배출하세요. *천과 뼈대를 안전하게 분리할 수 있다면 천은 일반쓰레기, 우산대는 캔류/고철.', '특수', '/resource/imgs/umbrella.png'),
         ('bicycle', '자전거', '대형폐기물', '자전거는 사용 여부와 관계없이 대형폐기물로 분류되며, 지자체에 신고하고 스티커를 부착한 후 지정된 장소에 배출하세요.', '대형', '/resource/imgs/bicycle.png'),
         ('chair', '의자', '대형폐기물', '1인용 의자는 대형폐기물로 분류되며, 지자체 신고 후 스티커 부착하여 배출하세요. 재질이 나무, 플라스틱, 금속 여부와 관계없이 동일하게 처리됩니다.', '대형', '/resource/imgs/chair.png'),
@@ -417,7 +419,7 @@ INSERT INTO stickerPrice (label, subType, region, price, unit) VALUES
     SELECT * FROM searchLog;
     SELECT * FROM stickerPrice;
 
-    
+	
 
     /*페이징 테스트용 더미데이터
     insert into article (regDate, updateDate, memberId, boardId, title, content)

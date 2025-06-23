@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -42,4 +44,12 @@ public interface LikePointDao {
 				AND relId = #{relId}
 			""")
 	void deleteLikePoint(int id, String relTypeCode, int relId);
+	
+	@Select("""
+			SELECT relId  
+				FROM likePoint
+				WHERE memberId = #{id}
+				AND relTypeCode = #{relTypeCode}
+			""")
+	List<Integer> getLikedLabels(int id, String relTypeCode);
 }

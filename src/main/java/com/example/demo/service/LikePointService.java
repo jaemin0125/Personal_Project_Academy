@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.LikePointDao;
@@ -29,4 +31,8 @@ public class LikePointService {
 	public void deleteLikePoint(int id, String relTypeCode, int relId) {
 		this.likePointDao.deleteLikePoint(id, relTypeCode, relId);
 	}
-}	
+
+	public List<Integer> getLikedLabels(int id, String relTypeCode) {
+		return this.likePointDao.getLikedLabels(id, relTypeCode);
+	}
+}

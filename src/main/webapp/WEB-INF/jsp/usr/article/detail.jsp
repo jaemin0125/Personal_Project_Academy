@@ -200,6 +200,7 @@
 								<div class="text-lg my-1 ml-2">\${data.content }</div>
 								<div class="text-xs text-gray-400">\${data.updateDate }</div>
 							</div>
+
 						`;
 						
 						if (method == 'write') {
@@ -320,13 +321,19 @@
 						</button>
 					</c:when>
 					<c:otherwise>
+						<span>추천수 : </span>
 						<span id="likePointCnt" class="text-sm text-gray-600"></span>
 					</c:otherwise>
 				</c:choose>
 			</div>
 
 			<!-- 본문 -->
-			<div class="prose max-w-none">${article.getForPrintContent()}</div>
+			<div class="prose max-w-none"><strong>${article.getForPrintContent()}</strong></div>
+			<c:if test="${article.getThumbnail() != null }">
+				<div class="text-sm">
+					<img src="${article.getThumbnail() }" class="w-62 h-auto rounded-lg"/>
+				</div>
+			</c:if>
 		</div>
 
 		<!-- 🔧 수정 / 삭제 / 뒤로 -->
@@ -349,7 +356,7 @@
 		<!-- 💬 댓글 -->
 		<div
 			class="bg-green-50 p-6 rounded-xl shadow space-y-4 border border-green-100">
-			<div class="text-xl font-bold text-green-800">댓글</div>
+			<div id="existReply" class="text-xl font-bold text-green-800">댓글</div>
 
 			<div id="replyArea" class="space-y-4"></div>
 			<c:if test="${req.getLoginedMember().getId() != 0}">
@@ -357,7 +364,7 @@
 					<div
 						class="text-smfont-medium text-green-700 loginedMemberLoginId mb-2"></div>
 					<textarea style="width: 100%; resize: none;" id="replyContent"
-						class="textarea"></textarea>
+						class="textarea" placeholder="댓글을 입력해주세요"></textarea>
 					<div class="flex justify-end mt-2">
 						<button class="btn btn-sm btn-success btn-outline"
 							onclick="writeReply();">등록</button>

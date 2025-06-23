@@ -18,7 +18,8 @@ public class Article {
 	private String writerName;
 	private int likePoint;
 	private int views;
-	
+	private String thumbnail;
+
 	public String getForPrintContent() {
 		return this.content.replaceAll("\n", "<br />");
 	}

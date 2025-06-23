@@ -14,6 +14,7 @@
 	const { colorSyntax } = Editor.plugin;
 	
 	let toastEditor = null;
+	let isThumbnailSet = false;
 	
 	$(function(){
 		const initialValueEl = $('#toast-ui-editor > div');
@@ -28,7 +29,39 @@
 		  initialEditType: 'markdown',
 		  initialValue: initialValue,
 		  theme: theme,
-		  plugins: [colorSyntax]
+		  plugins: [colorSyntax],
+		  placeholder: '내용을 입력하세요',
+		  
+		  hooks: {
+			  addImageBlobHook: function(blob, callback) {
+			    const formData = new FormData();
+			    formData.append('file', blob);
+
+			    $.ajax({
+			      url: '/usr/article/uploadImage',
+			      method: 'POST',
+			      data: formData,
+			      processData: false,
+			      contentType: false,
+			      success: function(result) {
+			        if (result.success) {
+			        	
+			          if (!isThumbnailSet) {
+			            $('#thumbnail').val(result.url);
+			            isThumbnailSet = true;
+			          }
+
+			          alert('이미지 업로드 성공!');
+			        } else {
+			          alert('이미지 업로드 실패');
+			        }
+			      },
+			      error: function(xhr, status, error) {
+			        alert('서버 오류로 업로드 실패');
+			      }
+			    });
+			  }
+			}
 		});
 		
 		toastEditor = editor;
@@ -36,6 +69,7 @@
 	
 	const submitForm = function (form) {
 		const markdown = toastEditor.getMarkdown().trim();
+		const thumbnailInput = document.querySelector('#thumbnail');
 		
 		form.title.value = form.title.value.trim();
 		
@@ -52,6 +86,8 @@
 		}
 		
 		form.content.value = markdown;
+		form.thumbnail.value = thumbnailInput.value;
+		
 		return true;
 	}
 </script>

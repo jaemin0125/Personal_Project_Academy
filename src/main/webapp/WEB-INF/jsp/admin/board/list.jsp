@@ -14,11 +14,9 @@
 			class="mb-10 border rounded-xl p-6">
 			<h2 class="text-lg font-semibold mb-4">🆕 게시판 추가</h2>
 			<div class="form-control mb-4 flex items-center">
-				<label class="label font-semibold mr-2">게시판 이름</label> <input
-					type="text" name="boardName" class="input input-bordered w-full"
-					placeholder="예: 공지사항" required />
-				<button type="submit" class="btn btn-sm btn-primary ml-6">게시판
-					추가</button>
+				<label class="label font-semibold mr-2">게시판 이름</label> 
+				<input type="text" name="boardName" class="input input-bordered w-full" placeholder="예: 공지사항" required />
+				<button type="submit" class="btn btn-sm btn-primary ml-6">게시판 추가</button>
 			</div>
 		</form>
 
@@ -32,12 +30,9 @@
 						<tr>
 							<td>${board.getId() }</td>
 							<td>
-								<form action="doModifyBoard" method="get"
-									class="flex items-center space-x-2">
+								<form action="doModifyBoard" method="get" class="flex items-center space-x-2">
 									<input type="hidden" name="boardId" value="${board.getId() }" />
-									<input type="text" name="boardName"
-										class="input input-bordered input-sm w-40"
-										value="${board.getName() }" required />
+									<input type="text" name="boardName" class="input input-bordered input-sm w-40" value="${board.getName() }" required />
 									<button type="submit" class="btn btn-sm ml-12 btn-success">수정</button>
 								</form>
 							</td>
@@ -54,7 +49,7 @@
 			</table>
 		</div>
 		<div class="text-right">
-			<button onclick="history.back();" class="btn btn-outline btn-success btn-sm mt-6">← 뒤로가기</button>
+			<button onclick="history.back();" class="btn btn-outline btn-sm mt-6">← 뒤로가기</button>
 		</div>
 	</div>
 </section>

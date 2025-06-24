@@ -3,8 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <c:set var="pageTitle" value="분조장" />
+<%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
-<c:if test="${loginedMember != null && loginedMember.id != 0}">
+<c:if test="${loginedMember != null && loginedMember.id != 0 && wasteGuide != null}">
 	<div class="fixed top-32 left-4 w-64 bg-white shadow-lg rounded-xl border border-gray-200 p-4 z-50 hidden lg:block">
 		<h3 class="text-green-700 font-bold mb-2 text-lg">⭐ 즐겨찾기한 항목</h3>
 		<ul id="likedList" class="space-y-2 text-sm text-gray-800">
@@ -12,7 +13,6 @@
 	</div>
 </c:if>
 
-<%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
 
 <script>
@@ -33,6 +33,7 @@
 				likePointBtn : likePointBtn
 			},
 		})
+		
 		await getLikePoint();
 		await LikedWasteList();
 	}
@@ -47,8 +48,6 @@
 			},
 			dataType : 'json',
 			success : function (data) {
-				$('#likePointCnt').html(data.rsData);
-				
 				if (data.success) {
 					$('#likePointBtn').html(`<i class="fa-solid fa-star text-yellow-500"></i> 즐겨찾기 해제`);
 				} else {
@@ -179,8 +178,7 @@
 	<hr class="border-t border-gray-300 my-12" />
 	<c:if test="${not empty relatedList}">
 		<div class="pb-6">
-			<h3 class="text-xl text-center font-semibold text-green-700 mb-4">헷갈릴
-				수 있는 다른 항목도 있어요 👀</h3>
+			<h3 class="text-xl text-center font-semibold text-green-700 mb-4">헷갈릴 수 있는 다른 항목도 있어요 👀</h3>
 			<div class="gap-1 flex w-full justify-center">
 				<c:forEach var="item" items="${relatedList}">
 					<a href="/usr/home/result?label=${item.label}"

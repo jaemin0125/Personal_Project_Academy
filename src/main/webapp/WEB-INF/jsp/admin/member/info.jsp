@@ -32,6 +32,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- 관리자 정보 관리 -->
 		<div class="card bg-base-100 shadow-xl">
 			<div class="card-body items-center text-center">
 				<h2 class="card-title">🧑‍ 관리자 정보 수정</h2>

@@ -60,7 +60,9 @@ public class UsrLikePointController {
 	public List<WasteGuide> getLikedLabels(String relTypeCode) {
 		int memberId = req.getLoginedMember().getId();
 		List<Integer> relIds = likePointService.getLikedLabels(memberId, relTypeCode);
-		if (relIds.isEmpty()) return Collections.emptyList();
+		if (relIds.isEmpty()) {
+			return Collections.emptyList();
+		}
 		
 		return wasteGuideService.getWasteGuideListByrelIds(relIds);
 	}

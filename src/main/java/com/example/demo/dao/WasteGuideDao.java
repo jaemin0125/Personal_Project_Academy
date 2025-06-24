@@ -125,14 +125,14 @@ public interface WasteGuideDao {
 	@Select("""
 		    <script>
 		        SELECT *
-		        FROM wasteGuide
-		        WHERE id IN 
-		        <foreach item="id" collection="relIds" open="(" separator="," close=")">
-		            #{id}
-		        </foreach>
+			        FROM wasteGuide
+			        WHERE id IN 
+			        <foreach item="id" collection="relIds" open="(" separator="," close=")">
+			            #{id}
+			        </foreach>
 		    </script>
 		""")
-		List<WasteGuide> getWasteGuideListByrelIds(@Param("relIds") List<Integer> relIds);
+		List<WasteGuide> getWasteGuideListByrelIds(List<Integer> relIds);
 
 	@Select("""
 			SELECT label

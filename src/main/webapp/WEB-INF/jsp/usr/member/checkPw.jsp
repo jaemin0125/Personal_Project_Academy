@@ -13,7 +13,7 @@
     </div>
     <button class="btn btn-primary w-40">확인</button>
     <div class="mt-2 mb-2 text-center">
-   		<button type="button" onclick="location.href='/'" class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
+   		<button type="button" onclick="history.back();" class="btn btn-outline btn-sm">← 뒤로가기</button>
     </div>
   </form>
 </div>

@@ -69,7 +69,7 @@
 	
 	const submitForm = function (form) {
 		const markdown = toastEditor.getMarkdown().trim();
-		const thumbnailInput = document.querySelector('#thumbnail');
+		const thumbnailInput = $('#thumbnail');
 		
 		form.title.value = form.title.value.trim();
 		
@@ -78,7 +78,7 @@
 			form.title.focus();
 			return false;
 		}
-		
+		 
 		if (markdown.length == 0) {
 			alert('내용을 입력해주세요');
 			toastEditor.focus();
@@ -86,7 +86,7 @@
 		}
 		
 		form.content.value = markdown;
-		form.thumbnail.value = thumbnailInput.value;
+		form.thumbnail.value = thumbnailInput.val();
 		
 		return true;
 	}

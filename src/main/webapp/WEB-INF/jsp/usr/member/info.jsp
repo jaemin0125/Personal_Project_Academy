@@ -92,7 +92,7 @@ function validateForm(form) {
 				<button class="btn btn-primary w-40 px-10">저장</button>
 			</div>
 			<div>
-				<button type="button" onclick="location.href='/'" class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
+				<button type="button" onclick="location.href='/'" class="btn btn-outline btn-sm">← 뒤로가기</button>
 			</div>
 		</form>
 	</div>

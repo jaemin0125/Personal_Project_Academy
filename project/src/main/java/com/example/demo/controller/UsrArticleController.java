@@ -41,7 +41,7 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/write")
-	public String write(@RequestParam(required = false) Integer boardId, Model model) {
+	public String write(@RequestParam(defaultValue = "2") Integer boardId, Model model) {
 		
 		List<Board> boards = this.boardService.getBoards();
 		

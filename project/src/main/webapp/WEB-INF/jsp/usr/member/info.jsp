@@ -61,10 +61,10 @@ function validateForm(form) {
 
 			<div class="form-control mb-4">
 				<div class="flex items-center">
-					<label class="w-38 font-semibold text-right pr-2">주소</label>
+					<label class="w-29 font-semibold text-center pl-16">주소</label>
 					<div class="flex items-center grow gap-2">
 						<input type="text" id="address" name="address" readonly
-							class="input input-bordered w-full"
+							class="input pr-10 input-bordered w-full"
 							value="${loginedMember.getAddress() }" />
 						<button type="button" onclick="postCode()"
 							class="btn btn-outline btn-sm">검색</button>

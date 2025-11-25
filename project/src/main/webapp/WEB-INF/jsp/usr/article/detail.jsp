@@ -140,7 +140,8 @@
 					for (idx in data) {
 						let btnHtml = '';
 						
-						if (data[idx].memberId == ${req.getLoginedMember().getId()}) {
+						if (data[idx].memberId == ${req.loginedMember.id}) {
+							
 							btnHtml = `
 								<div class="dropdown dropdown-bottom dropdown-end mr-4">
 								  <button tabindex="0" class="btn btn-circle btn-ghost btn-xs">
@@ -152,7 +153,7 @@
 								  </ul>
 								</div>
 							`;
-						} else if(${req.getLoginedMember().getAuthLevel() == '0'}){
+						} else if(${req.loginedMember.id != 0  && req.loginedMember.authLevel == 0}){
 							btnHtml = `
 								<div class="dropdown dropdown-bottom dropdown-end mr-4">
 								  <button tabindex="0" class="btn btn-circle btn-ghost btn-xs">
@@ -236,9 +237,19 @@
 				data : {
 					id : id
 				},
-			})
+				success : function(result){
+					if(result){
+						$('#' + id).remove();
+					} else {
+						alert('권한이 없거나 삭제에 실패했습니다');						
+					}
+				},
+				error: function(xhr, status, error){
+					console.log(error);
+					alert('서버 오류가 발생했습니다');
+				}
+			});
 			
-			$('#' + id).remove();
 		}
 		
 		const modifyReply = async function (id) {
@@ -250,16 +261,26 @@
 				return;
 			}
 			
-			await $.ajax({
-				url : '/usr/reply/modify',
-				type : 'POST',
-				data : {
-					id : id,
-					content : replyModifyContent.val()
-				},
-			})
-			
-			await addReply(id, 'modify');
+			try{
+				const result = await $.ajax({
+					url : '/usr/reply/modify',
+					type : 'POST',
+					data : {
+						id : id,
+						content : replyModifyContent.val()
+					},
+				});
+				
+				if(result){
+					await addReply(id, 'modify');
+				} else {
+					alert('권한이 없거나 수정에 실패했습니다.');
+				}
+				
+			} catch(error) {
+				console.log(error);
+				alert('오류가 발생했습니다');
+			}
 		}
 		
 		let originalForm = null;
@@ -351,17 +372,25 @@
 		<div class="flex justify-between">
 			<button onclick="history.back();"
 				class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
-
-			<c:if
-				test="${article.getMemberId() == req.getLoginedMember().getId() || req.getLoginedMember().getId() == 1}">
-				<div class="space-x-2">
-					<a class="btn btn-sm btn-outline btn-success"
-						href="modify?id=${article.getId()}">수정</a> <a
-						class="btn btn-sm btn-outline btn-success"
-						href="delete?id=${article.getId()}&boardId=${article.getBoardId()}"
-						onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
-				</div>
-			</c:if>
+			<c:choose>
+				<c:when test="${article.memberId == req.loginedMember.id}">
+					<div class="space-x-2">
+						<a class="btn btn-sm btn-outline btn-success"
+							href="modify?id=${article.getId()}">수정</a> <a
+							class="btn btn-sm btn-outline btn-success"
+							href="delete?id=${article.getId()}&boardId=${article.getBoardId()}"
+							onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+					</div>
+				</c:when>
+				<c:when test="${req.loginedMember.id != 0 && req.loginedMember.authLevel == 0}">
+					<div class="space-x-2">
+						<a
+							class="btn btn-sm btn-outline btn-success"
+							href="delete?id=${article.getId()}&boardId=${article.getBoardId()}"
+							onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+					</div>
+				</c:when>
+			</c:choose>
 		</div>
 
 		<!-- 💬 댓글 -->

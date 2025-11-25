@@ -45,15 +45,29 @@ public class UsrReplyController {
 	
 	@PostMapping("/usr/reply/delete")
 	@ResponseBody
-	public void delete(int id) {
+	public boolean delete(int id) {
+		
+		Reply reply = this.replyService.getReplyById(id);
+		
+		if(reply.getMemberId() != req.getLoginedMember().getId() && req.getLoginedMember().getAuthLevel() != 0) {
+			return false;
+		}
 		
 		this.replyService.deleteReply(id);
+		return true;
 	}
 	
 	@PostMapping("/usr/reply/modify")
 	@ResponseBody
-	public void modify(int id, String content) {
+	public boolean modify(int id, String content) {
+		
+		Reply reply = this.replyService.getReplyById(id);
+		
+		if(reply.getMemberId() != req.getLoginedMember().getId()) {
+			return false;
+		}
 		
 		this.replyService.modifyReply(id, content);
+		return true;
 	}
 }

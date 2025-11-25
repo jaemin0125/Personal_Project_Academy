@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.Article;
 import com.example.demo.dto.Board;
+import com.example.demo.dto.LoginedMember;
 import com.example.demo.dto.Req;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
@@ -134,7 +135,12 @@ public class UsrArticleController {
 	public String modify(Model model, int id) {
 
 		Article article = this.articleService.getArticleById(id);
-
+		
+		if(article.getMemberId() != req.getLoginedMember().getId()) {
+			
+			return String.format("usr/article/detail?id=%d", id);
+		}
+		
 		model.addAttribute("article", article);
 
 		return "usr/article/modify";
@@ -166,6 +172,13 @@ public class UsrArticleController {
 	public String delete(int id, int boardId, HttpServletRequest request) {
 		
 		Article oldArticle = this.articleService.getArticleById(id);
+		
+		if(oldArticle.getMemberId() != req.getLoginedMember().getId() && req.getLoginedMember().getAuthLevel() != 0) {
+			
+			return Util.jsReplace("권한이 없는 사용자입니다. ", String.format("usr/article/detail?id=%d", id));
+		}
+		
+		
 		String oldThumbnail = oldArticle.getThumbnail();
 		
 		if(oldThumbnail != null) {

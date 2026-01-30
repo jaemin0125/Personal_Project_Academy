@@ -35,19 +35,32 @@ public class WebConfig implements WebMvcConfigurer {
 				.addPathPatterns("/usr/likePoint/clickLikePoint").addPathPatterns("/usr/member/doModify")
 				.addPathPatterns("/usr/member/checkPw").addPathPatterns("/usr/member/info")
 				.addPathPatterns("/usr/reply/doWrite").addPathPatterns("/usr/reply/delete")
-				.addPathPatterns("/usr/reply/modify").addPathPatterns("/admin/board/list")
-				.addPathPatterns("/admin/board/doAddBoard").addPathPatterns("/admin/board/doModifyBoard")
-				.addPathPatterns("/admin/board/doDeleteBoard").addPathPatterns("/admin/member/info")
-				.addPathPatterns("/admin/wasteGuide/uploadImage").addPathPatterns("/admin/wasteGuide/list")
-				.addPathPatterns("/admin/wasteGuide/doAddWaste").addPathPatterns("/admin/wasteGuide/doModifyWaste")
-				.addPathPatterns("/admin/wasteGuide/doDeleteWaste");
+				.addPathPatterns("/usr/reply/modify")/*
+														 * .addPathPatterns("/admin/board/list")
+														 * .addPathPatterns("/admin/board/doAddBoard").addPathPatterns(
+														 * "/admin/board/doModifyBoard")
+														 * .addPathPatterns("/admin/board/doDeleteBoard").
+														 * addPathPatterns("/admin/member/info")
+														 * .addPathPatterns("/admin/wasteGuide/uploadImage").
+														 * addPathPatterns("/admin/wasteGuide/list")
+														 * .addPathPatterns("/admin/wasteGuide/doAddWaste").
+														 * addPathPatterns("/admin/wasteGuide/doModifyWaste")
+														 * .addPathPatterns("/admin/wasteGuide/doDeleteWaste")
+														 */;
 		
-		registry.addInterceptor(needAuthLevelInterceptor).addPathPatterns("/admin/board/list")
-				.addPathPatterns("/admin/board/doAddBoard").addPathPatterns("/admin/board/doModifyBoard")
-				.addPathPatterns("/admin/board/doDeleteBoard").addPathPatterns("/admin/member/info")
-				.addPathPatterns("/admin/wasteGuide/uploadImage").addPathPatterns("/admin/wasteGuide/list")
-				.addPathPatterns("/admin/wasteGuide/doAddWaste").addPathPatterns("/admin/wasteGuide/doModifyWaste")
-				.addPathPatterns("/admin/wasteGuide/doDeleteWaste");
+		/*
+		 * registry.addInterceptor(needAuthLevelInterceptor).addPathPatterns(
+		 * "/admin/board/list")
+		 * .addPathPatterns("/admin/board/doAddBoard").addPathPatterns(
+		 * "/admin/board/doModifyBoard")
+		 * .addPathPatterns("/admin/board/doDeleteBoard").addPathPatterns(
+		 * "/admin/member/info")
+		 * .addPathPatterns("/admin/wasteGuide/uploadImage").addPathPatterns(
+		 * "/admin/wasteGuide/list")
+		 * .addPathPatterns("/admin/wasteGuide/doAddWaste").addPathPatterns(
+		 * "/admin/wasteGuide/doModifyWaste")
+		 * .addPathPatterns("/admin/wasteGuide/doDeleteWaste");
+		 */
 
 		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/usr/member/join")
 				.addPathPatterns("/usr/member/login").addPathPatterns("/usr/member/doLogin");

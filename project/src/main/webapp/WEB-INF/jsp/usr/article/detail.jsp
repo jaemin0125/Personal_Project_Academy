@@ -393,7 +393,7 @@
 			</c:choose>
 		</div>
 
-		<!-- 💬 댓글 -->
+		<!-- 댓글 -->
 		<div
 			class="bg-green-50 p-6 rounded-xl shadow space-y-4 border border-green-100">
 			<div id="existReply" class="text-xl font-bold text-green-800">댓글</div>

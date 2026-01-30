@@ -48,6 +48,10 @@ public class Req {
 		this.session.removeAttribute("loginedMember");
 	}
 	
+	public boolean isLogined() {
+		return loginedMember != null && loginedMember.getId() != 0;  
+	}
+	
 	public void jsPrintReplace(String msg, String uri) {
 		this.resp.setContentType("text/html;charset=UTF-8");
 		
@@ -57,4 +61,5 @@ public class Req {
 			e.printStackTrace();
 		}
 	}
+	
 }

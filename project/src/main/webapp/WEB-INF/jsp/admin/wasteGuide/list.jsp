@@ -82,15 +82,19 @@
 					<!-- 타입 -->
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label class="col-span-3 text-right font-semibold whitespace-nowrap">타입</label>
-						<input type="text" name="wasteType" class="input input-bordered col-span-9" placeholder="예: 일반 or 대형 or 특수" required />
+						<select name="wasteType" class="select select-bordered col-span-9" required>
+							<option value="" class=" text-gray-400" disabled selected hidden>타입을 선택하세요</option>
+							<option value="일반">일반</option>	
+							<option value="대형">대형</option>
+							<option value="특수">특수</option>
+						</select>
 					</div>
 					
 					<!-- thumbnail -->
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일 이미지</label>
 						<div class="col-span-9">
-							<input type="file" id="uploadFileInput" class="file-input file-input-bordered w-full" accept="image/*" />
-							<button type="button" onclick="uploadImage()" class="btn btn-sm btn-outline">📤 이미지 업로드</button>
+							<input type="file" id="uploadFileInput" class="file-input file-input-bordered w-full mb-1" accept="image/*" onchange="uploadImage()"/>
 							<img id="thumbnailPreview" src="" class="mt-4 w-40 h-auto hidden border rounded" /> 
 							<input type="hidden" name="thumbnail" id="thumbnailInput" required /> <!-- 이미지 업로드 하면 hidden 클래스 삭제 -->
 						</div>

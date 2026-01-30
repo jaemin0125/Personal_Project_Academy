@@ -119,8 +119,8 @@
 			<div class="mt-2 text-lg font-medium">${wasteGuide.getForPrintGuide() }</div>
 		</div>
 
-		<c:if test="${loginedMember != null && loginedMember.getId() != 0}">
-			<c:if test="${wasteGuide.getWasteType() == '대형' }">
+		<c:if test="${loginedMember != null && loginedMember.id != 0}">
+			<c:if test="${wasteGuide.wasteType == '대형' }">
 				<div
 					class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg text-gray-800">
 					<h3 class="text-lg font-semibold text-yellow-700 mb-3">🏠
@@ -139,9 +139,9 @@
 							<tbody>
 								<c:forEach var="stickerPrice" items="${stickerPrice}">
 									<tr class="hover:bg-yellow-50">
-										<td class="px-4 py-2 border border-yellow-200">${stickerPrice.getSubType()}</td>
-										<td class="px-4 py-2 border border-yellow-200">${stickerPrice.getUnit()}</td>
-										<td class="px-4 py-2 border border-yellow-200 font-medium">${stickerPrice.getPrice()}원</td>
+										<td class="px-4 py-2 border border-yellow-200">${stickerPrice.subType}</td>
+										<td class="px-4 py-2 border border-yellow-200">${stickerPrice.unit}</td>
+										<td class="px-4 py-2 border border-yellow-200 font-medium">${stickerPrice.price}원</td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -160,7 +160,7 @@
 					class="btn btn-outline btn-success btn-sm">← 뒤로가기</button>
 
 				<!-- 찜 버튼 -->
-				<c:if test="${loginedMember != null && loginedMember.getId() != 0}">
+				<c:if test="${loginedMember != null && loginedMember.id != 0}">
 					<button onclick="clickLikePoint();"
 						class="btn btn-sm btn-outline btn-success" id="likeBtn">
 						<span id="likePointBtn"> <i class="fa-regular fa-star"></i>

@@ -62,9 +62,10 @@ public class UsrUploadController {
 	    }
 	    
 	    // 3. Flask에서 온 JSON 응답 처리
-	    
 	    List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results"); // results라는 Json객체 타입의 List 변수에 Json배열에서 results라는 key로 꺼내온 Json객체를 담는다  
-
+	    
+	    
+	    
 	    String resultLabel = null;
 	    if (results != null && !results.isEmpty()) {  
 	        Map<String, Object> topResult = results.get(0); 

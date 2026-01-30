@@ -58,8 +58,14 @@ public class UsrLikePointController {
 	@GetMapping("/usr/likePoint/getLikedLabels")
 	@ResponseBody
 	public List<WasteGuide> getLikedLabels(String relTypeCode) {
+		
+		if(!req.isLogined()) {
+			return Collections.emptyList();
+		}
+		
 		int memberId = req.getLoginedMember().getId();
 		List<Integer> relIds = likePointService.getLikedLabels(memberId, relTypeCode);
+		
 		if (relIds.isEmpty()) {
 			return Collections.emptyList();
 		}

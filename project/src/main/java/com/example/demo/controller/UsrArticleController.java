@@ -60,7 +60,7 @@ public class UsrArticleController {
 
 		int id = this.articleService.getLastArticleId();
 
-		return Util.jsReplace("게시글 작성!", String.format("detail?id=%d", id));
+		return Util.jsReplace("게시글 작성 완료!", String.format("detail?id=%d", id));
 	}
 
 	@GetMapping("/usr/article/list")

@@ -3,6 +3,7 @@ package com.example.demo.interceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.example.demo.controller.UsrArticleController;
 import com.example.demo.dto.Req;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ public class NeedLoginInterceptor implements HandlerInterceptor {
 	
 	public NeedLoginInterceptor(Req req) {
 		this.req = req;
+		
 	}
 	
 	@Override

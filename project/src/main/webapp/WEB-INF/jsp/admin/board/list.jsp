@@ -28,18 +28,18 @@
 				<tbody>
 					<c:forEach var="board" items="${boards}">
 						<tr>
-							<td>${board.getId() }</td>
+							<td>${board.id }</td>
 							<td>
 								<form action="doModifyBoard" method="get" class="flex items-center space-x-2">
-									<input type="hidden" name="boardId" value="${board.getId() }" />
-									<input type="text" name="boardName" class="input input-bordered input-sm w-40" value="${board.getName() }" required />
+									<input type="hidden" name="boardId" value="${board.id }" />
+									<input type="text" name="boardName" class="input input-bordered input-sm w-40" value="${board.name }" required />
 									<button type="submit" class="btn btn-sm ml-12 btn-success">수정</button>
 								</form>
 							</td>
 							<td>
 								<form action="doDeleteBoard" method="get"
 									onsubmit="return confirm('정말 삭제하시겠습니까?');">
-									<input type="hidden" name="boardId" value="${board.getId() }" />
+									<input type="hidden" name="boardId" value="${board.id }" />
 									<button type="submit" class="btn btn-sm btn-error">삭제</button>
 								</form>
 							</td>

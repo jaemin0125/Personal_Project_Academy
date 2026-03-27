@@ -65,27 +65,42 @@
 	  
   }
   
-  function showDetail(label){
-	  $.ajax({
+	function showDetail(label) {
+		$.ajax({
 			url : '/admin/wasteGuide/getWasteGuide',
 			type : 'GET',
-			data : {label : label},
+			data : {
+				label : label
+			},
 			success : function(data) {
-				console.log(data);
-				$("#wasteId").val("\${data.id}");
-				$("#label").val("\${data.label}");
-				$("#ko_label").val("\${data.ko_label}");
-				$("#category").val("\${data.category}");
-				$("#wasteType").val("\${data.wasteType}");
-				$("#guide").val("\${data.guide}");
-				$("#hiddenWasteId").val("\${data.id}");
-						
+				const item = data[0];
+
+				if (item) {
+					$("#wasteId").val(item.id);
+					$("#label").val(item.label);
+					$("#ko_label").val(item.ko_label);
+					$("#category").val(item.category);
+					$("#wasteType").val(item.wasteType);
+					$("#guide").val(item.guide);
+					$("#hiddenWasteId").val(item.id);
+					$("#modifyContainer").removeClass("hidden");
+			        
+			        // 스무스하게 해당 위치로 스크롤 (선택사항)
+			        document.getElementById('modifyContainer').scrollIntoView({ behavior: 'smooth' });
+					
+				}
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
 			}
 		});
-  }
+	}
+	
+	function confirmDelete() {
+	    if(confirm("정보를 삭제하시겠습니까?")) {
+	        $("#deleteForm").submit();
+	    }
+	}
 </script>
 
 <section class="mt-10 flex">
@@ -104,7 +119,7 @@
 
 					<!-- YOLO 라벨 -->
 					<div class="grid grid-cols-12 items-center gap-2">
-						<label class="col-span-3 text-right font-semibold">YOLO 라벨(영문)</label> 
+						<label class="col-span-3 text-right font-semibold">영문 명칭</label> 
 						<input type="text" name="label" class="input input-bordered col-span-9" placeholder="예: paperbox" required />
 					</div>
 
@@ -159,57 +174,99 @@
 				</form>
 			</div>
 		</div>
-		<div class="border rounded-xl p-6">
-			<h2 class="text-lg font-semibold mb-4">📋 등록된 쓰레기 목록</h2>
-			
-			
-			
-			
-			<!-- 해당 부분이 폐기물 정보 수정,삭제 UI 간소화 로직. -->
-			<form action="doModifyWaste" method="get">
-			<select id="selectedCategory" class="select select-bordered col-span-9 w-50" onchange="getLabels(this.value);" required>
-				<option hidden selected>카테고리를 선택하세요</option>
-				<c:forEach var="category" items="${categories }">
-					<option>${category.category }</option>
-				</c:forEach>
-			</select>
-			</form>
-			
-			<select id="selectedLabel" class="select select-bordered col-span-9 w-50" disabled required onchange="showDetail(this.value);">
-			</select>
-			
-			
-			
-			
-			<table class="table w-full">
-				<tbody>
-						<tr>
-							<td class="w-full">
-								<form id="" action="doModifyWaste" method="get"
-									class="flex items-center gap-2 w-full">
-									<input id="wasteId" type="hidden" name="wasteId"value="" /> 
-									<input id="label" type="text" name="label" class="input input-bordered input-sm !w-24 shrink-0" value="" required /> 
-									<input id="ko_label" type="text" name="ko_label" class="input input-bordered input-sm !w-30 shrink-0" value="" required /> 
-									<input id="category" type="text" name="category" class="input input-bordered input-sm !w-20 shrink-0"value="" required />
-									<input id="wasteType" type="text" name="wasteType" class="input input-bordered input-sm !w-20 shrink-0"value="" required />
-									<input id="guide" type="text" name="guide" class="input input-bordered input-sm flex-grow" value="" required />
-									<button type="submit" class="btn btn-sm btn-success ml-2 shrink-0">수정</button>
-								</form>
-							</td>
-							<td class="align-middle">
-								<form action="doDeleteWaste" method="get"
-									class="flex items-center justify-center"
-									onsubmit="return confirm('정말 삭제하시겠습니까?');">
-									<input id="hiddenWasteId" type="hidden" name="hiddenWasteId"
-										value="" />
-									<button type="submit" class="btn btn-sm btn-error">삭제</button>
-								</form>
-							</td>
-						</tr>
-				</tbody>
-			</table>
-		</div>
+		<div class="border rounded-2xl p-8 bg-base-100 shadow-sm">
+    <h2 class="text-2xl font-bold mb-8 flex items-center gap-2">
+        <span class="text-primary">📋</span> 등록된 정보 수정 및 삭제
+    </h2>
+    
+    <div class="flex flex-wrap gap-4 mb-10 p-6 bg-base-200 rounded-2xl items-end">
+        <div class="form-control w-full max-w-xs">
+            <label class="label"><span class="label-text font-bold">1. 카테고리 선택</span></label>
+            <select id="selectedCategory" class="select select-bordered w-full" onchange="getLabels(this.value);" required>
+                <option hidden selected>카테고리를 선택하세요</option>
+                <c:forEach var="category" items="${categories}">
+                    <option>${category.category}</option>
+                </c:forEach>
+            </select>
+        </div>
+
+        <div class="form-control w-full max-w-xs">
+            <label class="label"><span class="label-text font-bold">2. 상세 항목 선택</span></label>
+            <select id="selectedLabel" class="select select-bordered w-full" disabled required onchange="showDetail(this.value);">
+                <option selected disabled>카테고리를 먼저 선택하세요</option>
+            </select>
+        </div>
+        
+        <div class="text-sm text-gray-500 mb-3 ml-auto">
+            * 항목을 선택하면 아래에 수정 양식이 나타납니다.
+        </div>
+    </div>
+
+    <div id="modifyContainer" class="hidden animate-fadeIn">
+        <div class="divider text-gray-400 text-sm">EDIT INFORMATION</div>
+        
+        <div class="bg-white border-2 border-primary/10 rounded-3xl p-8 mt-6 shadow-lg">
+            <form action="doModifyWaste" method="get" class="space-y-6">
+                <input id="wasteId" type="hidden" name="wasteId" value="" /> 
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">영문 명칭</span></label>
+                        <input id="label" type="text" name="label" class="input input-bordered" value="" required />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">한글 명칭</span></label>
+                        <input id="ko_label" type="text" name="ko_label" class="input input-bordered" value="" required />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">카테고리</span></label>
+                        <input id="category" type="text" name="category" class="input input-bordered" value="" required />
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">배출 타입</span></label>
+                        <select id="wasteType" name="wasteType" class="select select-bordered" required>
+                            <option value="일반">일반</option>
+                            <option value="대형">대형</option>
+                            <option value="특수">특수</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-semibold">분리배출 가이드</span></label>
+                    <textarea id="guide" name="guide" class="textarea textarea-bordered h-32 w-full leading-relaxed" required></textarea>
+                </div>
+
+                <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button" onclick="confirmDelete();" class="btn btn-error btn-outline gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        정보 삭제
+                    </button>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="btn btn-primary px-10 shadow-md shadow-primary/20">저장하기</button>
+                    </div>
+                </div>
+            </form>
+            
+            <form id="deleteForm" action="doDeleteWaste" method="get">
+                <input id="hiddenWasteId" type="hidden" name="wasteId" value="" />
+            </form>
+        </div>
+    </div>
+</div>
 	</div>
 </section>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+</style>
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

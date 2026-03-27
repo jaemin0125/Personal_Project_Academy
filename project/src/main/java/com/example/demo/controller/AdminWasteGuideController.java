@@ -94,11 +94,8 @@ public class AdminWasteGuideController {
 		
 		List<WasteGuide> wasteGuide = this.wasteGuideService.getWasteGuideDetail(label);
 		
-		System.out.println(wasteGuide);
 		return wasteGuide;
 	}
-	
-	
 	
 
 	@GetMapping("/admin/wasteGuide/doAddWaste")

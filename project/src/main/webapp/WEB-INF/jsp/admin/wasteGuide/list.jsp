@@ -39,6 +39,53 @@
       }
     });
   }
+  
+  function getLabels(category) {
+	  
+	  $.ajax({
+			url : '/admin/wasteGuide/getCategoryLabels',
+			type : 'GET',
+			data : {category : category},
+			success : function(data) {
+				
+				$("#selectedLabel").empty().append(`<option value="" hidden selected>라벨을 선택하세요</option>`);
+				
+				data.forEach(function(item){
+					$("#selectedLabel").append(
+					 `<option value="\${item.label}">\${item.ko_label}</option>`
+					);
+				});
+				$("#selectedLabel").prop("disabled", false);
+				
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		});
+	  
+  }
+  
+  function showDetail(label){
+	  $.ajax({
+			url : '/admin/wasteGuide/getWasteGuide',
+			type : 'GET',
+			data : {label : label},
+			success : function(data) {
+				console.log(data);
+				$("#wasteId").val("\${data.id}");
+				$("#label").val("\${data.label}");
+				$("#ko_label").val("\${data.ko_label}");
+				$("#category").val("\${data.category}");
+				$("#wasteType").val("\${data.wasteType}");
+				$("#guide").val("\${data.guide}");
+				$("#hiddenWasteId").val("\${data.id}");
+						
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		});
+  }
 </script>
 
 <section class="mt-10 flex">
@@ -93,7 +140,7 @@
 					<!-- thumbnail -->
 					<div class="grid grid-cols-12 items-center gap-2">
 						<label class="col-span-3 text-right font-semibold whitespace-nowrap">썸네일 이미지</label>
-						<div class="col-span-9">
+						<div class="col-span-6">
 							<input type="file" id="uploadFileInput" class="file-input file-input-bordered w-full mb-1" accept="image/*" onchange="uploadImage()"/>
 							<img id="thumbnailPreview" src="" class="mt-4 w-40 h-auto hidden border rounded" /> 
 							<input type="hidden" name="thumbnail" id="thumbnailInput" required /> <!-- 이미지 업로드 하면 hidden 클래스 삭제 -->
@@ -114,20 +161,38 @@
 		</div>
 		<div class="border rounded-xl p-6">
 			<h2 class="text-lg font-semibold mb-4">📋 등록된 쓰레기 목록</h2>
+			
+			
+			
+			
+			<!-- 해당 부분이 폐기물 정보 수정,삭제 UI 간소화 로직. -->
+			<form action="doModifyWaste" method="get">
+			<select id="selectedCategory" class="select select-bordered col-span-9 w-50" onchange="getLabels(this.value);" required>
+				<option hidden selected>카테고리를 선택하세요</option>
+				<c:forEach var="category" items="${categories }">
+					<option>${category.category }</option>
+				</c:forEach>
+			</select>
+			</form>
+			
+			<select id="selectedLabel" class="select select-bordered col-span-9 w-50" disabled required onchange="showDetail(this.value);">
+			</select>
+			
+			
+			
+			
 			<table class="table w-full">
 				<tbody>
-					<c:forEach var="wasteGuide" items="${wasteGuides}">
 						<tr>
-							<td class="align-top">${wasteGuide.getId()}</td>
 							<td class="w-full">
-								<form action="doModifyWaste" method="get"
+								<form id="" action="doModifyWaste" method="get"
 									class="flex items-center gap-2 w-full">
-									<input type="hidden" name="wasteId"value="${wasteGuide.getId()}" /> 
-									<input type="text" name="label" class="input input-bordered input-sm !w-24 shrink-0" value="${wasteGuide.getLabel()}" required /> 
-									<input type="text" name="ko_label" class="input input-bordered input-sm !w-30 shrink-0" value="${wasteGuide.getKo_label()}" required /> 
-									<input type="text" name="category" class="input input-bordered input-sm !w-20 shrink-0"value="${wasteGuide.getCategory()}" required />
-									<input type="text" name="wasteType" class="input input-bordered input-sm !w-20 shrink-0"value="${wasteGuide.getWasteType()}" required />
-									<input type="text" name="guide" class="input input-bordered input-sm flex-grow" value="${wasteGuide.getGuide()}" required />
+									<input id="wasteId" type="hidden" name="wasteId"value="" /> 
+									<input id="label" type="text" name="label" class="input input-bordered input-sm !w-24 shrink-0" value="" required /> 
+									<input id="ko_label" type="text" name="ko_label" class="input input-bordered input-sm !w-30 shrink-0" value="" required /> 
+									<input id="category" type="text" name="category" class="input input-bordered input-sm !w-20 shrink-0"value="" required />
+									<input id="wasteType" type="text" name="wasteType" class="input input-bordered input-sm !w-20 shrink-0"value="" required />
+									<input id="guide" type="text" name="guide" class="input input-bordered input-sm flex-grow" value="" required />
 									<button type="submit" class="btn btn-sm btn-success ml-2 shrink-0">수정</button>
 								</form>
 							</td>
@@ -135,13 +200,12 @@
 								<form action="doDeleteWaste" method="get"
 									class="flex items-center justify-center"
 									onsubmit="return confirm('정말 삭제하시겠습니까?');">
-									<input type="hidden" name="wasteId"
-										value="${wasteGuide.getId()}" />
+									<input id="hiddenWasteId" type="hidden" name="hiddenWasteId"
+										value="" />
 									<button type="submit" class="btn btn-sm btn-error">삭제</button>
 								</form>
 							</td>
 						</tr>
-					</c:forEach>
 				</tbody>
 			</table>
 		</div>

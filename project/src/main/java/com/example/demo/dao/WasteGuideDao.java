@@ -141,4 +141,25 @@ public interface WasteGuideDao {
 				LIMIT 1
 			""")
 	String checkLabelExist(String ko_label);
+
+
+	@Select("""
+			SELECT DISTINCT category 
+				FROM wasteGuide;
+			""")
+	List<WasteGuide> getCategories();
+
+	@Select("""
+			SELECT * 
+			 	FROM wasteGuide
+			 	WHERE category = #{category};
+			""")
+	List<WasteGuide> getCategoryLabels(String category);
+
+	@Select("""
+			SELECT *
+				FROM wasteGuide
+				WHERE label = #{label};
+			""")
+	List<WasteGuide> getWasteGuideDetail(String label);
 }

@@ -69,11 +69,37 @@ public class AdminWasteGuideController {
 		}
 
 		List<WasteGuide> wasteGuides = this.wasteGuideService.getTotalGuide();
+		List<WasteGuide> categories = this.wasteGuideService.getCategories();
+		
 
 		model.addAttribute("wasteGuides", wasteGuides);
+		model.addAttribute("categories", categories);
 
 		return "admin/wasteGuide/list";
 	}
+	
+	@GetMapping("/admin/wasteGuide/getCategoryLabels") // 등록된 분리배출 가이드 중 선택된 것으로 가져오는 비동기용 메서드.
+	@ResponseBody
+		public List<WasteGuide> getCategoryLabels(String category) {
+		
+		List<WasteGuide> categoryLabels = this.wasteGuideService.getCategoryLabels(category);
+		
+		// 그러면 일단 카테고리는 list.jsp 열릴때 카테고리만 중복 제거에서 가져오고, 카테고리가 선택된 뒤에 이 컨트롤러 메서드를 쓴다?????
+		return categoryLabels;
+		}
+	
+	@GetMapping("/admin/wasteGuide/getWasteGuide")
+	@ResponseBody
+	public List<WasteGuide> getWasteGuide(String label) {
+		
+		List<WasteGuide> wasteGuide = this.wasteGuideService.getWasteGuideDetail(label);
+		
+		System.out.println(wasteGuide);
+		return wasteGuide;
+	}
+	
+	
+	
 
 	@GetMapping("/admin/wasteGuide/doAddWaste")
 	@ResponseBody

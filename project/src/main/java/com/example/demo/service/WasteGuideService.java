@@ -73,4 +73,16 @@ public class WasteGuideService {
 		return this.wasteGuideDao.checkLabelExist(ko_label);
 	}
 
+	public List<WasteGuide> getCategories() {
+		return this.wasteGuideDao.getCategories();
+	}
+
+	public List<WasteGuide> getCategoryLabels(String category) {
+		return this.wasteGuideDao.getCategoryLabels(category);
+	}
+
+	public List<WasteGuide> getWasteGuideDetail(String label) {
+		return this.wasteGuideDao.getWasteGuideDetail(label);
+	}
+
 }	

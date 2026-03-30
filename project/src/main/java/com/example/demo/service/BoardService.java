@@ -36,4 +36,8 @@ public class BoardService {
 		this.boardDao.doDeleteBoard(boardId);
 	}
 
+	public String doGetBoardName(int boardId) {
+		return this.boardDao.doGetBoardName(boardId);
+	}
+
 }

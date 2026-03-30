@@ -45,4 +45,11 @@ public interface BoardDao {
 				WHERE id = #{boardId}
 			""")
 	void doDeleteBoard(int boardId);
+
+	@Select("""
+			SELECT name 	
+				FROM board
+				WHERE id = #{boardId}
+			""")
+	String doGetBoardName(int boardId);
 }

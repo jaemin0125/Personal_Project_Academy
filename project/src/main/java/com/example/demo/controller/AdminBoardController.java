@@ -57,4 +57,13 @@ public class AdminBoardController {
 		return Util.jsReplace("게시판 삭제 완료", "/admin/board/list");
 	}
 	
+	@GetMapping("/admin/board/doGetBoardName")
+	@ResponseBody
+	public String doGetBoardName(int boardId) {
+		
+		String boardName = this.boardService.doGetBoardName(boardId);
+		
+		return boardName;
+	}
+	
 }

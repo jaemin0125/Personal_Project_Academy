@@ -16,8 +16,8 @@ public class BoardService {
 		this.boardDao = boardDao;
 	}
 
-	public Board getBoard(int boardId) {
-		return this.boardDao.getBoard(boardId);
+	public Board getBoardBySortId(int boardId) {
+		return this.boardDao.getBoardBySortId(boardId);
 	}
 
 	public void doAddBoard(String boardName) {
@@ -36,8 +36,12 @@ public class BoardService {
 		this.boardDao.doDeleteBoard(boardId);
 	}
 
-	public String doGetBoardName(int boardId) {
-		return this.boardDao.doGetBoardName(boardId);
+	public Board doGetBoardInfo(int boardId) {
+		return this.boardDao.doGetBoardInfo(boardId);
+	}
+
+	public void doUpdateSort(int boardId, int newSortId) {
+		this.boardDao.doUpdateSort(boardId, newSortId);
 	}
 
 }

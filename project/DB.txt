@@ -31,6 +31,7 @@ CREATE TABLE `member`(
 CREATE TABLE board(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
     , `name` VARCHAR(50) NOT NULL
+    , sort_id INT UNSIGNED NOT NULL
 );
 
 CREATE TABLE likePoint(
@@ -137,16 +138,20 @@ CREATE TABLE stickerPrice (
             , address = '대전 대덕구';
             
     INSERT INTO board
-        SET `name` = '공지사항';
+        SET `name` = '공지사항'
+            , sort_id = 1;
 
     INSERT INTO board
-        SET `name` = '팁/정보';
+        SET `name` = '팁/정보'
+            , sort_id = 2;
         
     INSERT INTO board
-        SET `name` = '질의응답';
+        SET `name` = '질의응답'
+            , sort_id = 3;
 
     INSERT INTO board
-        SET `name` = '오류 신고';
+        SET `name` = '오류 신고'
+            , sort_id = 4;
         
     INSERT INTO likePoint
         SET memberId = 2
@@ -418,10 +423,10 @@ INSERT INTO stickerPrice (label, subType, region, price, unit) VALUES
     SELECT * FROM wasteGuide;
     SELECT * FROM searchLog;
     SELECT * FROM stickerPrice;
-
+    
 	
 
     /*페이징 테스트용 더미데이터
     insert into article (regDate, updateDate, memberId, boardId, title, content)
     select now(), now(), FLOOR(RAND() * 3) + 1, FLOOR(RAND() * 4) + 1, concat('테스트제목', substr(RAND(), 1, 5)), CONCAT('테스트내용', SUBSTR(RAND(), 1, 5)) from article;
-    */
+    */ 

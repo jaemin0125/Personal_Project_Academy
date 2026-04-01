@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class Board {
 	private int id;
 	private String name;
+	private int sort_id;
 }

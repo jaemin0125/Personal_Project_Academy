@@ -6,23 +6,56 @@
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
 <script>
+	let sortable = null;
+	function showSortMode() {
+		$("#modifyBoardContainer").addClass("hidden"); // 수정창 닫기
+		$("#sortBoardContainer").removeClass("hidden"); // 순서창 열기
+
+		// SortableJS 초기화
+		if (!sortable) {
+			const el = document.getElementById('sortableList');
+			sortable = Sortable.create(el, {
+				animation : 150,
+				ghostClass : 'bg-primary/10'
+			});
+		}
+	}
+
+	// 3. 순서 저장 (서버 전송)
+	function saveBoardOrder() {
+		const ids = $('#sortableList li').map(function() {
+			return $(this).data('id');
+		}).get();
+
+		if (confirm("게시판 순서를 이대로 저장하시겠습니까?")) {
+			// 배열을 콤마로 연결해 서버로 이동 (기존 방식 응용)
+			location.href = "/admin/board/doUpdateSort?ids=" + ids.join(',');
+		}
+	}
+
+	// 4. 순서 편집 취소
+	function cancelSort() {
+		$("#sortBoardContainer").addClass("hidden");
+	}
+
 	function showBoardDetail(boardId) {
 		if (boardId) {
 			$("#modifyBoardContainer").removeClass("hidden");
 			$("#boardId").val(boardId);
 			$("#hiddenBoardId").val(boardId);
 		}
-		
+
 		$.ajax({
-			url : '/admin/board/doGetBoardName',
+			url : '/admin/board/doGetBoardInfo',
 			type : 'GET',
 			data : {
 				boardId : boardId
 			},
 			success : function(data) {
-				
-				$("#boardName").val(data);
-			
+
+				$("#boardName").val(data.name);
+				console.log(data.sort_id);
+
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
@@ -30,7 +63,6 @@
 		});
 
 	}
-	
 
 	function confirmBoardDelete() {
 		if (confirm("정보를 삭제하시겠습니까?")) {
@@ -39,7 +71,6 @@
 
 	}
 
-	
 	function cancelMoidfy() {
 		$("#modifyBoardContainer").addClass("hidden");
 		$("#selectedBoard").val("게시판을 선택하세요");
@@ -97,29 +128,73 @@
 		</div> --%>
 		<div class="border rounded-2xl p-8 bg-base-100 shadow-sm">
 			<h2 class="text-2xl font-bold mb-8 flex items-center gap-2">
-				<span class="text-primary">📋</span> 게시판 목록 수정
+				<span class="text-primary">📋</span> 게시판 설정 관리
 			</h2>
 
 			<div
-				class="flex flex-wrap gap-6 mb-10 p-6 bg-base-200 rounded-2xl items-end">
-				<div class="form-control w-fit">
-					<label class="label"> <span class="label-text font-bold">1.
-							게시판 선택</span>
-					</label> <select id="selectedBoard" class="select select-bordered mt-2"
+				class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 p-6 bg-base-200 rounded-2xl">
+
+				<div id="selectionContainer" class="form-control w-full">
+					<label class="label"> <span
+						class="label-text font-bold text-lg">1. 게시판 명칭 수정</span>
+					</label> <select id="selectedBoard"
+						class="select select-bordered mt-2 w-full"
 						onchange="showBoardDetail(this.value);" required>
 						<option hidden selected>게시판을 선택하세요</option>
 						<c:forEach var="board" items="${boards}">
 							<option value="${board.id}">${board.name}</option>
 						</c:forEach>
 					</select>
+					<p class="text-xs text-gray-500 mt-3">* 항목을 선택하면 아래에 수정 양식이
+						나타납니다.</p>
 				</div>
 
-				<div class="text-sm text-gray-500 mb-3">* 항목을 선택하면 아래에 수정 양식이 나타납니다.</div>
+				<div class="form-control w-full">
+					<label class="label"> <span
+						class="label-text font-bold text-lg">2. 게시판 출력 순서 변경</span>
+					</label>
+					<button type="button" onclick="showSortMode();"
+						class="btn btn-outline btn-primary mt-2 w-full gap-2">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+							fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+						순서 편집 모드 시작
+					</button>
+					<p class="text-xs text-gray-500 mt-3">* 드래그 앤 드롭으로 리스트 순서를
+						바꿉니다.</p>
+				</div>
+			</div>
+
+			<div id="sortBoardContainer" class="hidden animate-fadeIn mb-10">
+				<div class="divider text-gray-400 text-sm">REORDER BOARDS</div>
+				<div class="bg-base-200 rounded-3xl p-6 shadow-inner">
+					<p class="text-sm text-gray-600 mb-4 font-medium text-center">☰
+						항목을 드래그하여 순서를 바꾼 뒤 저장 버튼을 눌러주세요.</p>
+					<ul id="sortableList" class="space-y-2">
+						<c:forEach var="board" items="${boards}">
+							<li
+								class="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm cursor-move hover:border-primary border-2 border-transparent transition-all"
+								data-id="${board.id}">
+								<div class="flex items-center gap-3">
+									<span class="text-gray-400">☰</span> <span class="font-medium">${board.name}</span>
+								</div> <span class="text-xs badge badge-ghost">ID: ${board.id}</span>
+							</li>
+						</c:forEach>
+					</ul>
+					<div class="flex justify-end gap-3 mt-6">
+						<button type="button" onclick="cancelSort();"
+							class="btn btn-ghost">취소</button>
+						<button type="button" onclick="saveBoardOrder();"
+							class="btn btn-primary px-8">순서 저장하기</button>
+					</div>
+				</div>
 			</div>
 
 			<div id="modifyBoardContainer" class="hidden animate-fadeIn">
 				<div class="divider text-gray-400 text-sm">EDIT BOARD SETTINGS</div>
-
 				<div
 					class="bg-white border-2 border-primary/10 rounded-3xl p-8 mt-6 shadow-lg">
 					<form action="doModifyBoard" method="get" class="space-y-6">
@@ -128,18 +203,23 @@
 						<div class="form-control w-full">
 							<label class="label"> <span
 								class="label-text font-semibold text-lg">게시판 이름</span>
-							</label> 
-							<input id="boardName" type="text" name="boardName" class="input input-bordered mt-2 w-full max-w-lg focus:input-primary" placeholder="수정할 게시판 이름을 입력하세요" value="" required />
+							</label> <input id="boardName" type="text" name="boardName"
+								class="input input-bordered mt-2 w-full max-w-lg focus:input-primary"
+								placeholder="수정할 게시판 이름을 입력하세요" value="" required />
 						</div>
 
-						<div class="flex justify-between items-center pt-8 border-t border-gray-100">
-							<button type="button" onclick="confirmBoardDelete();" class="btn btn-error btn-outline gap-2">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    		</svg>
+						<div
+							class="flex justify-between items-center pt-8 border-t border-gray-100">
+							<button type="button" onclick="confirmBoardDelete();"
+								class="btn btn-error btn-outline gap-2">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+									fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round"
+										stroke-linejoin="round" stroke-width="2"
+										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
 								게시판 삭제
 							</button>
-
 							<div class="flex gap-3">
 								<button type="button" onclick="cancelMoidfy();"
 									class="btn btn-ghost">취소</button>
@@ -149,7 +229,7 @@
 						</div>
 					</form>
 
-					<form id="doDeleteBoard" action="doDeleteBoard" method="get"> <!-- 삭제 confirm 후 submit 되는 form -->
+					<form id="doDeleteBoard" action="doDeleteBoard" method="get">
 						<input id="hiddenBoardId" type="hidden" name="boardId" value="" />
 					</form>
 				</div>

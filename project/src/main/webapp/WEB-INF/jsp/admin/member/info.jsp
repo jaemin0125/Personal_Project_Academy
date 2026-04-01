@@ -26,7 +26,7 @@
 		<div class="card bg-base-100 shadow-xl">
 			<div class="card-body items-center text-center">
 				<h2 class="card-title">📋 게시판 정보 관리</h2>
-				<p class="text-sm text-gray-500">공지사항, 질문 등 게시판 구조를 수정합니다.</p>
+				<p class="text-sm text-gray-500">게시판의 구조를 수정합니다.</p>
 				<div class="card-actions mt-4">
 					<a href="/admin/board/list" class="btn btn-primary">이동하기</a>
 				</div>

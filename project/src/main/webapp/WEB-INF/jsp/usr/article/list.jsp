@@ -23,9 +23,9 @@
 		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 border-b border-gray-300 pb-2 text-gray-700 font-semibold text-lg gap-2">
 			<div class="flex flex-wrap gap-4">
 				<c:forEach var="boards" items="${boards }">
-					<a href="/usr/article/list?boardId=${boards.getId() }"
-					   class="pb-1 ${board.getId() == boards.getId() ? 'border-b-2 border-green-600' : ''}">
-						${boards.getName()}
+					<a href="/usr/article/list?boardId=${boards.id}&sortId=${boards.sort_id }"
+					   class="pb-1 ${board.id == boards.id ? 'border-b-2 border-green-600' : ''}">
+						${boards.name}
 					</a>
 				</c:forEach>
 			</div>

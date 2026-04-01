@@ -64,7 +64,7 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/list")
-	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "title") String searchType, @RequestParam(defaultValue = "") String searchKeyword) {
+	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int sortId,  @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "title") String searchType, @RequestParam(defaultValue = "") String searchKeyword) {
 
 		int articlesInPage = 10;
 		int limitFrom = (cPage - 1) * articlesInPage;
@@ -80,12 +80,14 @@ public class UsrArticleController {
 			end = totalPagesCnt;
 		}
 
-		Board board = this.boardService.getBoard(boardId);
+		Board board = this.boardService.getBoardBySortId(sortId);
 		
 		List<Board> boards = this.boardService.getBoards();
 		
+		
 		List<Article> articles = this.articleService.getArticles(boardId, articlesInPage, limitFrom, searchType,
 				searchKeyword);
+		
 		
 		model.addAttribute("searchType", searchType);
 		model.addAttribute("searchKeyword", searchKeyword);

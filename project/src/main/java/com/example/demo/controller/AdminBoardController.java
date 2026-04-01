@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.Board;
@@ -57,13 +59,28 @@ public class AdminBoardController {
 		return Util.jsReplace("게시판 삭제 완료", "/admin/board/list");
 	}
 	
-	@GetMapping("/admin/board/doGetBoardName")
+	@GetMapping("/admin/board/doGetBoardInfo")
 	@ResponseBody
-	public String doGetBoardName(int boardId) {
+	public Board doGetBoardName(int boardId) {
 		
-		String boardName = this.boardService.doGetBoardName(boardId);
+		Board boardInfo = this.boardService.doGetBoardInfo(boardId);
 		
-		return boardName;
+		return boardInfo;
+	}
+	
+	@GetMapping("/admin/board/doUpdateSort")
+	@ResponseBody
+	public String doUpdateOrder(@RequestParam("ids") List<Integer> ids) {
+		
+		
+		for(int i = 0; i < ids.size() ; i++) {
+			int boardId = ids.get(i);
+			int newSortId = i + 1;
+			
+			this.boardService.doUpdateSort(boardId, newSortId);
+		}
+		
+		return Util.jsReplace("게시판 순서가 변경되었습니다.", "/admin/board/list");
 	}
 	
 }

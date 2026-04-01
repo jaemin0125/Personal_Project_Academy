@@ -16,20 +16,22 @@ public interface BoardDao {
 	@Select("""
 			SELECT *
 				FROM board
-				WHERE id = #{boardId} 
+				WHERE sort_id = #{sortId} 
 			""")
-	Board getBoard(int boardId);
+	Board getBoardBySortId(int sortId);
 	
 	
 	@Insert("""
 			INSERT INTO board
 				SET name = #{boardName}
+					, sort_id = (SELECT IFNULL(MAX(sort_id), 0) + 1 FROM board AS B); 
 			""") 
 	void doAddBoard(String boardName);
 
 	@Select("""
 			SELECT *
 				FROM board
+				ORDER BY sort_id;
 			""")
 	List<Board> getBoards();
 
@@ -47,9 +49,16 @@ public interface BoardDao {
 	void doDeleteBoard(int boardId);
 
 	@Select("""
-			SELECT name 	
+			SELECT * 	
 				FROM board
 				WHERE id = #{boardId}
 			""")
-	String doGetBoardName(int boardId);
+	Board doGetBoardInfo(int boardId);
+
+	@Update("""
+			UPDATE board
+				SET sort_id = #{newSortId}
+				WHERE id = #{boardId}
+			""")
+	void doUpdateSort(int boardId, int newSortId);
 }

@@ -41,6 +41,7 @@
 	function showBoardDetail(boardId) {
 		if (boardId) {
 			$("#modifyBoardContainer").removeClass("hidden");
+			$("#sortBoardContainer").addClass("hidden");
 			$("#boardId").val(boardId);
 			$("#hiddenBoardId").val(boardId);
 		}

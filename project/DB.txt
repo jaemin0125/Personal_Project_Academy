@@ -424,9 +424,32 @@ INSERT INTO stickerPrice (label, subType, region, price, unit) VALUES
     SELECT * FROM searchLog;
     SELECT * FROM stickerPrice;
     
-	
+    
+    
+    
+/*INSERT INTO `member` (regDate, updateDate, loginId, loginPw, `name`, email, address, authLevel)
+WITH RECURSIVE cte AS (
+    -- 101부터 200까지 숫자 생성 (기존 데이터와 충돌 방지)
+    SELECT 101 AS n
+    UNION ALL
+    SELECT n + 1 FROM cte WHERE n < 200
+)
+SELECT 
+    DATE_ADD(NOW(), INTERVAL -n HOUR) AS regDate, -- 가입 시간을 다르게 해서 정렬 테스트 최적화
+    NOW() AS updateDate,
+    CONCAT('user', n) AS loginId,
+    'password123' AS loginPw,
+    CONCAT('테스트유저', n) AS `name`,
+    CONCAT('test', n, '@example.com') AS email,
+    CASE (n % 3) 
+        WHEN 0 THEN '서울시 강남구' 
+        WHEN 1 THEN '경기도 성남시' 
+        ELSE '부산시 해운대구' 
+    END AS address,
+    1 AS authLevel -- 모두 일반 사용자 권한
+FROM cte;
 
-    /*페이징 테스트용 더미데이터
+    페이징 테스트용 더미데이터
     insert into article (regDate, updateDate, memberId, boardId, title, content)
     select now(), now(), FLOOR(RAND() * 3) + 1, FLOOR(RAND() * 4) + 1, concat('테스트제목', substr(RAND(), 1, 5)), CONCAT('테스트내용', SUBSTR(RAND(), 1, 5)) from article;
     */ 

@@ -1,5 +1,7 @@
 package com.example.demo.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -62,5 +64,26 @@ public interface MemberDao {
 				WHERE id = #{id}
 			""")
 	Member getLoginedMemberById(int id);
+
+	@Select("""
+			SELECT COUNT(id)
+				FROM `member`
+			""")
+	int getMembersCnt();
+
+	@Select("""
+			SELECT id
+					, regDate
+					, updateDate
+					, loginId
+					, name
+					, email
+					, address
+					, authLevel
+			    FROM `member`
+				ORDER BY id DESC
+				LIMIT #{limitFrom}, #{membersInPage}
+			""")
+	List<Member> getMemberList(int membersInPage, int limitFrom);
 	
 }

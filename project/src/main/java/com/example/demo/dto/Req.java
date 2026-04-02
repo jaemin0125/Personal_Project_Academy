@@ -52,6 +52,10 @@ public class Req {
 		return loginedMember != null && loginedMember.getId() != 0;  
 	}
 	
+	public boolean isAdmin() {
+		return isLogined() && loginedMember.getAuthLevel() == 0;  
+	}
+	
 	public void jsPrintReplace(String msg, String uri) {
 		this.resp.setContentType("text/html;charset=UTF-8");
 		

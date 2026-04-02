@@ -36,9 +36,19 @@
 		<div class="card bg-base-100 shadow-xl">
 			<div class="card-body items-center text-center">
 				<h2 class="card-title">🧑‍ 관리자 정보 수정</h2>
-				<p class="text-sm text-gray-500">개인정보를 수정합니다</p>
+				<p class="text-sm text-gray-500">개인정보를 수정합니다.</p>
 				<div class="card-actions mt-4">
 					<a href="/usr/member/checkPw" class="btn btn-primary">이동하기</a>
+				</div>
+			</div>
+		</div>
+		<!-- 회원 정보 관리 -->
+		<div class="card bg-base-100 shadow-xl">
+			<div class="card-body items-center text-center">
+				<h2 class="card-title">👤 회원 정보 관리</h2>
+				<p class="text-sm text-gray-500">회원 정보를 수정합니다.</p>
+				<div class="card-actions mt-4">
+					<a href="/admin/member/manage" class="btn btn-primary">이동하기</a>
 				</div>
 			</div>
 		</div>

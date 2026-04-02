@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.MemberDao;
@@ -36,6 +38,14 @@ public class MemberService {
 
 	public Member getLoginedMemberById(int id) {
 		return this.memberDao.getLoginedMemberById(id);
+	}
+
+	public int getMembersCnt() {
+		return this.memberDao.getMembersCnt();
+	}
+
+	public List<Member> getMembersList(int membersInPage, int limitFrom) {
+		return this.memberDao.getMemberList(membersInPage, limitFrom);
 	}
 
 }

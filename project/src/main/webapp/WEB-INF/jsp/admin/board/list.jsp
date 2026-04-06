@@ -77,6 +77,7 @@
 		$("#selectedBoard").val("게시판을 선택하세요");
 
 	}
+	
 </script>
 
 

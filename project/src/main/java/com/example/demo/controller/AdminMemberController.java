@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.demo.dto.Article;
 import com.example.demo.dto.Member;
 import com.example.demo.dto.Req;
 import com.example.demo.service.MemberService;
@@ -33,12 +33,11 @@ public class AdminMemberController {
 	}
 
 	@GetMapping("/admin/member/manage")
-	public String modifyMember(Model model, @RequestParam(defaultValue = "1") int cPage) {
+	public String modifyMember(Model model, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "-1") int authLevel) {
 
 		/*
 		 * if (!req.isAdmin()) { return "usr/error/badRequest"; }
 		 */
-
 		
 		int membersInPage = 10;
 		int limitFrom = (cPage - 1) * membersInPage;
@@ -54,10 +53,11 @@ public class AdminMemberController {
 			end = totalPagesCnt;
 		}
 		
-		List<Member> members = this.memberService.getMembersList(membersInPage, limitFrom);
+		List<Member> members = this.memberService.getMembersList(membersInPage, limitFrom, authLevel);
 		
-
+		
 		model.addAttribute("members", members);
+		model.addAttribute("authLevel", authLevel);
 		model.addAttribute("cPage", cPage);
 		model.addAttribute("begin", begin);
 		model.addAttribute("end", end);
@@ -65,6 +65,13 @@ public class AdminMemberController {
 		model.addAttribute("articlesCnt", membersCnt);
 
 		return "admin/member/manage";
+	}
+	
+	@GetMapping("/admin/member/getMemberById")
+	@ResponseBody
+	public Member getMemberById(int id) {
+		
+		return this.memberService.getMemberById(id);
 	}
 
 }

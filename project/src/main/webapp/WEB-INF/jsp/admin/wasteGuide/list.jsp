@@ -166,7 +166,7 @@
 							class="col-span-3 text-right font-semibold whitespace-nowrap">타입</label>
 						<select name="wasteType" class="select select-bordered col-span-9"
 							required>
-							<option value="" class=" text-gray-400" disabled selected hidden>타입을
+							<option value="" class=" text-gray-400" disabled selected hidden = "hidden">타입을
 								선택하세요</option>
 							<option value="일반">일반</option>
 							<option value="대형">대형</option>
@@ -197,7 +197,7 @@
 						</div>
 						<div class="absolute right-18">
 							<button type="button" onclick="history.back();"
-								class="btn btn-outline">← 뒤로가기</button>
+								class="btn btn-outline">← 목록으로 돌아가기</button>
 						</div>
 					</div>
 				</form>

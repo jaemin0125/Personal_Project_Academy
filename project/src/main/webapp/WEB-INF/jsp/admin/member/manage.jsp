@@ -5,6 +5,42 @@
 
 <%@ include file="/WEB-INF/jsp/common/articleHeader.jsp"%>
 
+<script>
+	function goInfo(){
+		location.href = "/admin/member/info";	
+	}
+	
+	function openModifyModal(id){
+		
+		$.ajax({
+			url : '/admin/member/getMemberById',
+			type : 'GET',
+			data : {
+				id : id
+			},
+			success : function(data) {
+				document.getElementById('modify_modal').showModal();
+				
+				$("#m-regDate").val(data.regDate);
+				$("#m-loginId").val(data.loginId);
+				$("#m-name").val(data.name);
+				$("#m-email").val(data.email);
+				$("#m-address").val(data.address);
+				
+				
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		});
+		
+		
+		
+	}
+
+</script>
+
+
 <section class="mt-10 mb-10">
     <div class="container mx-auto max-w-6xl bg-base-100 p-6 rounded-2xl shadow-md">
         <h1 class="text-2xl font-bold mb-6 text-center text-primary">👤 회원 정보 관리</h1>
@@ -19,12 +55,13 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <select class="select select-bordered select-sm">
-                        <option disabled selected>권한 필터</option>
-                        <option>전체</option>
-                        <option>관리자</option>
-                        <option>일반회원</option>
-                    </select>
+                	<form id="filterForm" method="get">
+	                    <select name="authLevel" onchange="this.form.submit();" class="select select-bordered select-sm">
+		                        <option value="-1" <c:if test="${authLevel == -1 }"> selected </c:if>>전체 보기</option>
+		                        <option value="0"  <c:if test="${authLevel == 0 }"> selected </c:if>>관리자</option> 
+		                        <option value="1"  <c:if test="${authLevel == 1 }"> selected </c:if>>일반회원</option>
+	                    </select>
+                    </form>
                 </div>
             </div>
 
@@ -35,7 +72,6 @@
                             <th class="bg-base-200 text-center w-16">번호</th>
                             <th class="bg-base-200">아이디</th>
                             <th class="bg-base-200">이름</th>
-                            <th class="bg-base-200">이메일</th>
                             <th class="bg-base-200 text-center">권한</th>
                             <th class="bg-base-200 text-center">가입일</th>
                             <th class="bg-base-200 text-center">관리</th>
@@ -47,7 +83,6 @@
                                 <td class="text-center opacity-70">${member.id}</td>
                                 <td class="font-bold">${member.loginId}</td>
                                 <td>${member.name}</td>
-                                <td class="text-sm">${member.email}</td>
                                 <td class="text-center">
                                     <c:choose>
                                         <c:when test="${member.authLevel == 0}">
@@ -60,8 +95,8 @@
                                 </td>
                                 <td class="text-center text-xs opacity-60">${member.regDate}</td>
                                 <td class="text-center">
-                                    <a href="/admin/member/modify?id=${member.id}"
-                                       class="btn btn-sm btn-ghost text-info hover:bg-info/10"> 📝 수정 </a>
+                                    <button
+                                       class="btn btn-sm btn-ghost text-info hover:bg-info/10" onclick="openModifyModal(${member.id});"> 📝 수정 </button>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -69,16 +104,59 @@
                 </table>
             </div>
 
-            <div class="relative flex justify-center items-center mt-6 pt-6 border-t">
+			<dialog id="modify_modal" class="modal">
+			<div class="modal-box w-11/22 max-w-2xl">
+				<h3 class="font-bold text-lg mb-4">회원 상세 정보 및 수정</h3>
+
+				<form action="/admin/member/doModify" method="POST">
+					<input type="hidden" name="id" id="m-id">
+
+					<div class="grid grid-cols-2 gap-4">
+						<div class="form-control">
+							<label class="label">가입일</label> <input type="text"
+								id="m-regDate" class="input input-bordered bg-gray-100" readonly>
+						</div>
+						<div class="form-control">
+							<label class="label">아이디</label> <input type="text"
+								id="m-loginId" class="input input-bordered bg-gray-100" readonly>
+						</div>
+						<div class="form-control col-span-2">
+							<label class="label">이름</label> <input type="text" name="name"
+								id="m-name" class="input input-bordered">
+						</div>
+						<div class="form-control col-span-2">
+							<label class="label">이메일</label> <input type="email" name="email"
+								id="m-email" class="input input-bordered">
+						</div>
+						<div class="form-control col-span-2">
+							<label class="label">주소</label> <input type="text" name="address"
+								id="m-address" class="input input-bordered">
+						</div>
+						<div class="form-control">
+							<label class="label">권한</label> <select name="authLevel"
+								id="m-authLevel" class="select select-bordered">
+								<option value="1">일반사용자</option>
+								<option value="0">관리자</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="modal-action">
+						<button type="submit" class="btn btn-primary">수정 저장</button>
+						<button type="button" class="btn" onclick="modify_modal.close()">취소</button>
+					</div>
+				</form>
+			</div>
+			</dialog>
+
+			<div class="relative flex justify-center items-center mt-6 pt-6 border-t">
                 
                 <div class="join shadow-sm border">
+                    
                     <c:if test="${begin > 1}">
                         <a href="?cPage=${begin - 1}" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angles-left"></i>
                         </a>
-                    </c:if>
-                    
-                    <c:if test="${cPage > 1}">
                         <a href="?cPage=1" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angle-left"></i>
                         </a>
@@ -105,7 +183,7 @@
                 </div>
 
                 <div class="absolute right-0 flex flex-col items-end gap-2">
-                    <button onclick="history.back();" class="btn btn-outline btn-sm gap-2">
+                    <button onclick="goInfo();" class="btn btn-outline btn-sm gap-2">
                         <span class="text-xs">←</span> 목록으로 돌아가기
                     </button>
                 </div>

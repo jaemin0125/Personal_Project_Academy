@@ -44,8 +44,12 @@ public class MemberService {
 		return this.memberDao.getMembersCnt();
 	}
 
-	public List<Member> getMembersList(int membersInPage, int limitFrom) {
-		return this.memberDao.getMemberList(membersInPage, limitFrom);
+	public List<Member> getMembersList(int membersInPage, int limitFrom, int authLevel) {
+		return this.memberDao.getMemberList(membersInPage, limitFrom, authLevel);
+	}
+
+	public Member getMemberById(int id) {
+		return this.memberDao.getMemberById(id);
 	}
 
 }

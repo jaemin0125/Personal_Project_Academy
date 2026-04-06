@@ -72,18 +72,36 @@ public interface MemberDao {
 	int getMembersCnt();
 
 	@Select("""
-			SELECT id
-					, regDate
-					, updateDate
+			<script>
+				SELECT id
+						, SUBSTR(regDate, 1, 10) regDate
+						, SUBSTR(updateDate, 1, 10) updateDate
+						, loginId
+						, name
+						, email
+						, address
+						, authLevel
+				    FROM `member`
+				    <if test="authLevel != -1">
+				    	WHERE authLevel = #{authLevel}
+				    </if>
+					ORDER BY id DESC
+					LIMIT #{limitFrom}, #{membersInPage}
+			</script>
+			""")
+	List<Member> getMemberList(int membersInPage, int limitFrom, int authLevel);
+
+	@Select("""
+			SELECT SUBSTR(regDate, 1, 10) regDate
+					, SUBSTR(updateDate, 1, 10) updateDate
 					, loginId
 					, name
 					, email
 					, address
 					, authLevel
-			    FROM `member`
-				ORDER BY id DESC
-				LIMIT #{limitFrom}, #{membersInPage}
+					FROM `member`
+					WHERE id = #{id}
 			""")
-	List<Member> getMemberList(int membersInPage, int limitFrom);
+	Member getMemberById(int id);
 	
 }

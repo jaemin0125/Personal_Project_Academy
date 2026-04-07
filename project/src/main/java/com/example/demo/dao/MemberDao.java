@@ -66,10 +66,15 @@ public interface MemberDao {
 	Member getLoginedMemberById(int id);
 
 	@Select("""
-			SELECT COUNT(id)
-				FROM `member`
+			<script>
+				SELECT COUNT(id)
+					FROM `member`
+					<if test="authLevel != -1">
+						WHERE authLevel = #{authLevel}
+					</if>
+			</script>
 			""")
-	int getMembersCnt();
+	int getMembersCnt(int authLevel);
 
 	@Select("""
 			<script>

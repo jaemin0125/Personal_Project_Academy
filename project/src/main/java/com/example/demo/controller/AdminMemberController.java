@@ -33,7 +33,7 @@ public class AdminMemberController {
 	}
 
 	@GetMapping("/admin/member/manage")
-	public String modifyMember(Model model, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "-1") int authLevel) {
+	public String manageMember(Model model, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "-1") int authLevel) {
 
 		/*
 		 * if (!req.isAdmin()) { return "usr/error/badRequest"; }
@@ -42,7 +42,7 @@ public class AdminMemberController {
 		int membersInPage = 10;
 		int limitFrom = (cPage - 1) * membersInPage;
 
-		int membersCnt = this.memberService.getMembersCnt();
+		int membersCnt = this.memberService.getMembersCnt(authLevel);
 		
 		int totalPagesCnt = (int) Math.ceil(membersCnt / (double) membersInPage);
 

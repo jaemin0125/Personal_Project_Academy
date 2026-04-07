@@ -11,7 +11,6 @@
 	}
 	
 	function openModifyModal(id){
-		
 		$.ajax({
 			url : '/admin/member/getMemberById',
 			type : 'GET',
@@ -20,26 +19,18 @@
 			},
 			success : function(data) {
 				document.getElementById('modify_modal').showModal();
-				
 				$("#m-regDate").val(data.regDate);
 				$("#m-loginId").val(data.loginId);
 				$("#m-name").val(data.name);
 				$("#m-email").val(data.email);
 				$("#m-address").val(data.address);
-				
-				
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
 			}
 		});
-		
-		
-		
 	}
-
 </script>
-
 
 <section class="mt-10 mb-10">
     <div class="container mx-auto max-w-6xl bg-base-100 p-6 rounded-2xl shadow-md">
@@ -152,31 +143,31 @@
 			<div class="relative flex justify-center items-center mt-6 pt-6 border-t">
                 
                 <div class="join shadow-sm border">
-                    
+                    <c:set var="queryString" value="?authLevel=${authLevel }"/>
                     <c:if test="${begin > 1}">
-                        <a href="?cPage=${begin - 1}" class="join-item btn btn-sm">
+                        <a href="${queryString }&cPage=${begin - 1}" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angles-left"></i>
                         </a>
-                        <a href="?cPage=1" class="join-item btn btn-sm">
+                        <a href="${queryString }&cPage=1" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angle-left"></i>
                         </a>
                     </c:if>
                     
                     <c:forEach var="i" begin="${begin}" end="${end}">
-                        <a href="?cPage=${i}"
+                        <a href="${queryString }&cPage=${i}"
                            class="join-item btn btn-sm ${cPage == i ? 'btn-active btn-primary' : ''}">
                             ${i}
                         </a>
                     </c:forEach>
 
                     <c:if test="${end < totalPagesCnt}">
-                        <a href="?cPage=${end + 1}" class="join-item btn btn-sm">
+                        <a href="${queryString }&cPage=${end + 1}" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angle-right"></i>
                         </a>
                     </c:if>
 
                     <c:if test="${cPage < totalPagesCnt}">
-                        <a href="?cPage=${totalPagesCnt}" class="join-item btn btn-sm">
+                        <a href="${queryString }&cPage=${totalPagesCnt}" class="join-item btn btn-sm">
                             <i class="fa-solid fa-angles-right"></i>
                         </a>
                     </c:if>

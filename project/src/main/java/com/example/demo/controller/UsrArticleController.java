@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.Article;
 import com.example.demo.dto.Board;
-import com.example.demo.dto.LoginedMember;
 import com.example.demo.dto.Req;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.BoardService;
@@ -64,7 +63,7 @@ public class UsrArticleController {
 	}
 
 	@GetMapping("/usr/article/list")
-	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int sortId,  @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "title") String searchType, @RequestParam(defaultValue = "") String searchKeyword) {
+	public String list(Model model, @RequestParam(defaultValue = "1") int boardId, @RequestParam(defaultValue = "1") int sortId, @RequestParam(defaultValue = "1") int cPage, @RequestParam(defaultValue = "title") String searchType, @RequestParam(defaultValue = "") String searchKeyword) {
 
 		int articlesInPage = 10;
 		int limitFrom = (cPage - 1) * articlesInPage;
@@ -79,8 +78,10 @@ public class UsrArticleController {
 		if (end > totalPagesCnt) {
 			end = totalPagesCnt;
 		}
-
+		
+		
 		Board board = this.boardService.getBoardBySortId(sortId);
+
 		
 		List<Board> boards = this.boardService.getBoards();
 		

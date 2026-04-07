@@ -40,8 +40,8 @@ public class MemberService {
 		return this.memberDao.getLoginedMemberById(id);
 	}
 
-	public int getMembersCnt() {
-		return this.memberDao.getMembersCnt();
+	public int getMembersCnt(int authLevel) {
+		return this.memberDao.getMembersCnt(authLevel);
 	}
 
 	public List<Member> getMembersList(int membersInPage, int limitFrom, int authLevel) {

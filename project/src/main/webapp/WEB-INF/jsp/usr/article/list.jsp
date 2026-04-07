@@ -12,8 +12,8 @@
 		<ul class="space-y-2">
 			<c:forEach var="boards" items="${boards }">
 				<li>
-					<a href="/usr/article/list?boardId=${boards.getId() }"
-					   class="block hover:text-green-800">${boards.getName() }</a>
+					<a href="/usr/article/list?boardId=${boards.id }&sortId=${boards.sort_id}"
+					   class="block hover:text-green-800">${boards.name }</a>
 				</li>
 			</c:forEach>
 		</ul>
@@ -23,7 +23,7 @@
 		<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 border-b border-gray-300 pb-2 text-gray-700 font-semibold text-lg gap-2">
 			<div class="flex flex-wrap gap-4">
 				<c:forEach var="boards" items="${boards }">
-					<a href="/usr/article/list?boardId=${boards.id}&sortId=${boards.sort_id }"
+					<a href="/usr/article/list?boardId=${boards.id}&sortId=${boards.sort_id}"
 					   class="pb-1 ${board.id == boards.id ? 'border-b-2 border-green-600' : ''}">
 						${boards.name}
 					</a>
@@ -32,7 +32,8 @@
 
 			<form method="get"
 				  class="flex flex-col sm:flex-row sm:items-center gap-2 bg-green-50 px-1.5 py-1.5 rounded-lg shadow-sm w-full sm:w-auto">
-				<input type="hidden" name="boardId" value="${board.getId() }" />
+				<input type="hidden" name="boardId" value="${board.id }" />
+				<input type="hidden" name="sortId" value="${board.sort_id }" />
 				<select name="searchType"
 						class="border border-green-400 text-sm px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300">
 					<option value="title" <c:if test="${searchType == 'title'}">selected</c:if>>제목</option>
@@ -53,9 +54,9 @@
 			<c:forEach var="article" items="${articles}">
 				<div class="p-4 bg-white shadow rounded hover:bg-gray-100 transition">
 					<h3 class="font-bold text-xl">
-						<a href="/usr/article/detail?id=${article.getId() }">${article.title}</a>
+						<a href="/usr/article/detail?id=${article.id }">${article.title}</a>
 					</h3>
-					<p class="text-gray-600 line-clamp-2">${article.getContent() }</p>
+					<p class="text-gray-600 line-clamp-2">${article.content }</p>
 					<div class="text-sm text-gray-500 mt-2">
 						작성자: ${article.getWriterName()} | 작성일: ${article.getRegDate().substring(2,10)} |
 						조회수: ${article.getViews()} | 좋아요: ${article.getLikePoint()}
@@ -85,7 +86,7 @@
 		<!-- 페이지네이션 -->
 		<div class="flex justify-center mb-8 mt-4">
 			<div class="flex items-center space-x-1 flex-wrap">
-				<c:set var="queryString" value="?boardId=${board.getId()}&searchType=${searchType}&searchKeyword=${searchKeyword}" />
+				<c:set var="queryString" value="?boardId=${board.getId()}&sortId=${board.sort_id }&searchType=${searchType}&searchKeyword=${searchKeyword}" />
 
 				<c:if test="${begin != 1}">
 					<a class="btn btn-sm px-3 py-1 border rounded hover:bg-[#06874e] hover:text-white" href="${queryString}&cPage=1">

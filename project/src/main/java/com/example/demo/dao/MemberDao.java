@@ -15,7 +15,6 @@ public interface MemberDao {
 	@Insert("""
 			INSERT INTO `member`
 			    SET regDate = NOW()
-			        , updateDate = NOW()
 			        , loginId = #{loginId}
 			        , loginPw = #{loginPw}
 			        , `name` = #{name}
@@ -33,31 +32,32 @@ public interface MemberDao {
 
 	@Update("""
 			UPDATE `member`
-				SET name = #{name}
+				SET updateDate = NOW()
+					,name = #{name}
 					, email = #{email}
 					, address = #{address}
 					, loginPw = #{loginPw}
 					WHERE loginId = #{loginedMemberId}
 			""")
 	void doModifyMember(String loginedMemberId, String name, String email, String address, String loginPw);
-	
+
 	@Select("""
 			SELECT loginId
 				FROM `member`
 				WHERE id = #{id}
 			""")
 	String getLoginId(int id);
-	
+
 	@Update("""
 			UPDATE `member`
-				SET name = #{name}
+				SET updateDate = NOW()
+					, name = #{name}
 					, email = #{email}
 					, address = #{address}
 					WHERE loginId = #{loginedMemberId}
 			""")
 	void modifyWithOutPw(String loginedMemberId, String name, String email, String address);
 
-	
 	@Select("""
 			SELECT *
 				FROM `member`
@@ -103,10 +103,20 @@ public interface MemberDao {
 					, name
 					, email
 					, address
+					, status
 					, authLevel
 					FROM `member`
 					WHERE id = #{id}
 			""")
 	Member getMemberById(int id);
-	
+
+	@Update("""
+			UPDATE `member`
+				SET updateDate = NOW()
+					 ,authLevel = #{authLevel}
+					 , status = #{status}
+				WHERE id = #{id}
+			""")
+	void doModifyMemberInfo(int id, int authLevel, int status);
+
 }

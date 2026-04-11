@@ -52,4 +52,8 @@ public class MemberService {
 		return this.memberDao.getMemberById(id);
 	}
 
+	public void doModifyMemberInfo(int id, int authLevel, int status) {
+		this.memberDao.doModifyMemberInfo(id, authLevel, status);
+	}
+
 }

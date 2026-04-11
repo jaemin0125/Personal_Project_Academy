@@ -69,7 +69,12 @@ public class UsrMemberController {
 		if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
 			return Util.jsReplace("비밀번호가 일치하지 않습니다", "login");
 		}
-		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel()));
+		
+		if (member.getStatus() == 1) {
+			return Util.jsReplace("차단된 회원입니다 관리자에게 문의하세요.", "/");
+		} /* 추가적으로 휴면, 탈퇴대기 관련 로직을 추가하여 else if 문 추가 예정. */
+		
+		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel(), member.getStatus()));
 		
 		return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()), "/usr/home/main");
 	}

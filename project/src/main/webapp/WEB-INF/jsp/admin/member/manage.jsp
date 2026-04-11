@@ -19,11 +19,20 @@
 			},
 			success : function(data) {
 				document.getElementById('modify_modal').showModal();
-				$("#m-regDate").val(data.regDate);
-				$("#m-loginId").val(data.loginId);
-				$("#m-name").val(data.name);
-				$("#m-email").val(data.email);
-				$("#m-address").val(data.address);
+				$("#m-id").val(id)
+				$("#m-authLevel").val(data.authLevel);
+				$("#m-status").val(data.status);
+				
+				$("#m-regDate").text(data.regDate);
+				$("#m-loginId").text(data.loginId);
+				$("#m-name").text(data.name);
+				$("#m-email").text(data.email);
+				$("#m-address").text(data.address);
+				
+				if(data.updateDate){
+					$("#m-updateDate").text(data.updateDate);
+				}
+				
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
@@ -95,46 +104,109 @@
                 </table>
             </div>
 
-			<dialog id="modify_modal" class="modal">
-			<div class="modal-box w-11/22 max-w-2xl">
-				<h3 class="font-bold text-lg mb-4">회원 상세 정보 및 수정</h3>
+			<dialog id="modify_modal" class="modal modal-bottom sm:modal-middle">
+			<div
+				class="modal-box w-11/12 max-w-2xl border border-base-300 shadow-2xl p-0 overflow-hidden">
+				<div
+					class="bg-slate-50 px-6 py-4 border-b flex items-center justify-between">
+					<div>
+						<h3 class="font-bold text-xl text-slate-800">회원 관리 및 권한 설정</h3>
+						<p class="text-xs text-slate-500 mt-1">회원의 개인정보를 확인하고 관리 권한을
+							조정합니다.</p>
+					</div>
+					<button type="button" class="btn btn-sm btn-circle btn-ghost"
+						onclick="modify_modal.close()">✕</button>
+				</div>
 
-				<form action="/admin/member/doModify" method="POST">
+				<form action="/admin/member/doModify" method="POST"
+					class="p-6 space-y-6">
 					<input type="hidden" name="id" id="m-id">
 
-					<div class="grid grid-cols-2 gap-4">
-						<div class="form-control">
-							<label class="label">가입일</label> <input type="text"
-								id="m-regDate" class="input input-bordered bg-gray-100" readonly>
+					<section>
+						<div class="flex items-center gap-2 mb-3">
+							<span
+								class="badge badge-sm badge-outline badge-primary font-bold px-3 py-2">회원
+								정보</span>
 						</div>
-						<div class="form-control">
-							<label class="label">아이디</label> <input type="text"
-								id="m-loginId" class="input input-bordered bg-gray-100" readonly>
+						<div
+							class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-base-100 border rounded-xl p-4 shadow-sm">
+							<div class="form-control">
+								<label class="label"><span
+									class="label-text font-medium text-slate-500">아이디</span></label>
+								<div id="m-loginId"
+									class="px-1 font-bold text-slate-700 uppercase tracking-tight">
+									-</div>
+							</div>
+							<div class="form-control">
+								<label class="label"><span
+									class="label-text font-medium text-slate-500">이름</span></label>
+								<div id="m-name" class="px-1 text-slate-700 font-semibold">
+									-</div>
+							</div>
+							<div class="form-control">
+								<label class="label"><span
+									class="label-text font-medium text-slate-500">이메일</span></label>
+								<div id="m-email" class="px-1 text-slate-700">-</div>
+							</div>
+							<div class="form-control">
+								<label class="label"><span
+									class="label-text font-medium text-slate-500">주소</span></label>
+								<div id="m-address" class="px-1 text-slate-700 truncate"
+									title="상세 주소">-</div>
+							</div>
 						</div>
-						<div class="form-control col-span-2">
-							<label class="label">이름</label> <input type="text" name="name"
-								id="m-name" class="input input-bordered">
+					</section>
+
+					<section
+						class="bg-primary/5 rounded-2xl p-5 border border-primary/10">
+						<div class="flex items-center gap-2 mb-4">
+							<span
+								class="badge badge-sm badge-primary font-bold px-3 py-2 text-white">관리
+								설정</span>
 						</div>
-						<div class="form-control col-span-2">
-							<label class="label">이메일</label> <input type="email" name="email"
-								id="m-email" class="input input-bordered">
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div class="form-control">
+								<label class="label"> <span
+									class="label-text font-bold text-slate-700">접근 권한 등급</span>
+								</label> <select name="authLevel" id="m-authLevel"
+									class="select select-bordered select-primary w-full bg-white font-semibold">
+									<option value="1">일반사용자 (Level 1)</option>
+									<option value="0">관리자 (Level 0)</option>
+								</select>
+							</div>
+
+							<div class="form-control">
+								<label class="label"> <span
+									class="label-text font-bold text-slate-700">계정 상태</span>
+								</label> 
+								<select name="status" id="m-status"
+									class="select select-bordered w-full bg-white">
+									<option value="0">정상 (Active)</option>
+									<option value="1">차단 (Banned)</option>
+									<option value="2" disabled>휴면 (Dormant) - 시스템 전용</option>
+								</select>
+							</div>
 						</div>
-						<div class="form-control col-span-2">
-							<label class="label">주소</label> <input type="text" name="address"
-								id="m-address" class="input input-bordered">
+					</section>
+
+					<div
+						class="flex justify-between items-center px-2 py-1 text-[11px] text-slate-400 border-t pt-4">
+						<div class="flex gap-4">
+							<span>가입일: <b id="m-regDate"
+								class="font-normal text-slate-500">-</b></span> <span>최종 수정: <b
+								id="m-updateDate" class="font-normal text-slate-500">-</b></span>
 						</div>
-						<div class="form-control">
-							<label class="label">권한</label> <select name="authLevel"
-								id="m-authLevel" class="select select-bordered">
-								<option value="1">일반사용자</option>
-								<option value="0">관리자</option>
-							</select>
-						</div>
+						<div class="italic text-primary/60 font-medium">Administrator
+							Access Only</div>
 					</div>
 
-					<div class="modal-action">
-						<button type="submit" class="btn btn-primary">수정 저장</button>
-						<button type="button" class="btn" onclick="modify_modal.close()">취소</button>
+					<div class="flex justify-end gap-3 pt-2">
+						<button type="button" class="btn btn-ghost btn-sm h-10 px-6"
+							onclick="modify_modal.close()">취소</button>
+						<button type="submit"
+							class="btn btn-primary btn-sm h-10 px-8 shadow-md">권한 설정
+							저장</button>
 					</div>
 				</form>
 			</div>

@@ -26,6 +26,11 @@ public class NeedAuthLevelInterceptor implements HandlerInterceptor {
 			return false;
 		}
 		
+		if (req.getLoginedMember().getStatus() != 0) {
+			req.jsPrintReplace("권한이 없는 계정입니다", "/");
+			return false;
+		}
+
 		return HandlerInterceptor.super.preHandle(request, response, handler);
 	}
 	

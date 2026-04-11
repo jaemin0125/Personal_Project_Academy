@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class LoginedMember {
 	private int id;
 	private int authLevel;
+	private int status;
 }

@@ -2,15 +2,19 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.Member;
 import com.example.demo.dto.Req;
 import com.example.demo.service.MemberService;
+import com.example.demo.util.Util;
 
 @Controller
 public class AdminMemberController {
@@ -65,6 +69,15 @@ public class AdminMemberController {
 		model.addAttribute("articlesCnt", membersCnt);
 
 		return "admin/member/manage";
+	}
+	
+	@PostMapping("/admin/member/doModify")
+	@ResponseBody
+	public String doModifyMember(int id, int authLevel, int status) {
+		
+		this.memberService.doModifyMemberInfo(id, authLevel, status);
+		
+		return Util.jsReplace("회원 정보가 수정되었습니다.", "/admin/member/manage");
 	}
 	
 	@GetMapping("/admin/member/getMemberById")

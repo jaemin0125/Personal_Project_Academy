@@ -66,7 +66,7 @@ public interface WasteGuideDao {
 					, guide = #{guide}
 					, wasteType = #{wasteType}
 					, thumbnail = #{thumbnail}
-					, updateDate = NOW()
+					, regDate = NOW()
 			""")
 	void doAddWaste(String label, String ko_label, String category, String guide, String wasteType, String thumbnail);
 

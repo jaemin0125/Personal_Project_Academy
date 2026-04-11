@@ -16,7 +16,6 @@ public interface ReplyDao {
 	@Insert("""
 			INSERT INTO reply
 			    SET regDate = NOW()
-			        , updateDate = NOW()
 			        , memberId = #{memberId}
 			        , relTypeCode = #{relTypeCode}
 			        , relId = #{relId}

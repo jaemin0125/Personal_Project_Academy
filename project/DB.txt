@@ -5,7 +5,7 @@ USE Recycle_AM;
 CREATE TABLE article(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
     , regDate DATETIME NOT NULL
-    , updateDate DATETIME NOT NULL
+    , updateDate DATETIME
     , memberId INT UNSIGNED NOT NULL
     , boardId INT UNSIGNED NOT NULL
     , title VARCHAR(50) NOT NULL
@@ -15,18 +15,19 @@ CREATE TABLE article(
     , relTypeCode VARCHAR(20) DEFAULT 'article'
 );
 
+
 CREATE TABLE `member`(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
     , regDate DATETIME NOT NULL
-    , updateDate DATETIME NOT NULL
+    , updateDate DATETIME
     , loginId VARCHAR(50) NOT NULL UNIQUE
     , loginPw VARCHAR(100) NOT NULL
     , `name` VARCHAR(50) NOT NULL
     , email VARCHAR(50) NOT NULL
     , address VARCHAR(100) NOT NULL
+    , `status` TINYINT NOT NULL DEFAULT 0 COMMENT '0 = 정상, 1 = 차단, 2 = 휴면'
     , authLevel INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '관리자 = 0, 사용자 = 1'
 );
-
 
 CREATE TABLE board(
     id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
@@ -43,7 +44,7 @@ CREATE TABLE likePoint(
 CREATE TABLE reply(
    id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
    , regDate DATETIME NOT NULL
-   , updateDate DATETIME NOT NULL
+   , updateDate DATETIME
    , relTypeCode VARCHAR(20) NOT NULL
    , relId INT UNSIGNED NOT NULL
    , memberId INT UNSIGNED NOT NULL
@@ -59,7 +60,7 @@ CREATE TABLE wasteGuide (
     , wasteType VARCHAR(20) NOT NULL     
     , thumbnail VARCHAR(255)             
     , regDate DATETIME DEFAULT NOW()
-    , updateDate DATETIME DEFAULT NOW()  
+    , updateDate DATETIME 
     , relTypeCode VARCHAR(20) NOT NULL DEFAULT 'waste'
 );
 
@@ -87,7 +88,6 @@ CREATE TABLE stickerPrice (
 
     INSERT INTO article
         SET regDate = NOW()
-            , updateDate = NOW()
             , memberId = 1
             , boardId = 1
             , title = '공지1'
@@ -95,7 +95,6 @@ CREATE TABLE stickerPrice (
             
     INSERT INTO article
         SET regDate = NOW()
-            , updateDate = NOW()
             , memberId = 1
             , boardId = 2
             , title = '제목2'
@@ -103,7 +102,6 @@ CREATE TABLE stickerPrice (
 
     INSERT INTO article
         SET regDate = NOW()
-            , updateDate = NOW()
             , memberId = 2
             , boardId = 3
             , title = '제목3'
@@ -111,7 +109,6 @@ CREATE TABLE stickerPrice (
 
     INSERT INTO `member`
         SET regDate = NOW()
-            , updateDate = NOW()
             , loginId = 'admin'
             , loginPw = SHA2('admin', 256)
             , `name` = '관리자'
@@ -121,7 +118,6 @@ CREATE TABLE stickerPrice (
             
     INSERT INTO `member`
         SET regDate = NOW()
-            , updateDate = NOW()
             , loginId = 'test1'
             , loginPw = SHA2('test1', 256)
             , `name` = '유저1'
@@ -130,7 +126,6 @@ CREATE TABLE stickerPrice (
 
     INSERT INTO `member`
         SET regDate = NOW()
-            , updateDate = NOW()
             , loginId = 'test2'
             , loginPw = SHA2('test2', 256)
             , `name` = '유저2'

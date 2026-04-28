@@ -27,6 +27,8 @@ CREATE TABLE `member`(
     , address VARCHAR(100) NOT NULL
     , `status` TINYINT NOT NULL DEFAULT 0 COMMENT '0 = 정상, 1 = 차단, 2 = 휴면'
     , authLevel INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '관리자 = 0, 사용자 = 1'
+    , lastLoginDate DATETIME NOT NULL DEFAULT NOW()
+    , phoneNumber VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE board(

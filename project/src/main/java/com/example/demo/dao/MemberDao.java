@@ -119,4 +119,11 @@ public interface MemberDao {
 			""")
 	void doModifyMemberInfo(int id, int authLevel, int status);
 
+	@Update("""
+			UPDATE `member`
+				SET lastLoginDate = NOW()
+				WHERE id = #{id};
+			""")
+	void updateLoginDate(int id);
+
 }

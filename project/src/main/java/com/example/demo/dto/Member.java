@@ -18,4 +18,5 @@ public class Member {
 	private String address;
 	private int status;
 	private int authLevel;
+	private String lastLoginDate;
 }

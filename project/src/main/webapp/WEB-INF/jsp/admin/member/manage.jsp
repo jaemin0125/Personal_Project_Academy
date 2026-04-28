@@ -11,6 +11,9 @@
 	}
 	
 	function openModifyModal(id){
+		
+		const loginedId = "${req.loginedMember.id}";
+				
 		$.ajax({
 			url : '/admin/member/getMemberById',
 			type : 'GET',
@@ -28,6 +31,12 @@
 				$("#m-name").text(data.name);
 				$("#m-email").text(data.email);
 				$("#m-address").text(data.address);
+				
+				if(loginedId == id){
+					$('#m-status').prop("disabled", true);
+				} else {
+					$('#m-status').prop("disabled", false);
+				}
 				
 				if(data.updateDate){
 					$("#m-updateDate").text(data.updateDate);

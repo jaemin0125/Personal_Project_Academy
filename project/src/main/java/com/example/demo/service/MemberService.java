@@ -56,4 +56,8 @@ public class MemberService {
 		this.memberDao.doModifyMemberInfo(id, authLevel, status);
 	}
 
+	public void updateLoginDate(int id) {
+		this.memberDao.updateLoginDate(id);
+	}
+
 }

@@ -20,8 +20,9 @@ public interface MemberDao {
 			        , `name` = #{name}
 			        , email = #{email}
 			        , address = #{address}
+			        , phoneNumber = #{phoneNum}
 			""")
-	void joinMember(String loginId, String loginPw, String name, String email, String address);
+	void joinMember(String loginId, String loginPw, String name, String email, String address, String phoneNum);
 
 	@Select("""
 			SELECT *
@@ -122,8 +123,22 @@ public interface MemberDao {
 	@Update("""
 			UPDATE `member`
 				SET lastLoginDate = NOW()
-				WHERE id = #{id};
+				WHERE id = #{id}
 			""")
 	void updateLoginDate(int id);
+
+	@Select("""
+			SELECT COUNT(id)
+				FROM `member`
+				WHERE phoneNumber = #{phoneNum}
+			""")
+	int phoneNumDupChk(String phoneNum);
+
+	@Select("""
+			SELECT loginId
+				FROM `member`
+				WHERE phoneNumber = #{phoneNum}
+			""")
+	String getMemberByPhoneNumber(String phoneNum);
 
 }

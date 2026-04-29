@@ -109,6 +109,7 @@ CREATE TABLE stickerPrice (
             , title = '제목3'
             , content = '내용3';
 
+
     INSERT INTO `member`
         SET regDate = NOW()
             , loginId = 'admin'
@@ -116,7 +117,8 @@ CREATE TABLE stickerPrice (
             , `name` = '관리자'
             , email = '123@naver.com'
             , address = '세종특별자치시'
-            , authLevel = 0;
+            , authLevel = 0
+            , phoneNumber = '01074358990';
             
     INSERT INTO `member`
         SET regDate = NOW()
@@ -124,7 +126,8 @@ CREATE TABLE stickerPrice (
             , loginPw = SHA2('test1', 256)
             , `name` = '유저1'
             , email = '123@naver.com'
-            , address = '대전 유성구';
+            , address = '대전 유성구'
+            , phoneNumber = '01074358992';
 
     INSERT INTO `member`
         SET regDate = NOW()
@@ -132,7 +135,8 @@ CREATE TABLE stickerPrice (
             , loginPw = SHA2('test2', 256)
             , `name` = '유저2'
             , email = '123@naver.com'
-            , address = '대전 대덕구';
+            , address = '대전 대덕구'
+            , phoneNumber = '01074358993';
             
     INSERT INTO board
         SET `name` = '공지사항'

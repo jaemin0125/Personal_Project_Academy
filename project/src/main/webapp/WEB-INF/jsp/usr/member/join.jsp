@@ -181,13 +181,21 @@
 			dataType : 'json',
 			success : function(data) {
 
-				if (data.exists == true) {
+				if (data.exists == true && !data.isDupPhoneNum) {
 					authMsg.removeClass('text-red-500');
 					authMsg.addClass('text-success');
 					authMsg.html("인증이 완료되었습니다");
 					$('#isPhoneCertified').val("true");
+					$('#certifyButton').prop("disabled", true);
 					window.auth_modal.close();
-				} else if (data.exists == false) {
+				}
+				
+				else if (data.exists == true && data.isDupPhoneNum) {
+					alert('이미 가입된 휴대폰 번호입니다. 로그인 페이지로 이동합니다');
+					location.href = "/usr/member/login";
+				} 
+				
+				else if (data.exists == false) {
 					authMsg.removeClass('text-success');
 					authMsg.addClass('text-red-500');
 					authMsg.html("인증에 실패하였습니다");
@@ -201,8 +209,8 @@
 			}
 		})
 	}
-	
-	function closeModal(){
+
+	function closeModal() {
 		document.getElementById('auth_modal').close();
 		$('#cellphoneNum').prop('readonly', false);
 	}
@@ -248,7 +256,7 @@
 						placeholder="휴대폰 번호 (- 없이 입력)" class="grow" />
 					</label>
 					<button type="button" onclick="openAuthModal()"
-						class="btn btn-outline btn-sm" name="certifyPhone">인증하기</button>
+						id="certifyButton" class="btn btn-outline btn-sm" name="certifyPhone">인증하기</button>
 				</div>
 				<input type="hidden" id="isPhoneCertified" name="isPhoneCertified"
 					value="false" />
@@ -283,8 +291,7 @@
 			<div class="modal-action justify-center">
 				<button type="button" onclick="verifyAuth()"
 					class="btn btn-success btn-wide">인증 완료 확인</button>
-				<button type="button" onclick="closeModal();"
-					class="btn btn-ghost">닫기</button>
+				<button type="button" onclick="closeModal();" class="btn btn-ghost">닫기</button>
 			</div>
 		</div>
 		</dialog>

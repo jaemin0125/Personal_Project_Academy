@@ -6,7 +6,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.SecureRandom;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +23,7 @@ import com.example.demo.dto.Req;
 import com.example.demo.dto.ResultData;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.Util;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class UsrMemberController {
@@ -40,9 +44,9 @@ public class UsrMemberController {
 
 	@PostMapping("/usr/member/doJoin")
 	@ResponseBody
-	public String doJoin(String loginId, String loginPw, String name, String email, String address) {
+	public String doJoin(String loginId, String loginPw, String name, String email, String address, String phoneNum) {
 
-		this.memberService.joinMember(loginId, Util.encryptSHA256(loginPw), name, email, address);
+		this.memberService.joinMember(loginId, Util.encryptSHA256(loginPw), name, email, address, phoneNum);
 
 		return Util.jsReplace(String.format("[ %s ] 님의 가입이 완료되었습니다", name), "/usr/home/main");
 	}
@@ -59,44 +63,77 @@ public class UsrMemberController {
 
 		return ResultData.from("S-1", String.format("[ %s ] 은(는) 사용가능한 아이디입니다", loginId));
 	}
-	
+
 	@GetMapping("/usr/member/getAuthPin")
 	@ResponseBody
 	public String getAuthPin() {
-		
+
 		StringBuilder pin = new StringBuilder();
-		
-        for (int i = 0; i < 4; i++) {
-            pin.append(secureRandom.nextInt(10));
-        }
-        
+
+		for (int i = 0; i < 4; i++) {
+			pin.append(secureRandom.nextInt(10));
+		}
+
 		return pin.toString();
 	}
-	
+
 	@GetMapping("/usr/member/verifyPhoneNum")
 	@ResponseBody
-	  public Object VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
+	public Object VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
+
+		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
+
+		Boolean exists = (Boolean) map.get("exists");
+		Boolean isDupPhoneNum = false;
+
+		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
+		if (exists) {
+			int idCount = this.memberService.phoneNumDupChk(phoneNum);
+
+			if (idCount == 1) {
+				isDupPhoneNum = true;
+			}
+		}
+		Map<String, Object> rs = new HashMap<>();
+
+		rs.put("exists", exists);
+		rs.put("isDupPhoneNum", isDupPhoneNum);
+
+		return rs;
+	}
+	
+	@GetMapping("/usr/member/findLoginInfo")
+	@ResponseBody
+	public Object FindLoginInfo(String phoneNum, String authPin) throws IOException, InterruptedException {
 		
-	    String url = "https://api.octoverse.kr/octomo/v1/public/message/exists";
-	    String apiKey = "f7ea444bde0d6b14faa6741d7639bab61e105f53247cc6d9a4e71cf34ab4e4d6";
+		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
+		
+		Boolean exists = (Boolean) map.get("exists");
+		Boolean isDupPhoneNum = false;
+		String loginId = null;
 
-	    String jsonBody = String.format("{\"mobileNum\":\"%s\",\"text\":\"%s\"}", phoneNum, authPin);
+		Map<String, Object> rs = new HashMap<>();
+		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
+		if (exists) {
+			int idCount = this.memberService.phoneNumDupChk(phoneNum);
 
-	    HttpRequest request = HttpRequest.newBuilder()
-	        .uri(URI.create(url))
-	        .header("Accept", "application/json")
-	        .header("Content-Type", "application/json")
-	        .header("Authorization", "Octomo " + apiKey)
-	        .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-	        .build();
+			if (idCount == 1) {
+				isDupPhoneNum = true;
+			}
+		}
+		
+		if(isDupPhoneNum) {
+			loginId = this.memberService.getMemberByPhoneNumber(phoneNum);
+		}
+		
+		if(loginId != null) {
+			rs.put("loginId", loginId);
+		}
+		
+		rs.put("exists", exists);
+		return rs;
+	}
 
-	    HttpClient client = HttpClient.newHttpClient();
-	    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-	    return response.body();
-	  }
-	
-	
 	@GetMapping("/usr/member/login")
 	public String login() {
 		return "usr/member/login";
@@ -153,7 +190,6 @@ public class UsrMemberController {
 		} else if (req.getLoginedMember().getAuthLevel() == 0) {
 			return "usr/member/info";
 		}
-
 
 		return "usr/member/info";
 	}

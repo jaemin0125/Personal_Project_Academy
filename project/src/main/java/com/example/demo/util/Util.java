@@ -1,7 +1,16 @@
 package com.example.demo.util;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Util {
 	public static String jsReplace(String msg, String uri) {
@@ -54,4 +63,25 @@ public class Util {
 			throw new RuntimeException("SHA-256 알고리즘을 지원하지 않습니다.", e);
 		}
 	}
+	
+//	Octomo 인증 API
+	public static Map<String, Object> VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
+
+		String url = "https://api.octoverse.kr/octomo/v1/public/message/exists";
+		String apiKey = "f7ea444bde0d6b14faa6741d7639bab61e105f53247cc6d9a4e71cf34ab4e4d6";
+
+		String jsonBody = String.format("{\"mobileNum\":\"%s\",\"text\":\"%s\"}", phoneNum, authPin);
+
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("Accept", "application/json")
+				.header("Content-Type", "application/json").header("Authorization", "Octomo " + apiKey)
+				.POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+		Map<String, Object> map = new ObjectMapper().readValue(response.body(), Map.class);
+		
+		return map;
+	}
+
 }

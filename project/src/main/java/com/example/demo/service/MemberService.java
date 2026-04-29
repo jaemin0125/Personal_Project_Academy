@@ -16,8 +16,8 @@ public class MemberService {
 		this.memberDao = memberDao;
 	}
 
-	public void joinMember(String loginId, String loginPw, String name, String email, String address) {
-		this.memberDao.joinMember(loginId, loginPw, name, email, address);
+	public void joinMember(String loginId, String loginPw, String name, String email, String address, String phoneNum) {
+		this.memberDao.joinMember(loginId, loginPw, name, email, address, phoneNum);
 	}
 
 	public Member getMemberByLoginId(String loginId) {
@@ -58,6 +58,14 @@ public class MemberService {
 
 	public void updateLoginDate(int id) {
 		this.memberDao.updateLoginDate(id);
+	}
+
+	public int phoneNumDupChk(String phoneNum) {
+		return this.memberDao.phoneNumDupChk(phoneNum);
+	}
+
+	public String getMemberByPhoneNumber(String phoneNum) {
+		return this.memberDao.getMemberByPhoneNumber(phoneNum);
 	}
 
 }

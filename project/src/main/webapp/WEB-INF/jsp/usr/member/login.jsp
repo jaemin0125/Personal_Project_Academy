@@ -7,7 +7,8 @@
 <%@ include file="/WEB-INF/jsp/common/header.jsp"%>
 
 <script>
-const findIdState = {
+const findInfoState = {
+	info : null,
 	phoneNum : null,
 	authPin : null,
 	loginId : null
@@ -36,34 +37,52 @@ const findIdState = {
 		location.href = "/";
 	}
 	
-	function getFirstHtml(){
-		return `<div class="modal-box text-center">
-					<h3 class="font-bold text-lg">아이디 찾기</h3>
-					<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
-					<div class="flex flex-col gap-3">
-						<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
-							class="input input-bordered w-full" />
-						<button type="button" onclick="findLoginId();"
-							class="btn btn-primary w-full">아이디 확인</button>
-					</div>
-					<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
-					<div class="modal-action">
-						<form method="dialog">
-							<button class="btn btn-ghost">닫기</button>
-						</form>
-					</div>
-				</div>`;
+	function getFirstHtml(info){
+		if(info == "id"){
+			return `<div class="modal-box text-center">
+						<h3 class="font-bold text-lg">아이디 찾기</h3>
+						<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
+						<div class="flex flex-col gap-3">
+							<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+								class="input input-bordered w-full" />
+							<button type="button" onclick="findLoginId();"
+								class="btn btn-success w-full">아이디 확인</button>
+						</div>
+						<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
+						<div class="modal-action">
+							<form method="dialog">
+								<button class="btn btn-ghost">닫기</button>
+							</form>
+						</div>
+					</div>`;
+		} else if(info == "pw"){
+			return `<div class="modal-box text-center">
+						<h3 class="font-bold text-lg">비밀번호 찾기</h3>
+						<p class="py-4 text-sm text-gray-500">아이디와 등록된 휴대폰 번호를 입력해주세요.</p>
+						<div class="flex flex-col gap-3">
+							<input type="text" id="findPw_loginId" placeholder="아이디"
+								class="input input-bordered w-full" /> <input type="text"
+								id="findPw_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+								class="input input-bordered w-full" />
+							<button type="button" onclick="getAuthPin_pw();" class="btn btn-success	 w-full">본인 인증
+								후 비밀번호 재설정</button>
+						</div>
+						<div class="modal-action">
+							<form method="dialog">
+								<button class="btn btn-ghost">닫기</button>
+							</form>
+						</div>
+					</div>`;
+		}
+		
 	}
-	
 	
 	
 	
 	function openFindIdModal(){
 		document.getElementById('findId_modal').showModal();
-		$('#findId_modal').html(getFirstHtml());
+		$('#findId_modal').html(getFirstHtml("id"));
 	}
-	
-	
 	
 	
 	function findLoginId (){
@@ -84,7 +103,7 @@ const findIdState = {
 			return;
 		} 
 		
-		findIdState.phoneNum = phoneNum;
+		findInfoState.phoneNum = phoneNum;
 		
 		$('#findId_phoneNum').prop('readonly', true);
 		
@@ -93,7 +112,7 @@ const findIdState = {
 			type : 'GET',
 			dataType : 'text',
 			success : function(data) {
-					findIdState.authPin = data; //Pin번호 전역 상태에 저장.
+					findInfoState.authPin = data; //Pin번호 전역 상태에 저장.
 				
 					$('#findId_modal').html(
 							`<div class="modal-box text-center">
@@ -116,7 +135,7 @@ const findIdState = {
 								<p class="text-xs text-error mb-4">※ 문자를 보낸 후 아래 확인 버튼을 눌러주세요.</p>
 					
 								<div class="modal-action justify-center">
-									<button type="button" onclick="verifyAuth()"
+									<button type="button" onclick="verifyAuth('id')"
 										class="btn btn-success btn-wide">인증 완료 확인</button>
 									<form method="dialog">
 										<button class="btn btn-ghost">닫기</button>
@@ -133,27 +152,168 @@ const findIdState = {
 		
 	}
 	
-	function verifyAuth() {
+	function verifyAuth(info) {
 
 		$.ajax({
 			url : '/usr/member/findLoginInfo',
 			type : 'GET',
 			data : {
-				phoneNum : findIdState.phoneNum,
-				authPin : findIdState.authPin
+				phoneNum : findInfoState.phoneNum,
+				authPin : findInfoState.authPin,
+				loginId : findInfoState.loginId
 			},
 			dataType : 'json',
 			success : function(data) {
 				if(!data.exists){
 					alert('인증에 실패하였습니다');
-					return;
+					return location.href = "/usr/member/login";
+				} else if(data.exists && !data.loginId){
+					alert('입력하신 정보의 회원이 존재하지 않습니다');
+					return location.href = "/usr/member/join";
 				}
 				
-				if(!data.loginId){
-					alert('입력하신 정보의 회원이 존재하지 않습니다');
-					location.href = "/usr/member/join";
+				if (data.loginId && info == "id"){
+					findInfoState.loginId = data.loginId;
+					
+					$('#findId_modal').html(
+							`<div id="find-id-result" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+							    <div class="p-8">
+							        <div class="text-center mb-8">
+							            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-50 text-green-500 rounded-full mb-4 ring-8 ring-green-50/50">
+							                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+							                </svg>
+							            </div>
+							            <h2 class="text-2xl font-black text-gray-800 tracking-tight">아이디 찾기 성공</h2>
+							            <p class="text-gray-400 mt-2 text-sm font-medium">회원님의 소중한 계정 정보를 찾았습니다.</p>
+							        </div>
+							
+							        <div class="bg-gray-50 rounded-2xl p-10 text-center border border-dashed border-gray-200 my-6 relative">
+							            <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em] mb-3 font-bold">Registered Account</p>
+							            
+							            <div class="flex items-center justify-center gap-2">
+							                <span id="display-login-id" class="text-4xl font-mono font-black text-green-600 tracking-tighter">
+							                   \${findInfoState.loginId}
+							                </span>
+							            </div>
+							            
+							            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-green-500 rounded-full translate-y-1/2"></div>
+							        </div>
+							
+							        <div class="flex flex-col gap-3 mt-10">
+							            <a href="/usr/member/login" 
+							               class="btn btn-success btn-lg w-full text-white font-bold shadow-lg shadow-green-200 border-none transition-all hover:scale-[1.02] active:scale-95">
+							                로그인하기
+							            </a>
+							            
+							            <div class="relative py-4">
+							                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
+							                <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-3 text-gray-300 tracking-widest">Additional Option</span></div>
+							           </div>
+							            
+							            <button onclick="findPw_modal();" 
+							               class="btn btn-ghost btn-sm w-full text-gray-400 hover:text-green-600 hover:bg-green-50 font-medium">
+							                비밀번호가 기억나지 않으시나요?
+							            </button>
+							        </div>
+							    </div>
+							    
+							    <div class="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center">
+							        <p class="text-[10px] text-gray-400 font-medium">보안을 위해 비밀번호는 주기적으로 변경해 주세요.</p>
+							    </div>
+							</div>`);	
+					
+				} else if (info == "pw"){
+					console.log(findInfoState);
+					//여기에 비밀번호 재설정 Html (Modal 교체용)
 				}
-				//loginId 안내 후 findIdState 의 상태는 다시 null로 초기화해줘야함!!!!!
+				
+				
+				findInfoState.phoneNum = null;
+				findInfoState.authPin = null;
+				findInfoState.loginId = null;
+				
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		})
+	}
+	
+	function findPw_modal(){
+		document.getElementById('findId_modal').close();
+		
+		$('#findPw_modal').html(getFirstHtml("pw"));
+		document.getElementById('findPw_modal').showModal();
+	}
+	
+	function getAuthPin_pw(){
+		
+		const regExp = /^010[0-9]{7,8}$/;
+		const phoneNum = $('#findPw_phoneNum').val();
+		const loginId = $('#findPw_loginId').val();
+		
+		if(loginId.length == 0){
+			alert('ID를 입력하세요');
+			$('#findPw_loginId').focus();
+			
+			return;
+		}
+		if(phoneNum.length == 0){
+			alert('휴대폰 번호를 입력하세요');
+			$('#findPw_phoneNum').focus();
+			
+			return;
+		}
+		if(!regExp.test(phoneNum)){
+			alert('올바른 휴대폰 번호 형식이 아닙니다');
+			$('#findPw_phoneNum').focus();
+			
+			return;
+		}
+		
+		
+		
+		findInfoState.phoneNum = phoneNum;
+		findInfoState.loginId = loginId;
+		
+		$.ajax({
+			url : '/usr/member/getAuthPin',
+			type : 'GET',
+			dataType : 'text',
+			success : function(data) {
+					 findInfoState.authPin = data; //Pin번호 전역 상태에 저장.
+				
+					$('#findPw_modal').html(
+							`<div class="modal-box text-center">
+								<h3 class="font-bold text-lg">휴대폰 소유 확인</h3>
+								<p class="py-4 text-sm text-gray-500">아래 안내된 번호로 인증 번호를 전송해 주세요.</p>
+					
+								<div class="bg-base-200 p-6 rounded-lg my-4 space-y-3">
+									<div>
+										<span class="text-xs text-gray-400">보낼 곳(옥토모 대표번호)</span>
+										<p id="octomoNum" class="text-xl font-bold text-primary">1666-3538</p>
+									</div>
+									<hr class="border-base-300">
+									<div>
+										<span class="text-xs text-gray-400">메시지 내용(인증번호)</span>
+										<p id="authPin"
+											class="text-3xl font-black tracking-widest text-secondary">\${data}</p>
+									</div>
+								</div>
+					
+								<p class="text-xs text-error mb-4">※ 문자를 보낸 후 아래 확인 버튼을 눌러주세요.</p>
+					
+								<div class="modal-action justify-center">
+									<button type="button" onclick="verifyAuth('pw')"
+										class="btn btn-success btn-wide">인증 완료 확인</button>
+									<form method="dialog">
+										<button class="btn btn-ghost">닫기</button>
+									</form>
+								</div>
+							</div>` 
+							)
+
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
@@ -210,7 +370,7 @@ const findIdState = {
 
 			<span class="w-px h-3 bg-gray-200"></span>
 
-			<button type="button" onclick="findPw_modal.showModal();"
+			<button type="button" onclick="findPw_modal();"
 				class="hover:text-green-600 transition-colors bg-transparent border-none p-0 cursor-pointer">
 				비밀번호 찾기</button>
 
@@ -228,42 +388,42 @@ const findIdState = {
 </section>
 
 <dialog id="findId_modal" class="modal">
-	<div class="modal-box text-center">
-		<h3 class="font-bold text-lg">아이디 찾기</h3>
-		<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
-		<div class="flex flex-col gap-3">
-			<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
-				class="input input-bordered w-full" />
-			<button type="button" onclick="findLoginId();"
-				class="btn btn-primary w-full">아이디 확인</button>
-		</div>
-		<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
-		<div class="modal-action">
-			<form method="dialog">
-				<button class="btn btn-ghost">닫기</button>
-			</form>
-		</div>
+<div class="modal-box text-center">
+	<h3 class="font-bold text-lg">아이디 찾기</h3>
+	<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
+	<div class="flex flex-col gap-3">
+		<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+			class="input input-bordered w-full" />
+		<button type="button" onclick="findLoginId();"
+			class="btn btn-success w-full">아이디 확인</button>
 	</div>
+	<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
+	<div class="modal-action">
+		<form method="dialog">
+			<button class="btn btn-ghost">닫기</button>
+		</form>
+	</div>
+</div>
 </dialog>
 
 <dialog id="findPw_modal" class="modal">
-	<div class="modal-box text-center">
-		<h3 class="font-bold text-lg">비밀번호 찾기</h3>
-		<p class="py-4 text-sm text-gray-500">아이디와 등록된 휴대폰 번호를 입력해주세요.</p>
-		<div class="flex flex-col gap-3">
-			<input type="text" id="findPw_loginId" placeholder="아이디"
-				class="input input-bordered w-full" /> <input type="text"
-				id="findPw_phoneNum" placeholder="휴대폰 번호 (- 없이)"
-				class="input input-bordered w-full" />
-			<button type="button" class="btn btn-secondary w-full">본인 인증
-				후 비밀번호 재설정</button>
-		</div>
-		<div class="modal-action">
-			<form method="dialog">
-				<button class="btn btn-ghost">닫기</button>
-			</form>
-		</div>
+<div class="modal-box text-center">
+	<h3 class="font-bold text-lg">비밀번호 찾기</h3>
+	<p class="py-4 text-sm text-gray-500">아이디와 등록된 휴대폰 번호를 입력해주세요.</p>
+	<div class="flex flex-col gap-3">
+		<input type="text" id="findPw_loginId" placeholder="아이디"
+			class="input input-bordered w-full" /> <input type="text"
+			id="findPw_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+			class="input input-bordered w-full" />
+		<button type="button" onclick="getAuthPin_pw();"
+			class="btn btn-success	 w-full">본인 인증 후 비밀번호 재설정</button>
 	</div>
+	<div class="modal-action">
+		<form method="dialog">
+			<button class="btn btn-ghost">닫기</button>
+		</form>
+	</div>
+</div>
 </dialog>
 
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.dto.LoginedMember;
@@ -24,6 +25,9 @@ import com.example.demo.dto.ResultData;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+import lombok.Builder.Default;
 
 @Controller
 public class UsrMemberController {
@@ -104,16 +108,23 @@ public class UsrMemberController {
 	
 	@GetMapping("/usr/member/findLoginInfo")
 	@ResponseBody
-	public Object FindLoginInfo(String phoneNum, String authPin) throws IOException, InterruptedException {
+	public Object FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId) throws IOException, InterruptedException {
+
+		System.out.println(phoneNum);
+		System.out.println(authPin);
+		System.out.println(loginId);
 		
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
-		
+
 		Boolean exists = (Boolean) map.get("exists");
 		Boolean isDupPhoneNum = false;
-		String loginId = null;
+		String findLoginId = null;
+		Boolean isInfoMatching = false;
 
 		Map<String, Object> rs = new HashMap<>();
 		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
+		
+
 		if (exists) {
 			int idCount = this.memberService.phoneNumDupChk(phoneNum);
 
@@ -121,16 +132,21 @@ public class UsrMemberController {
 				isDupPhoneNum = true;
 			}
 		}
-		
-		if(isDupPhoneNum) {
-			loginId = this.memberService.getMemberByPhoneNumber(phoneNum);
+
+		if (isDupPhoneNum) {
+			findLoginId = this.memberService.getMemberByPhoneNumber(phoneNum);
+		}
+
+		if (findLoginId != null) {
+			rs.put("loginId", findLoginId);
 		}
 		
-		if(loginId != null) {
-			rs.put("loginId", loginId);
+		if(exists && loginId.length() != 0) {
+			//여기에 phoneNum와, loginId가 매칭되는지 확인
+			System.out.println("pw찾는 함수 호출");
 		}
-		
-		rs.put("exists", exists);
+
+		rs.put("exists", true);
 		return rs;
 	}
 

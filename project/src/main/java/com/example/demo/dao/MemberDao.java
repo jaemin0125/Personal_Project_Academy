@@ -141,4 +141,20 @@ public interface MemberDao {
 			""")
 	String getMemberByPhoneNumber(String phoneNum);
 
+	@Select("""
+			SELECT COUNT(id)
+				FROM `member`
+				WHERE loginId = #{loginId}
+				AND phoneNumber = #{phoneNum}
+			""")
+	int getIdCntByInfo(String phoneNum, String loginId);
+
+	@Update("""
+			UPDATE `member`
+				SET loginPw = #{newPassword}
+				WHERE loginId = #{loginId}
+				AND phoneNumber = #{phoneNum}
+			""")
+	void doResetPassword(String loginId, String phoneNum, String newPassword);
+
 }

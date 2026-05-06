@@ -68,4 +68,12 @@ public class MemberService {
 		return this.memberDao.getMemberByPhoneNumber(phoneNum);
 	}
 
+	public int getIdCntByInfo(String phoneNum, String loginId) {
+		return this.memberDao.getIdCntByInfo(phoneNum, loginId);
+	}
+
+	public void doResetPassword(String loginId, String phoneNum, String newPassword) {
+		this.memberDao.doResetPassword(loginId, phoneNum, newPassword);
+	}
+
 }

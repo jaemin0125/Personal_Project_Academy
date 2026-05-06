@@ -160,17 +160,30 @@ const findInfoState = {
 			data : {
 				phoneNum : findInfoState.phoneNum,
 				authPin : findInfoState.authPin,
-				loginId : findInfoState.loginId
+				loginId : findInfoState.loginId,
+				mode : info
 			},
 			dataType : 'json',
 			success : function(data) {
-				if(!data.exists){
-					alert('인증에 실패하였습니다');
-					return location.href = "/usr/member/login";
-				} else if(data.exists && !data.loginId){
-					alert('입력하신 정보의 회원이 존재하지 않습니다');
-					return location.href = "/usr/member/join";
+				if(info == "id"){
+					if(!data.exists){
+						alert('인증에 실패하였습니다');
+						return location.href = "/usr/member/login";
+					} else if(data.exists && !data.loginId){
+						alert('입력하신 정보의 회원이 존재하지 않습니다');
+						return location.href = "/usr/member/join";
+					}
+				} else if(info == "pw"){
+					if(!data.exists){
+						alert('인증에 실패하였습니다');
+						return location.href = "/usr/member/login";
+					} else if (data.exists && !data.isInfoMatching){
+						alert('입력하신 아이디와 휴대폰 번호 정보가 일치하지 않습니다');
+						return location.href = "/usr/member/login";
+					}
 				}
+				
+				
 				
 				if (data.loginId && info == "id"){
 					findInfoState.loginId = data.loginId;
@@ -223,21 +236,139 @@ const findInfoState = {
 							    </div>
 							</div>`);	
 					
-				} else if (info == "pw"){
-					console.log(findInfoState);
-					//여기에 비밀번호 재설정 Html (Modal 교체용)
+					findInfoState.info = null;
+					findInfoState.phoneNum = null;
+					findInfoState.authPin = null;
+					findInfoState.loginId = null;
+					
+				} else if (info == "pw") {
+				    $('#findPw_modal').html(`
+				        <div id="reset-pw-form" class="modal-box p-0 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-11/12 max-w-md">
+				            <div class="p-8">
+				                <div class="text-center mb-8">
+				                    <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-50 text-blue-500 rounded-full mb-4 ring-8 ring-blue-50/50">
+				                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+				                        </svg>
+				                    </div>
+				                    <h2 class="text-2xl font-black text-gray-800 tracking-tight">비밀번호 재설정</h2>
+				                    <p class="text-gray-400 mt-2 text-sm font-medium">안전한 사용을 위해 새 비밀번호를 입력해주세요.</p>
+				                </div>
+
+				                <div class="space-y-4">
+				                    <div class="form-control">
+				                        <label class="label">
+				                            <span class="label-text font-bold text-gray-600">새 비밀번호</span>
+				                        </label>
+				                        <input type="password" id="newPassword" placeholder="8~16자 영문, 숫자 조합" 
+				                               class="input input-bordered w-full focus:input-primary transition-all rounded-xl bg-gray-50 border-gray-200" />
+				                    </div>
+
+				                    <div class="form-control">
+				                        <label class="label">
+				                            <span class="label-text font-bold text-gray-600">비밀번호 확인</span>
+				                        </label>
+				                        <input type="password" id="newPasswordConfirm" placeholder="다시 한번 입력해주세요" 
+				                               class="input input-bordered w-full focus:input-primary transition-all rounded-xl bg-gray-50 border-gray-200" />
+				                        <label class="label">
+				                            <span id="pw-match-msg" class="label-text-alt text-error hidden block w-full break-all">비밀번호가 일치하지 않습니다.</span>
+				                        </label>
+				                    </div>
+
+				                    <div class="flex flex-col gap-3 mt-6">
+				                        <button onclick="submitNewPassword();" 
+				                                class="btn btn-primary btn-lg w-full text-white font-bold shadow-lg shadow-blue-200 border-none transition-all hover:scale-[1.02] active:scale-95">
+				                            비밀번호 변경하기
+				                        </button>
+				                        
+				                        <button onclick="location.reload();" 
+				                                class="btn btn-ghost btn-sm w-full text-gray-400 font-medium">
+				                            취소
+				                        </button>
+				                    </div>
+				                </div>
+				            </div>
+				            
+				            <div class="bg-gray-50 px-8 py-4 border-t border-gray-100 text-center">
+				                <p class="text-[10px] text-gray-400 font-medium text-left italic">
+				                    * 다른 사이트에서 사용하지 않는 안전한 비밀번호를 권장합니다.
+				                </p>
+				            </div>
+				        </div>
+				    `);
 				}
 				
-				
-				findInfoState.phoneNum = null;
-				findInfoState.authPin = null;
-				findInfoState.loginId = null;
 				
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
 			}
 		})
+	}
+	
+	function submitNewPassword(){
+		const regExp = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=\.-])(?=.*[0-9]).{8,16}$/;
+		const newPassword = $('#newPassword').val().trim();
+		const newPasswordConfirm = $('#newPasswordConfirm').val().trim();
+		
+		if(newPassword.length == 0){
+			alert('비밀번호를 입력하세요');
+			$('#newPassword').focus();	
+			return;
+		} else if (newPasswordConfirm.length == 0){
+			alert('비밀번호를 다시 입력하세요');
+			$('#newPasswordConfirm').focus();
+			return;
+		}
+		
+		if(!regExp.test(newPassword)){
+			alert('올바른 비밀번호 형식이 아닙니다');
+			$('#newPassword').focus();
+			
+			return;
+		}
+		
+		if(newPassword != newPasswordConfirm){
+			$('#pw-match-msg').removeClass("hidden");
+			$('#newPasswordConfirm').focus();
+			
+			return;
+		}
+		
+		if(newPassword == newPasswordConfirm){
+			$('#pw-match-msg').addClass("hidden");
+		}
+		
+		console.log(findInfoState);
+		
+		$.ajax({
+			url : '/usr/member/resetPassword',
+			type : 'POST',
+			data : {
+				loginId : findInfoState.loginId,
+				phoneNum : findInfoState.phoneNum,
+				newPassword : newPassword,
+			},
+			dataType : 'json',
+			success : function(data) {
+				if(data.rsCode.statsWith("S-") && data.success){
+					alert(data.rsMsg);
+					return location.href = "/";
+				} else{
+					alert(data.rsMsg);
+					return location.href = "/usr/member/login";
+				}
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		})
+		
+		findInfoState.info = null;
+		findInfoState.phoneNum = null;
+		findInfoState.authPin = null;
+		findInfoState.loginId = null;
+		
 	}
 	
 	function findPw_modal(){
@@ -320,6 +451,8 @@ const findInfoState = {
 			}
 		})
 	}
+	
+	
 
 </script>
 
@@ -371,7 +504,7 @@ const findInfoState = {
 			<span class="w-px h-3 bg-gray-200"></span>
 
 			<button type="button" onclick="findPw_modal();"
-				class="hover:text-green-600 transition-colors bg-transparent border-none p-0 cursor-pointer">
+				class="hover:text-green-600 transition-colors bg-transparent border-none p-0 cursor-pointer ">
 				비밀번호 찾기</button>
 
 			<span class="w-px h-3 bg-gray-200"></span> <a href="/usr/member/join"

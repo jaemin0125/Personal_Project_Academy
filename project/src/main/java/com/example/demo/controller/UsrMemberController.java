@@ -84,11 +84,18 @@ public class UsrMemberController {
 	@GetMapping("/usr/member/verifyPhoneNum")
 	@ResponseBody
 	public Object VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
-
+		String regExp = "^010[0-9]{7,8}$";
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
-
 		Boolean exists = (Boolean) map.get("exists");
 		Boolean isDupPhoneNum = false;
+		
+		Map<String, Object> rs = new HashMap<>();
+		
+		if(!phoneNum.matches(regExp)) {
+			rs.put("exists", false);
+			return rs;
+		}
+		
 
 		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
 		if (exists) {
@@ -98,7 +105,6 @@ public class UsrMemberController {
 				isDupPhoneNum = true;
 			}
 		}
-		Map<String, Object> rs = new HashMap<>();
 
 		rs.put("exists", exists);
 		rs.put("isDupPhoneNum", isDupPhoneNum);
@@ -108,15 +114,11 @@ public class UsrMemberController {
 	
 	@GetMapping("/usr/member/findLoginInfo")
 	@ResponseBody
-	public Object FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId) throws IOException, InterruptedException {
-
-		System.out.println(phoneNum);
-		System.out.println(authPin);
-		System.out.println(loginId);
+	public Object FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId, String mode) throws IOException, InterruptedException {
 		
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
 
-		Boolean exists = (Boolean) map.get("exists");
+		Boolean exists = true /*(Boolean) map.get("exists")*/;
 		Boolean isDupPhoneNum = false;
 		String findLoginId = null;
 		Boolean isInfoMatching = false;
@@ -124,29 +126,37 @@ public class UsrMemberController {
 		Map<String, Object> rs = new HashMap<>();
 		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
 		
+		if(mode.equals("id")) {
+			if (exists) {
+				int idCount = this.memberService.phoneNumDupChk(phoneNum);
 
-		if (exists) {
-			int idCount = this.memberService.phoneNumDupChk(phoneNum);
+				if (idCount == 1) {
+					isDupPhoneNum = true;
+				}
+			}
 
-			if (idCount == 1) {
-				isDupPhoneNum = true;
+			if (isDupPhoneNum) {
+				findLoginId = this.memberService.getMemberByPhoneNumber(phoneNum);
+			}
+
+			if (findLoginId != null) {
+				rs.put("loginId", findLoginId);
+			}
+		}
+		
+		if(mode.equals("pw")) {
+			if(exists && loginId.length() != 0) {
+				//여기에 phoneNum와, loginId가 매칭되는지 확인
+				int countId = this.memberService.getIdCntByInfo(phoneNum, loginId);
+				
+				if(countId == 1) {
+					isInfoMatching = true;
+				}
 			}
 		}
 
-		if (isDupPhoneNum) {
-			findLoginId = this.memberService.getMemberByPhoneNumber(phoneNum);
-		}
-
-		if (findLoginId != null) {
-			rs.put("loginId", findLoginId);
-		}
-		
-		if(exists && loginId.length() != 0) {
-			//여기에 phoneNum와, loginId가 매칭되는지 확인
-			System.out.println("pw찾는 함수 호출");
-		}
-
-		rs.put("exists", true);
+		rs.put("exists", exists);
+		rs.put("isInfoMatching", isInfoMatching);
 		return rs;
 	}
 
@@ -232,6 +242,19 @@ public class UsrMemberController {
 		this.req.logout();
 
 		return Util.jsReplace("회원정보가 수정되었습니다 변경된 정보로 다시 로그인하세요", "/");
+	}
+	
+	@PostMapping("/usr/member/resetPassword")
+	@ResponseBody
+	public ResultData doResetPassword(String loginId, String phoneNum, String newPassword) {
+		
+		String regExp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=\\.\\-])(?=.*[0-9]).{8,16}$";	
+		
+		if(loginId.length() != 0 && newPassword.matches(regExp)) {
+			this.memberService.doResetPassword(loginId, phoneNum, Util.encryptSHA256(newPassword));
+			return ResultData.from("S-1", "정상적으로 비밀번호가 변경되었습니다");
+		}
+		return ResultData.from("F-1", "오류 발생");
 	}
 
 }

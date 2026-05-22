@@ -108,8 +108,12 @@
 		$("#modifyContainer").addClass("hidden");
 		$("#selectedLabel").prop("disabled", true).empty().append(`<option selected disabled>카테고리를 먼저 선택하세요</option>`);
 		$("#selectedCategory").val("카테고리를 선택하세요");
-		
 	}
+	
+	function goInfo(){
+		location.href = "/admin/member/info";
+	}
+	
 </script>
 
 <section class="mt-10 flex">
@@ -196,7 +200,7 @@
 							<button type="submit" class="btn btn-primary w-40">정보 추가</button>
 						</div>
 						<div class="absolute right-18">
-							<button type="button" onclick="history.back();"
+							<button type="button" onclick="goInfo();"
 								class="btn btn-outline">← 목록으로 돌아가기</button>
 						</div>
 					</div>

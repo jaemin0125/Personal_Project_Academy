@@ -137,6 +137,7 @@
 				},
 				dataType : 'json',
 				success : function (data) {
+					console.log(data);
 					for (idx in data) {
 						let btnHtml = '';
 						
@@ -173,7 +174,7 @@
 									\${btnHtml }
 								</div>
 								<div class="text-lg my-1 ml-2">\${data[idx].content }</div>
-								<div class="text-xs text-gray-400">\${data[idx].updateDate }</div>
+								<div class="text-xs text-gray-400">\${data[idx].updateDate == null ? data[idx].regDate : data[idx].updateDate}</div>
 							</div>
 						`;
 						
@@ -210,7 +211,7 @@
 									</div>
 								</div>
 								<div class="text-lg my-1 ml-2">\${data.content }</div>
-								<div class="text-xs text-gray-400">\${data.updateDate }</div>
+								<div class="text-xs text-gray-400">\${data.updateDate == null ? data.regDate : data.updateDate }</div>
 							</div>
 
 						`;

@@ -10,12 +10,15 @@
 
 <script>
 	let validLoginId = null;
-
+	
 	const joinFormChk = function(form) {
+		
 		form.loginId.value = form.loginId.value.trim();
 		form.loginPw.value = form.loginPw.value.trim();
 		form.loginPwChk.value = form.loginPwChk.value.trim();
 		form.name.value = form.name.value.trim();
+		
+		const regExp = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=\.-])(?=.*[0-9]).{8,16}$/; //PW 정규식
 
 		if (form.loginId.value.length == 0) {
 			alert('아이디는 필수 입력 정보입니다');
@@ -37,6 +40,12 @@
 
 		if (form.loginPw.value != form.loginPwChk.value) {
 			alert('비밀번호가 일치하지 않습니다');
+			form.loginPw.focus();
+			return false;
+		}
+		
+		if(!regExpPw.test(form.loginPw.value)){
+			alert('올바른 비밀번호 형식이 아닙니다')
 			form.loginPw.focus();
 			return false;
 		}
@@ -71,7 +80,6 @@
 			return false;
 		}
 
-		console.log(form.isPhoneCertified.value);
 
 		return true;
 	}
@@ -99,12 +107,12 @@
 				if (data.success) {
 					loginIdDupChkMsg.removeClass('text-red-500');
 					loginIdDupChkMsg.addClass('text-green-500');
-					loginIdDupChkMsg.html(`\${data.rsMsg}`);
+					loginIdDupChkMsg.html(data.rsMsg);
 					validLoginId = el.value;
 				} else {
 					loginIdDupChkMsg.removeClass('text-green-500');
 					loginIdDupChkMsg.addClass('text-red-500');
-					loginIdDupChkMsg.html(`\${data.rsMsg}`);
+					loginIdDupChkMsg.html(data.rsMsg);
 					validLoginId = null;
 				}
 			},
@@ -167,7 +175,7 @@
 
 	function verifyAuth() {
 
-		const phoneNum = $('#cellphoneNum').val();
+		const phoneNum = $('#cellphoneNum').val().trim();
 		const authPin = $('#authPin').html();
 		const authMsg = $('#authMsg');
 
@@ -180,29 +188,37 @@
 			},
 			dataType : 'json',
 			success : function(data) {
+				
+				if(data.fail){
+					
+					if(data.rsCode === "F-2"){
+						authMsg.removeClass('text-success');
+						authMsg.addClass('text-red-500');
+						authMsg.html(data.rsMsg);
 
-				if (data.exists == true && !data.isDupPhoneNum) {
+						$('#cellphoneNum').prop('readonly', false);
+						window.auth_modal.close();
+						return;
+					} 
+					else if (data.rsCode === "F-3") {
+						alert(data.rsMsg);
+						location.href = "/usr/member/login";
+						return;
+					} 
+					
+					return;
+				}
+				
+				if (data.success) {
 					authMsg.removeClass('text-red-500');
 					authMsg.addClass('text-success');
-					authMsg.html("인증이 완료되었습니다");
+					authMsg.html(data.rsMsg);
 					$('#isPhoneCertified').val("true");
 					$('#certifyButton').prop("disabled", true);
 					window.auth_modal.close();
+					return;
 				}
 				
-				else if (data.exists == true && data.isDupPhoneNum) {
-					alert('이미 가입된 휴대폰 번호입니다. 로그인 페이지로 이동합니다');
-					location.href = "/usr/member/login";
-				} 
-				
-				else if (data.exists == false) {
-					authMsg.removeClass('text-success');
-					authMsg.addClass('text-red-500');
-					authMsg.html("인증에 실패하였습니다");
-
-					$('#cellphoneNum').prop('readonly', false);
-					window.auth_modal.close();
-				}
 			},
 			error : function(xhr, status, error) {
 				console.log(error);
@@ -213,6 +229,11 @@
 	function closeModal() {
 		document.getElementById('auth_modal').close();
 		$('#cellphoneNum').prop('readonly', false);
+	}
+	
+	function navigateToHome(){
+		location.href = "/";
+		
 	}
 </script>
 
@@ -234,7 +255,7 @@
 				</div>
 
 				<label class="input input-bordered flex items-center gap-2">
-					<input type="password" name="loginPw" placeholder="비밀번호"
+					<input type="password" name="loginPw" placeholder="비밀번호 8~16자 영문, 숫자 조합"
 					class="grow" />
 				</label> <label class="input input-bordered flex items-center gap-2">
 					<input type="password" name="loginPwChk" placeholder="비밀번호 확인"
@@ -297,7 +318,7 @@
 		</dialog>
 
 		<div class="text-center mt-4">
-			<button class="btn btn-outline btn-sm" onclick="history.back();">뒤로가기</button>
+			<button class="btn btn-outline btn-sm" onclick="navigateToHome();">뒤로가기</button>
 		</div>
 	</div>
 </section>

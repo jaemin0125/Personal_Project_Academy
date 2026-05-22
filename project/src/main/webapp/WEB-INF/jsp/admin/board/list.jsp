@@ -78,6 +78,10 @@
 
 	}
 	
+	function goInfo(){
+		location.href = "/admin/member/info";
+	}
+	
 </script>
 
 
@@ -238,7 +242,7 @@
 			</div>
 
 			<div class="text-right mt-6">
-				<button onclick="history.back();" class="btn btn-outline btn-sm">←
+				<button onclick="goInfo();" class="btn btn-outline btn-sm">←
 					목록으로 돌아가기</button>
 			</div>
 		</div>

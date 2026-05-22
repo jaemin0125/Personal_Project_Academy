@@ -83,81 +83,81 @@ public class UsrMemberController {
 
 	@GetMapping("/usr/member/verifyPhoneNum")
 	@ResponseBody
-	public Object VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
+	public ResultData<Map<String, Object>> VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
+		
 		String regExp = "^010[0-9]{7,8}$";
+		
+
+		if (phoneNum == null || !phoneNum.trim().matches(regExp)) {
+			return ResultData.from("F-1", "올바른 전화번호의 형식이 아닙니다");
+		}
+
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
 		Boolean exists = (Boolean) map.get("exists");
-		Boolean isDupPhoneNum = false;
 		
-		Map<String, Object> rs = new HashMap<>();
-		
-		if(!phoneNum.matches(regExp)) {
-			rs.put("exists", false);
-			return rs;
+		if(!exists) {
+			return ResultData.from("F-2", "인증에 실패하였습니다");
 		}
 		
-
-		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
-		if (exists) {
-			int idCount = this.memberService.phoneNumDupChk(phoneNum);
-
-			if (idCount == 1) {
-				isDupPhoneNum = true;
-			}
+		int idCnt = this.memberService.phoneNumDupChk(phoneNum);
+		
+		if(idCnt == 0) {
+			return ResultData.from("S-1", "인증이 완료되었습니다"); // 중복된 회원 정보가 없으니 join form에서는 Success의 의미.
+		} else if (idCnt == 1) {
+			return ResultData.from("F-3", "이미 가입된 휴대폰 번호입니다"); // 이미 가입된 정보가 있으니 Fail의 의미
 		}
-
-		rs.put("exists", exists);
-		rs.put("isDupPhoneNum", isDupPhoneNum);
-
-		return rs;
-	}
 	
+		return ResultData.from("F-4", "잘못된 접근입니다");
+	}
+
 	@GetMapping("/usr/member/findLoginInfo")
 	@ResponseBody
-	public Object FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId, String mode) throws IOException, InterruptedException {
-		
+	public ResultData<Map<String, Object>> FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId, String mode) throws IOException, InterruptedException {
+		String regExp = "^010[0-9]{7,8}$";
+
+		if (phoneNum == null || !phoneNum.trim().matches(regExp)) {
+			return ResultData.from("F-1", "올바른 전화번호의 형식이 아닙니다");
+		}
+
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
 
-		Boolean exists = true /*(Boolean) map.get("exists")*/;
-		Boolean isDupPhoneNum = false;
-		String findLoginId = null;
-		Boolean isInfoMatching = false;
+		Boolean exists = (Boolean) map.get("exists");
 
-		Map<String, Object> rs = new HashMap<>();
 		/* 휴대폰 인증 성공 시 이미 가입된 번호인지 중복 검증 */
-		
-		if(mode.equals("id")) {
-			if (exists) {
-				int idCount = this.memberService.phoneNumDupChk(phoneNum);
-
-				if (idCount == 1) {
-					isDupPhoneNum = true;
-				}
-			}
-
-			if (isDupPhoneNum) {
-				findLoginId = this.memberService.getMemberByPhoneNumber(phoneNum);
-			}
-
-			if (findLoginId != null) {
-				rs.put("loginId", findLoginId);
-			}
+		if (!exists) {
+			return ResultData.from("F-2", "인증에 실패하였습니다");
 		}
-		
-		if(mode.equals("pw")) {
-			if(exists && loginId.length() != 0) {
-				//여기에 phoneNum와, loginId가 매칭되는지 확인
-				int countId = this.memberService.getIdCntByInfo(phoneNum, loginId);
-				
-				if(countId == 1) {
-					isInfoMatching = true;
-				}
+
+		Map<String, Object> rsData = new HashMap<>();
+
+		if (mode.equals("id")) {
+			int idCnt = this.memberService.phoneNumDupChk(phoneNum);
+
+			if (idCnt == 0) {
+				// 아이디 없을 떄
+				return ResultData.from("F-3", "입력하신 정보의 회원이 존재하지 않습니다");
+			} else if (idCnt == 1) {
+				rsData.put("loginId", this.memberService.getMemberByPhoneNumber(phoneNum));
+				return ResultData.from("S-1", "인증 성공 및 아이디 찾음", rsData);
 			}
 		}
 
-		rs.put("exists", exists);
-		rs.put("isInfoMatching", isInfoMatching);
-		return rs;
+		if (mode.equals("pw")) {
+			if (loginId.trim().length() == 0) {
+				return ResultData.from("F-1", "올바른 ID의 형식이 아닙니다");
+			}
+
+			int infoCnt = this.memberService.getIdCntByInfo(phoneNum, loginId);
+
+			if (infoCnt == 0) {
+				// 인증한 phoneNum과 loginId 정보가 일치하지 않을 때
+				return ResultData.from("F-3", "입력하신 아이디와 휴대폰 번호 정보가 일치하지 않습니다");
+			} else if (infoCnt == 1) {
+				return ResultData.from("S-2", "인증 성공 비밀번호 재설정");
+			}
+		}
+
+		return ResultData.from("F-4", "잘못된 접근입니다");
 	}
 
 	@GetMapping("/usr/member/login")
@@ -243,14 +243,14 @@ public class UsrMemberController {
 
 		return Util.jsReplace("회원정보가 수정되었습니다 변경된 정보로 다시 로그인하세요", "/");
 	}
-	
+
 	@PostMapping("/usr/member/resetPassword")
 	@ResponseBody
 	public ResultData doResetPassword(String loginId, String phoneNum, String newPassword) {
-		
-		String regExp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=\\.\\-])(?=.*[0-9]).{8,16}$";	
-		
-		if(loginId.length() != 0 && newPassword.matches(regExp)) {
+
+		String regExp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=\\.\\-])(?=.*[0-9]).{8,16}$";
+
+		if (loginId.length() != 0 && newPassword.matches(regExp)) {
 			this.memberService.doResetPassword(loginId, phoneNum, Util.encryptSHA256(newPassword));
 			return ResultData.from("S-1", "정상적으로 비밀번호가 변경되었습니다");
 		}

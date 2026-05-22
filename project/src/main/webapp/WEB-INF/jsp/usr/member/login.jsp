@@ -88,7 +88,7 @@ const findInfoState = {
 	function findLoginId (){
 		
 		const regExp = /^010[0-9]{7,8}$/;
-		const phoneNum = $('#findId_phoneNum').val();
+		const phoneNum = $('#findId_phoneNum').val().trim();
 		
 		if(phoneNum.length == 0){
 			alert('휴대폰 번호를 입력하세요');
@@ -165,28 +165,23 @@ const findInfoState = {
 			},
 			dataType : 'json',
 			success : function(data) {
-				if(info == "id"){
-					if(!data.exists){
-						alert('인증에 실패하였습니다');
+
+				if(data.fail){
+					alert(data.rsMsg);
+					
+					if(data.rsCode === "F-2" || data.rsCode === "F-4" ){ //F-2 = 인증 실패 코드 (공통) , F-4 = 잘못된 접근 코드
 						return location.href = "/usr/member/login";
-					} else if(data.exists && !data.loginId){
-						alert('입력하신 정보의 회원이 존재하지 않습니다');
+					} 
+					else if (data.rsCode === "F-3") { //F-3 = 회원 정보 미존재 코드 (공통)
 						return location.href = "/usr/member/join";
 					}
-				} else if(info == "pw"){
-					if(!data.exists){
-						alert('인증에 실패하였습니다');
-						return location.href = "/usr/member/login";
-					} else if (data.exists && !data.isInfoMatching){
-						alert('입력하신 아이디와 휴대폰 번호 정보가 일치하지 않습니다');
-						return location.href = "/usr/member/login";
-					}
+					
+					return; //F-1 = 입력값 유효성 오류 코드 (공통) F-1일 떄는 모달 유지를 위해 redirection X 
 				}
 				
 				
-				
-				if (data.loginId && info == "id"){
-					findInfoState.loginId = data.loginId;
+				if (data.rsCode === "S-1"){ //S-1 = id찾기 성공 코드
+					findInfoState.loginId = data.rsData.loginId;
 					
 					$('#findId_modal').html(
 							`<div id="find-id-result" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -241,7 +236,7 @@ const findInfoState = {
 					findInfoState.authPin = null;
 					findInfoState.loginId = null;
 					
-				} else if (info == "pw") {
+				} else if (data.rsCode === "S-2") { //S-2 = pw 재설정 허용 코드
 				    $('#findPw_modal').html(`
 				        <div id="reset-pw-form" class="modal-box p-0 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-11/12 max-w-md">
 				            <div class="p-8">
@@ -351,7 +346,7 @@ const findInfoState = {
 			},
 			dataType : 'json',
 			success : function(data) {
-				if(data.rsCode.statsWith("S-") && data.success){
+				if(data.success){
 					alert(data.rsMsg);
 					return location.href = "/";
 				} else{
@@ -381,8 +376,8 @@ const findInfoState = {
 	function getAuthPin_pw(){
 		
 		const regExp = /^010[0-9]{7,8}$/;
-		const phoneNum = $('#findPw_phoneNum').val();
-		const loginId = $('#findPw_loginId').val();
+		const phoneNum = $('#findPw_phoneNum').val().trim();
+		const loginId = $('#findPw_loginId').val().trim();
 		
 		if(loginId.length == 0){
 			alert('ID를 입력하세요');
@@ -402,7 +397,6 @@ const findInfoState = {
 			
 			return;
 		}
-		
 		
 		
 		findInfoState.phoneNum = phoneNum;

@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dao.MemberDao;
@@ -14,6 +16,13 @@ public class MemberService {
 	
 	public MemberService(MemberDao memberDao) {
 		this.memberDao = memberDao;
+	}
+	
+	@Scheduled(cron = "0 0 4 * * *")
+	public void checkAndConvertDormantMembers() {
+		LocalDateTime oneYearAgo = LocalDateTime.now().minusYears(1);
+		
+		this.memberDao.checkAndConvertDormantMembers(oneYearAgo);
 	}
 
 	public void joinMember(String loginId, String loginPw, String name, String email, String address, String phoneNum) {
@@ -74,6 +83,10 @@ public class MemberService {
 
 	public void doResetPassword(String loginId, String phoneNum, String newPassword) {
 		this.memberDao.doResetPassword(loginId, phoneNum, newPassword);
+	}
+
+	public void doReleaseDormantStatus(int id) {
+		this.memberDao.doReleaseDormantStatus(id);
 	}
 
 }

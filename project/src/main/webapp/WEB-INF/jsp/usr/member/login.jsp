@@ -29,9 +29,196 @@ const findInfoState = {
 			form.loginPw.focus();
 			return false;
 		}
+		
+		$.ajax({
+			url : '/usr/member/doLogin',
+			type : 'POST',
+			data : {
+				loginId : form.loginId.value,
+				loginPw : form.loginPw.value
+			},
+			dataType : 'json',
+			success : function(data) {
+				
+				console.log(data);
+				
+				if (data.fail){
+					
+					alert(data.rsMsg);
+					
+					if (data.rsCode == "F-1"){
+						return location.href = "/usr/member/login";
+					}
+					else if (data.rsCode == "F-2"){
+						return location.href = "/usr/member/login";
+					}
+					else if (data.rsCode == "F-3"){
+						return location.href = "/";
+					}
+					else if(data.rsCode == "F-4" && confirm(data.rsMsg)){
+						document.getElementById("dormant_modal").showModal();
+						$('#dormant_user_id').html(data.rsData.loginId);
+						
+						findInfoState.loginId = data.rsData.loginId;
+						findInfoState.phoneNum = data.rsData.phoneNumber;
+						return;
+					}
+				}
+				else if (data.success){
+					alert(data.rsMsg);
+					return location.href = "/";
+				}
+				
 
-		return true;
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		})
+
+
+		return false;
 	}
+	
+	function openReleaseModal(){
+		$('#dormant_modal').html(getFirstHtml("dormant"));
+	}
+
+	function closeReleaseModal(){
+		$('#dormant_modal').html(
+				`<div class="modal-box border border-success bg-base-100 p-6 shadow-2xl max-w-md">
+				    <div class="flex flex-col items-center text-center mb-6">
+				      <div class="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-3 animate-pulse">
+				        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+				        </svg>
+				      </div>
+				      <h3 class="font-extrabold text-2xl text-base-content">장기 미접속 휴면 계정 안내</h3>
+				    </div>
+	
+				    <div class="text-sm text-gray-600 space-y-3 bg-base-200/50 p-4 rounded-xl border border-base-300">
+				      <p class="text-center font-medium text-base-content">
+				        회원님의 소중한 개인정보 보호를 위해 <br>
+				        <span id="dormant_user_id" class="text-success font-bold underline decoration-2"></span> 님은 현재 휴면 상태로 전환되어 있습니다.
+				      </p>
+				      <div class="divider my-1"></div>
+				      <ul class="list-disc list-inside text-xs space-y-1 text-gray-500">
+				        <li>정보통신망법에 의거, 1년 이상 미로그인 시 휴면 처리됩니다.</li>
+				        <li>아래 본인인증을 완료하시면 즉시 일반 계정으로 복구됩니다.</li>
+				      </ul>
+				    </div>
+	
+				    <div class="modal-action flex flex-col gap-2 mt-6 w-full">
+				      <button onclick="openConvertModal()" class="btn btn-success text-white w-full shadow-lg shadow-success/20 gap-2 hover:bg-success-focus">
+				        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+				        </svg>
+				        휴대폰으로 본인인증하기
+				      </button>
+				      <button onclick="closeReleaseModal()"  class="btn btn-ghost btn-sm w-full text-gray-400 font-normal">
+				        취소하고 돌아가기
+				      </button>
+				    </div>
+				  </div>`);
+		
+		document.getElementById('dormant_modal').close();
+		
+		findInfoState.info = null;
+		findInfoState.phoneNum = null;
+		findInfoState.authPin = null;
+		findInfoState.loginId = null;
+	}
+	
+	function releaseDormant(){
+		
+		$.ajax({
+			url : '/usr/member/getAuthPin',
+			type : 'GET',
+			dataType : 'text',
+			success : function(data) {
+					findInfoState.authPin = data; //Pin번호 전역 상태에 저장.
+				
+					
+					console.log(findInfoState);
+					$('#dormant_modal').html(
+							`<div class="modal-box text-center">
+								<h3 class="font-bold text-lg">휴대폰 소유 확인</h3>
+								<p class="py-4 text-sm text-gray-500">아래 안내된 번호로 인증 번호를 전송해 주세요.</p>
+					
+								<div class="bg-base-200 p-6 rounded-lg my-4 space-y-3">
+									<div>
+										<span class="text-xs text-gray-400">보낼 곳(옥토모 대표번호)</span>
+										<p id="octomoNum" class="text-xl font-bold text-primary">1666-3538</p>
+									</div>
+									<hr class="border-base-300">
+									<div>
+										<span class="text-xs text-gray-400">메시지 내용(인증번호)</span>
+										<p id="authPin"
+											class="text-3xl font-black tracking-widest text-secondary">\${data}</p>
+									</div>
+								</div>
+					
+								<p class="text-xs text-error mb-4">※ 문자를 보낸 후 아래 확인 버튼을 눌러주세요.</p>
+					
+								<div class="modal-action justify-center">
+									<button type="button" onclick="verifyDormantAuth()"
+										class="btn btn-success btn-wide">인증 완료 확인</button>
+									<button onclick="closeReleaseModal()" class="btn btn-ghost">닫기</button>
+								</div>
+							</div>`
+							)
+
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		})
+	}
+	
+	
+	
+	function verifyDormantAuth() {
+
+		$.ajax({
+			url : '/usr/member/verifyDormantAuth',
+			type : 'POST',
+			data : {
+				phoneNum : findInfoState.phoneNum,
+				authPin : findInfoState.authPin,
+				loginId : findInfoState.loginId,
+			},
+			dataType : 'json',
+			success : function(data) {
+
+				if(data.fail){
+					alert(data.rsMsg);
+					
+					if(data.rsCode === "F-2" || data.rsCode === "F-4" ){ //F-2 = 인증 실패 코드 (공통) , F-4 = 잘못된 접근 코드
+						return location.href = "/usr/member/login";
+					} 
+					else if (data.rsCode === "F-3") { //F-3 = 회원 정보 미존재 코드 (공통)
+						return location.href = "/usr/member/join";
+					}
+					
+					return; //F-1 = 입력값 유효성 오류 코드 (공통) F-1일 떄는 모달 유지를 위해 redirection X 
+				}
+				
+				if(data.success){
+					alert(data.rsMsg);
+					
+					return location.href = "/usr/member/login";
+				}
+				
+				
+			},
+			error : function(xhr, status, error) {
+				console.log(error);
+			}
+		})
+	}
+	
+	
+
 
 	function historyBack() {
 		location.href = "/";
@@ -73,10 +260,37 @@ const findInfoState = {
 							</form>
 						</div>
 					</div>`;
+		} else if (info == "dormant"){
+			return `<div class="modal-box text-center border border-success bg-base-100 p-6 shadow-2xl">
+				            <div class="inline-flex items-center justify-center w-14 h-14 bg-success/10 text-success rounded-full mb-3">
+				            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+				                <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+				            </svg>
+				        </div>
+				        <h3 class="font-extrabold text-xl text-base-content tracking-tight">본인 확인 및 휴면 해제</h3>
+				        <p class="py-3 text-xs sm:text-sm text-gray-500">
+				            안전한 계정 복구를 위해 <br class="sm:hidden"> 아래 등록된 정보로 본인인증을 진행합니다.
+				        </p>
+				        <div class="flex flex-col gap-3 mt-2">
+				            <div class="form-control w-full">
+				                <label class="label pt-0">
+				                    <span class="label-text-alt text-gray-400">가입된 휴대폰 번호</span>
+				                </label>
+				                <input type="text" id="dormant_phoneNum" value="\${findInfoState.phoneNum}" readonly
+				                    class="input input-bordered w-full bg-base-200 text-center font-mono font-bold tracking-wider text-base-content focus:outline-none" />
+				            </div>
+				            <button type="button" onclick="releaseDormant();"
+				                class="btn btn-success w-full text-white font-bold tracking-wide mt-2 shadow-md shadow-success/10 hover:bg-success-focus">
+				                인증번호(PIN) 발급받기
+				            </button>
+				        </div>
+				        <div class="modal-action justify-end mt-4">
+			                <button onclick="closeReleaseModal()" class="btn btn-ghost btn-sm text-gray-400 font-normal">취소</button>
+				        </div>
+				    </div>`;
 		}
 		
 	}
-	
 	
 	
 	function openFindIdModal(){
@@ -334,7 +548,6 @@ const findInfoState = {
 			$('#pw-match-msg').addClass("hidden");
 		}
 		
-		console.log(findInfoState);
 		
 		$.ajax({
 			url : '/usr/member/resetPassword',
@@ -358,11 +571,6 @@ const findInfoState = {
 				console.log(error);
 			}
 		})
-		
-		findInfoState.info = null;
-		findInfoState.phoneNum = null;
-		findInfoState.authPin = null;
-		findInfoState.loginId = null;
 		
 	}
 	
@@ -515,42 +723,79 @@ const findInfoState = {
 </section>
 
 <dialog id="findId_modal" class="modal">
-<div class="modal-box text-center">
-	<h3 class="font-bold text-lg">아이디 찾기</h3>
-	<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
-	<div class="flex flex-col gap-3">
-		<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
-			class="input input-bordered w-full" />
-		<button type="button" onclick="findLoginId();"
-			class="btn btn-success w-full">아이디 확인</button>
+	<div class="modal-box text-center">
+		<h3 class="font-bold text-lg">아이디 찾기</h3>
+		<p class="py-4 text-sm text-gray-500">가입 시 등록한 휴대폰 번호를 입력해주세요.</p>
+		<div class="flex flex-col gap-3">
+			<input type="text" id="findId_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+				class="input input-bordered w-full" />
+			<button type="button" onclick="findLoginId();"
+				class="btn btn-success w-full">아이디 확인</button>
+		</div>
+		<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn btn-ghost">닫기</button>
+			</form>
+		</div>
 	</div>
-	<div id="findId_result" class="mt-4 text-sm font-medium h-6"></div>
-	<div class="modal-action">
-		<form method="dialog">
-			<button class="btn btn-ghost">닫기</button>
-		</form>
-	</div>
-</div>
 </dialog>
 
 <dialog id="findPw_modal" class="modal">
-<div class="modal-box text-center">
-	<h3 class="font-bold text-lg">비밀번호 찾기</h3>
-	<p class="py-4 text-sm text-gray-500">아이디와 등록된 휴대폰 번호를 입력해주세요.</p>
-	<div class="flex flex-col gap-3">
-		<input type="text" id="findPw_loginId" placeholder="아이디"
-			class="input input-bordered w-full" /> <input type="text"
-			id="findPw_phoneNum" placeholder="휴대폰 번호 (- 없이)"
-			class="input input-bordered w-full" />
-		<button type="button" onclick="getAuthPin_pw();"
-			class="btn btn-success	 w-full">본인 인증 후 비밀번호 재설정</button>
+	<div class="modal-box text-center">
+		<h3 class="font-bold text-lg">비밀번호 찾기</h3>
+		<p class="py-4 text-sm text-gray-500">아이디와 등록된 휴대폰 번호를 입력해주세요.</p>
+		<div class="flex flex-col gap-3">
+			<input type="text" id="findPw_loginId" placeholder="아이디"
+				class="input input-bordered w-full" /> <input type="text"
+				id="findPw_phoneNum" placeholder="휴대폰 번호 (- 없이)"
+				class="input input-bordered w-full" />
+			<button type="button" onclick="getAuthPin_pw();"
+				class="btn btn-success	 w-full">본인 인증 후 비밀번호 재설정</button>
+		</div>
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn btn-ghost">닫기</button>
+			</form>
+		</div>
 	</div>
-	<div class="modal-action">
-		<form method="dialog">
-			<button class="btn btn-ghost">닫기</button>
-		</form>
-	</div>
-</div>
 </dialog>
 
+<dialog id="dormant_modal" class="modal modal-bottom sm:modal-middle transition-all duration-300">
+  <div class="modal-box border border-success bg-base-100 p-6 shadow-2xl max-w-md">
+    
+    <div class="flex flex-col items-center text-center mb-6">
+      <div class="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-3 animate-pulse">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h3 class="font-extrabold text-2xl text-base-content">장기 미접속 휴면 계정 안내</h3>
+    </div>
+
+    <div class="text-sm text-gray-600 space-y-3 bg-base-200/50 p-4 rounded-xl border border-base-300">
+      <p class="text-center font-medium text-base-content">
+        회원님의 소중한 개인정보 보호를 위해 <br>
+        <span id="dormant_user_id" class="text-success font-bold underline decoration-2"></span> 님은 현재 휴면 상태로 전환되어 있습니다.
+      </p>
+      <div class="divider my-1"></div>
+      <ul class="list-disc list-inside text-xs space-y-1 text-gray-500">
+        <li>정보통신망법에 의거, 1년 이상 미로그인 시 휴면 처리됩니다.</li>
+        <li>아래 본인인증을 완료하시면 즉시 일반 계정으로 복구됩니다.</li>
+      </ul>
+    </div>
+
+    <div class="modal-action flex flex-col gap-2 mt-6 w-full">
+      <button onclick="openReleaseModal()" class="btn btn-success text-white w-full shadow-lg shadow-success/20 gap-2 hover:bg-success-focus">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        휴대폰으로 본인인증하기
+      </button>
+      <button onclick="closeReleaseModal()"  class="btn btn-ghost btn-sm w-full text-gray-400 font-normal">
+        취소하고 돌아가기
+      </button>
+    </div>
+  </div>
+</dialog>
 <%@ include file="/WEB-INF/jsp/common/footer.jsp"%>

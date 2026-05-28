@@ -83,10 +83,10 @@ public class UsrMemberController {
 
 	@GetMapping("/usr/member/verifyPhoneNum")
 	@ResponseBody
-	public ResultData<Map<String, Object>> VerifyPhoneNum(String phoneNum, String authPin) throws IOException, InterruptedException {
-		
+	public ResultData<Map<String, Object>> VerifyPhoneNum(String phoneNum, String authPin)
+			throws IOException, InterruptedException {
+
 		String regExp = "^010[0-9]{7,8}$";
-		
 
 		if (phoneNum == null || !phoneNum.trim().matches(regExp)) {
 			return ResultData.from("F-1", "올바른 전화번호의 형식이 아닙니다");
@@ -94,25 +94,26 @@ public class UsrMemberController {
 
 		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
 		Boolean exists = (Boolean) map.get("exists");
-		
-		if(!exists) {
+
+		if (!exists) {
 			return ResultData.from("F-2", "인증에 실패하였습니다");
 		}
-		
+
 		int idCnt = this.memberService.phoneNumDupChk(phoneNum);
-		
-		if(idCnt == 0) {
+
+		if (idCnt == 0) {
 			return ResultData.from("S-1", "인증이 완료되었습니다"); // 중복된 회원 정보가 없으니 join form에서는 Success의 의미.
 		} else if (idCnt == 1) {
 			return ResultData.from("F-3", "이미 가입된 휴대폰 번호입니다"); // 이미 가입된 정보가 있으니 Fail의 의미
 		}
-	
+
 		return ResultData.from("F-4", "잘못된 접근입니다");
 	}
 
 	@GetMapping("/usr/member/findLoginInfo")
 	@ResponseBody
-	public ResultData<Map<String, Object>> FindLoginInfo(String phoneNum, String authPin, @RequestParam(defaultValue = "") String loginId, String mode) throws IOException, InterruptedException {
+	public ResultData<Map<String, Object>> FindLoginInfo(String phoneNum, String authPin,
+			@RequestParam(defaultValue = "") String loginId, String info) throws IOException, InterruptedException {
 		String regExp = "^010[0-9]{7,8}$";
 
 		if (phoneNum == null || !phoneNum.trim().matches(regExp)) {
@@ -130,7 +131,7 @@ public class UsrMemberController {
 
 		Map<String, Object> rsData = new HashMap<>();
 
-		if (mode.equals("id")) {
+		if (info.equals("id")) {
 			int idCnt = this.memberService.phoneNumDupChk(phoneNum);
 
 			if (idCnt == 0) {
@@ -142,7 +143,7 @@ public class UsrMemberController {
 			}
 		}
 
-		if (mode.equals("pw")) {
+		if (info.equals("pw")) {
 			if (loginId.trim().length() == 0) {
 				return ResultData.from("F-1", "올바른 ID의 형식이 아닙니다");
 			}
@@ -150,13 +151,47 @@ public class UsrMemberController {
 			int infoCnt = this.memberService.getIdCntByInfo(phoneNum, loginId);
 
 			if (infoCnt == 0) {
-				// 인증한 phoneNum과 loginId 정보가 일치하지 않을 때
-				return ResultData.from("F-3", "입력하신 아이디와 휴대폰 번호 정보가 일치하지 않습니다");
+				// 인증한 phoneNum과 loginId 정보가 일치하지 않을 때j
+				return ResultData.from("F-3", "회원 정보와 인증된 휴대폰 번호가 일치하지 않습니다");
 			} else if (infoCnt == 1) {
 				return ResultData.from("S-2", "인증 성공 비밀번호 재설정");
 			}
 		}
 
+		return ResultData.from("F-4", "잘못된 접근입니다");
+	}
+	
+	@PostMapping("/usr/member/verifyDormantAuth")
+	@ResponseBody
+	public ResultData<Map<String,Object>> verifyDormantAuth(String phoneNum, String authPin, String loginId) throws IOException, InterruptedException{
+		
+		String regExp = "^010[0-9]{7,8}$";
+
+		if (phoneNum == null || !phoneNum.trim().matches(regExp)) {
+			return ResultData.from("F-1", "올바른 전화번호의 형식이 아닙니다");
+		} else if (loginId.trim().length() == 0) {
+			return ResultData.from("F-1", "올바른 ID의 형식이 아닙니다");
+		}
+		
+		Map<String, Object> map = Util.VerifyPhoneNum(phoneNum, authPin);
+		
+		Boolean exists = (Boolean) map.get("exists");
+		
+		if(!exists) {
+			return ResultData.from("F-2", "인증에 실패하였습니다");
+		}
+		
+		Member member = this.memberService.getMemberByLoginId(loginId);
+		
+		if(member == null || !member.getPhoneNumber().equals(phoneNum)) {
+			return ResultData.from("F-3", "회원 정보와 인증된 휴대폰 번호가 일치하지 않습니다");
+		}
+		
+		if(exists) {
+			this.memberService.doReleaseDormantStatus(member.getId());
+			return ResultData.from("S-1", "휴면 계정 보호가 완전히 해제되었습니다. 다시 로그인해 주세요!");
+		}
+		
 		return ResultData.from("F-4", "잘못된 접근입니다");
 	}
 
@@ -167,26 +202,49 @@ public class UsrMemberController {
 
 	@PostMapping("/usr/member/doLogin")
 	@ResponseBody
-	public String doLogin(String loginId, String loginPw) {
+	public ResultData<Map<String, Object>> doLogin(String loginId, String loginPw) {
 
 		Member member = this.memberService.getMemberByLoginId(loginId);
-
+		
 		if (member == null) {
-			return Util.jsReplace(String.format("[ %s ] 은(는) 존재하지 않는 회원입니다", loginId), "login");
+			return ResultData.from("F-1", String.format("[ %s ] 은(는) 존재하지 않는 회원입니다", loginId));
+		} 
+		
+		
+		Map<String, Object> rs = new HashMap<>();
+		
+		rs.put("loginId", member.getLoginId());
+		rs.put("phoneNumber", member.getPhoneNumber());
+		/*
+		 * if (member == null) { return
+		 * Util.jsReplace(String.format("[ %s ] 은(는) 존재하지 않는 회원입니다", loginId), "login");
+		 * }
+		 * 
+		 * if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
+		 * return Util.jsReplace("비밀번호가 일치하지 않습니다", "login"); }
+		 * 
+		 * if (member.getStatus() == 1) { return
+		 * Util.jsReplace("차단된 회원입니다 관리자에게 문의하세요.", "/"); 추가적으로 휴면, 탈퇴대기 관련 로직을 추가하여
+		 * else if 문 추가 예정. } else if (member.getStatus() == 2) { return
+		 * Util.jsReplace("휴면 상태의 계정입니다.", "/"); }
+		 */
+		
+		 if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
+			return ResultData.from("F-2", "비밀번호가 일치하지 않습니다");
+		} else if (member.getStatus() == 1) {
+			return ResultData.from("F-3", "차단된 회원입니다 관리자에게 문의하세요");
+		} else if (member.getStatus() == 2) {
+			return ResultData.from("F-4", "장기 미접속으로 인해 현재 휴면 전환된 계정입니다. \n휴면 상태를 해제하시겠습니까?", rs);
 		}
-
-		if (member.getLoginPw().equals(Util.encryptSHA256(loginPw)) == false) {
-			return Util.jsReplace("비밀번호가 일치하지 않습니다", "login");
-		}
-
-		if (member.getStatus() == 1) {
-			return Util.jsReplace("차단된 회원입니다 관리자에게 문의하세요.", "/");
-		} /* 추가적으로 휴면, 탈퇴대기 관련 로직을 추가하여 else if 문 추가 예정. */
 
 		this.req.login(new LoginedMember(member.getId(), member.getAuthLevel(), member.getStatus()));
 		this.memberService.updateLoginDate(member.getId());
 
-		return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()), "/usr/home/main");
+		/*
+		 * return Util.jsReplace(String.format("[ %s ] 님 환영합니다", member.getLoginId()),
+		 * "/usr/home/main");
+		 */
+		return ResultData.from("S-1",String.format("[ %s ] 님 환영합니다", member.getLoginId()));
 	}
 
 	@GetMapping("/usr/member/logout")

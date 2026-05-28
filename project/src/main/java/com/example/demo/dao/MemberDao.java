@@ -1,5 +1,6 @@
 package com.example.demo.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
@@ -156,5 +157,21 @@ public interface MemberDao {
 				AND phoneNumber = #{phoneNum}
 			""")
 	void doResetPassword(String loginId, String phoneNum, String newPassword);
+
+	@Select("""
+			UPDATE `member`
+				SET `status` = 2
+			 	WHERE `status` = 0 
+			 	AND lastLoginDate <= #{oneYearAgo} 
+			 	AND authLevel != 0;
+			""")
+	void checkAndConvertDormantMembers(LocalDateTime oneYearAgo);
+
+	@Update("""
+			UPDATE `member`
+				SET `status` = 0
+				WHERE id = #{id}
+			""")
+	void doReleaseDormantStatus(int id);
 
 }

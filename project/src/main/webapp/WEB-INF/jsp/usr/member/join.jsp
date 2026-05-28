@@ -189,7 +189,7 @@
 			dataType : 'json',
 			success : function(data) {
 				
-				if(data.fail){
+				if (data.fail){
 					
 					if(data.rsCode === "F-2"){
 						authMsg.removeClass('text-success');
@@ -226,11 +226,6 @@
 		})
 	}
 
-	function closeModal() {
-		document.getElementById('auth_modal').close();
-		$('#cellphoneNum').prop('readonly', false);
-	}
-	
 	function navigateToHome(){
 		location.href = "/";
 		
@@ -245,7 +240,6 @@
 		<form action="doJoin" method="post"
 			onsubmit="return joinFormChk(this);">
 			<div class="space-y-4">
-
 				<div>
 					<label class="input input-bordered flex items-center gap-2">
 						<input type="text" name="loginId" placeholder="아이디" class="grow"
@@ -312,7 +306,9 @@
 			<div class="modal-action justify-center">
 				<button type="button" onclick="verifyAuth()"
 					class="btn btn-success btn-wide">인증 완료 확인</button>
-				<button type="button" onclick="closeModal();" class="btn btn-ghost">닫기</button>
+				<form method="dialog">
+					<button class="btn btn-ghost">닫기</button>
+				</form>
 			</div>
 		</div>
 		</dialog>

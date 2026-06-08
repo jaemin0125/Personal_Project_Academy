@@ -62,17 +62,15 @@ YOLO 기반 객체 인식 AI를 활용해 사용자가 업로드한 쓰레기 �
 
 <br>
 
-
-| 기능 구분 | 기존 디자인 (Before) | 리팩토링 후 UI (After) |
-| :---: | :---: | :---: |
-| **메인 화면** | <img width="400" alt="기존 메인 화면" src="https://github.com/user-attachments/assets/07fd055c-e4f5-41df-b978-393f94e221cc" /> | 수정 내용 없음 |
-| **사진 업로드 & 추론** | <img width="400" alt="기존 업로드 및 추론" src="https://github.com/user-attachments/assets/17f4286b-bd4b-4c47-ba65-904773d05e2d" /> | 수정 내용 없음 |
-| **분리배출 결과 안내** | <img width="400" alt="기존 결과 화면" src="https://github.com/user-attachments/assets/b36372d0-7772-42a5-a2f5-0085e3c25c7f" /> | 수정 내용 없음 |
-| **관리자 대시보드 1** | <img width="400" alt="기존 관리자 페이지" src="https://github.com/user-attachments/assets/f93444c5-aed3-4c65-846b-5666918a7a2f" /> | <img width="400"  alt="image" src="https://github.com/user-attachments/assets/0650079f-c5bf-47a3-b06b-e2ce748d121c" /> |
-| **관리자 대시보드 2** | <img width="400" alt="기존 관리자 페이지" src="https://github.com/user-attachments/assets/df1ce780-85d8-4555-9523-c9ed0c7bfe1c" /> | <img width="400" alt="image" src="https://github.com/user-attachments/assets/8d36d275-c57c-4d9c-ab5a-fedaf3ebc7a3" /> |
-| **관리자 대시보드 3** | 기존 기능 없음 | <img width="400"  alt="image" src="https://github.com/user-attachments/assets/8ffbd551-b167-43af-941e-9d36e9feb1fc" /> |
-| **Octomo 인증** | 기존 기능 없음 | <img width="400"  alt="Video Project 4" src="https://github.com/user-attachments/assets/adb4649a-fdbd-4364-a3cf-524f75cda7ed" /> |
-
+| 기능 구분 | 기존 디자인 (Before) | 리팩토링 및 고도화 내용 (After) |
+| :---: | :---: | :--- |
+| **메인 화면** | <img src="https://github.com/user-attachments/assets/07fd055c-e4f5-41df-b978-393f94e221cc" width="400" alt="기존 메인 화면" /> | 수정 내용 없음 |
+| **사진 업로드 & 추론** | <img src="https://github.com/user-attachments/assets/17f4286b-bd4b-4c47-ba65-904773d05e2d" width="400" alt="기존 업로드 및 추론" /> | 수정 내용 없음 |
+| **분리배출 결과 안내** | <img src="https://github.com/user-attachments/assets/b36372d0-7772-42a5-a2f5-0085e3c25c7f" width="400" alt="기존 결과 화면" /> | 수정 내용 없음 |
+| **관리자 대시보드 1** | <img src="https://github.com/user-attachments/assets/f93444c5-aed3-4c65-846b-5666918a7a2f" width="400" alt="기존 관리자 페이지 1" /> | <img src="https://github.com/user-attachments/assets/664dcb55-be51-44f7-afac-e6a524327d29" width="400" alt="리팩토링 후 관리자 페이지 1" /><br>➔ **DaisyUI 적용 및 가독성 개선 완료** |
+| **관리자 대시보드 2** | <img src="https://github.com/user-attachments/assets/df1ce780-85d8-4555-9523-c9ed0c7bfe1c" width="400" alt="기존 관리자 페이지 2" /> | <img src="https://github.com/user-attachments/assets/68d627dc-7e58-4310-afa7-1859f626e2c0" width="400" alt="리팩토링 후 관리자 페이지 2" /><br>➔ **SortableJS 기반 컴포넌트 최적화 반영** |
+| **관리자 대시보드 3** | <div align="center" style="width:400px; color:#888;">(기존 기능 없음)</div> | <img src="https://github.com/user-attachments/assets/5fe2e41b-4dc5-4f31-8e63-f61cd8b0969c" width="400" alt="신규 관리자 기능" /><br>➔ **[신규] 회원 정보 관리 및 보안 제어 센터 추가** |
+| **Octomo 본인 인증** | <div align="center" style="width:400px; color:#888;">(기존 기능 없음)</div> | <img src="https://github.com/user-attachments/assets/adb4649a-fdbd-4364-a3cf-524f75cda7ed" width="400" alt="Octomo MO 인증 구동 화면" /><br>➔ **[신규] MO 인증 기반 아이디/비밀번호 찾기 및 휴면 해제 로직 고도화** |
 
 
 

@@ -61,7 +61,7 @@ YOLO 기반 객체 인식 AI를 활용해 사용자가 업로드한 쓰레기 �
 <br>
 
 | 기능 구분 | 기존 디자인 (Before) | 리팩토링 및 고도화 내용 (After) |
-| :---: | :---: | :--- |
+| :---: | :---: | :---: |
 | **메인 화면** | <img  src="https://github.com/user-attachments/assets/defdd54b-026b-4387-a572-04b2cccf24de" width="400" alt="기존 메인 화면" /> | <div align="center" style="width:400px; color:#888;">(수정 내용 없음)</div> |
 | **사진 업로드** | <img src="https://github.com/user-attachments/assets/b1ecee69-7209-4d0b-8b67-3331314865d3" width="400" alt="기존" /> | <div align="center" style="width:400px; color:#888;">(수정 내용 없음)</div> |
 | **추론 및 라벨 반환** | <img src="https://github.com/user-attachments/assets/db50e36a-3511-480f-bfb1-3463e0acddce" width="400" alt="기존" /> | <div align="center" style="width:400px; color:#888;">(수정 내용 없음)</div> |
